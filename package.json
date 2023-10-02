@@ -1,10 +1,20 @@
 {
-  "name": "maas-react-components",
-  "private": true,
+  "name": "@canonical/maas-react-components",
+  "description": "React components for use in MAAS UI projects.",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/canonical/maas-react-components"
+    "url": "git+https://github.com/canonical/maas-react-components.git"
   },
+  "bugs": {
+    "url": "https://github.com/canonical/maas-react-components/issues"
+  },
+  "homepage": "https://github.com/canonical/maas-react-components#readme",
+  "main": "src/lib/index.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "license": "AGPL-3.0",
   "scripts": {
     "prepare": "husky install",
     "build": "tsc && vite build",
