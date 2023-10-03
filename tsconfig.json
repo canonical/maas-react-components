@@ -19,8 +19,6 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "vite.config.ts",
-    "vitest-setup.ts",
     "./src/**/*.ts",
     "./src/**/*.tsx"
   ]
