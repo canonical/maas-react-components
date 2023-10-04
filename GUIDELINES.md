@@ -35,7 +35,7 @@ Each component added to the library needs must meet the following criteria:
 
 It is acceptable to initially add a component to the MAAS React Component Library, even if it is known or planned for wider use. However, this should be clearly documented and communicated to the relevant team members.
 
-Every such component should be labeled as “planned for wider use”/”potential for wider use”  in the live documentation. This is to ensure that those components are revisited regularly and eventually either migrated to @canonical/react-component or have the label removed.
+Every such component should be labeled as "candidate"  in the live documentation indicating that they're a candidate for wider use. This is to ensure that those components are revisited regularly and eventually either migrated to @canonical/react-component or have the label removed.
 
 #### Recommended patterns
 

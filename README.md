@@ -1,11 +1,23 @@
+<div align="center">
+
 # MAAS React Components
 
-This project is a library of React components for use in MAAS UI projects.
+<br />
+<img src="https://assets.ubuntu.com/v1/142ae045-Canonical%20MAAS.png" alt="Canonical MAAS" width="180" />
 
-It contains components that are either specific to, or only used in MAAS. General purpose components should be added to
+<br />
+<br />
+
+Library of React components for use in MAAS UI projects.
+
+It contains components that are either specific to, or only used in MAAS. <br /> General purpose components should be added to
 [@canonical/react-components](https://github.com/canonical/react-components) instead.
 
-Read more in [Project philosophy and guidelines](GUIDELINES.md).
+ **[Storybook](https://canonical.github.io/maas-react-components/)** | **[Philosophy and guidelines](GUIDELINES.md)**
+
+<hr />
+
+</div>
 
 ## Getting started
 
