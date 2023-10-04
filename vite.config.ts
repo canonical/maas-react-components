@@ -1,7 +1,9 @@
-import react from "@vitejs/plugin-react";
 import path from "path";
-import { defineConfig } from "vitest/config";
+
+import react from "@vitejs/plugin-react";
 import dts from "vite-plugin-dts";
+import { defineConfig } from "vitest/config";
+
 import { name } from "./package.json";
 
 export default defineConfig({
@@ -23,6 +25,7 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
+        "@canonical/react-components",
         "react",
         "react/jsx-runtime",
         "react-dom",
