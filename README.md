@@ -7,6 +7,26 @@ It contains components that are either specific to, or only used in MAAS. Genera
 
 Read more in [Project philosophy and guidelines](GUIDELINES.md).
 
+## Getting started
+
+### Installation
+
+```bash
+npm install @canonical/maas-react-components
+```
+
+or using yarn:
+  
+```bash
+yarn add @canonical/maas-react-components
+```
+
+Add styles import to your app:
+
+```css
+@import "@canonical/maas-react-components/dist/style.css";
+```
+
 ## Development with `maas-react-components`
 
 To see the changes you make to `maas-react-components` reflected in a consuming app immediately, follow these steps:

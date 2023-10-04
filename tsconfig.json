@@ -19,6 +19,7 @@
     "jsx": "react-jsx"
   },
   "include": [
+    "vitest-setup.ts",
     "./src/**/*.ts",
     "./src/**/*.tsx"
   ]
