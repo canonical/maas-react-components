@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - test-storybook-publish
 jobs:
   build-docs:
     name: Build Storybook
