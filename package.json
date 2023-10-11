@@ -76,10 +76,11 @@
     "@types/react-dom": "18.2.6"
   },
   "peerDependencies": {
+    "@canonical/react-components": "^0.47.0",
     "@types/react": "^17.0.2 || ^18.0.0",
     "@types/react-dom": "^17.0.2 || ^18.0.0",
-    "@canonical/react-components": "^0.47.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "vanilla-framework": "^4.3.0"
   }
 }
