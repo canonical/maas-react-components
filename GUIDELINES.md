@@ -4,7 +4,7 @@
 
 The primary goal of this library is to address the issue of duplicated React components across MAAS UI projects and encourage better component design and separation of concerns.
 
-It is not meant to be a replacement for @canonical/react-components.
+It is not meant to be a replacement for [@canonical/react-components](https://github.com/canonical/react-components).
 
 This library contains either components that are specific to, or only used in MAAS, such as components not yet approved by the design team for wide use across all web team sites and applications. General purpose components should be added to @canonical/react-components and not @canonical/maas-react-components.
 
