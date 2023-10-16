@@ -37,6 +37,10 @@ It is acceptable to initially add a component to the MAAS React Component Librar
 
 Every such component should be labeled as "candidate"  in the live documentation indicating that they're a candidate for wider use. This is to ensure that those components are revisited regularly and eventually either migrated to @canonical/react-component or have the label removed.
 
+#### Legacy components
+
+Components labeled as "legacy" do not adhere to all component library guidelines and aren't a good example to follow. They've been added for practical reasons, and we plan to phase them out eventually.
+
 #### Recommended patterns
 
 ##### Compound components
