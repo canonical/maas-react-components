@@ -61,4 +61,13 @@ const meta: Meta<typeof NestedFormGroup> = {
 export default meta;
 
 export const Example = { args: { "aria-hidden": false } };
-export const ControlledExample = ControlledTemplate;
+export const ControlledExample = {
+  render: ControlledTemplate,
+  parameters: {
+    docs: {
+      source: {
+        code: null,
+      },
+    },
+  },
+};
