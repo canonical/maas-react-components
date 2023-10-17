@@ -41,7 +41,8 @@
     "semantic-release": "semantic-release",
     "semantic-release-dry-run": "semantic-release --dry-run --no-ci",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "create-component": "plop component"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.7.1",
@@ -78,6 +79,7 @@
     "eslint-plugin-unused-imports": "^3.0.0",
     "husky": "8.0.0",
     "jsdom": "^22.1.0",
+    "plop": "^4.0.0",
     "prettier": "^3.0.3",
     "prop-types": "^15.8.1",
     "sass": "^1.68.0",
@@ -94,10 +96,10 @@
     "@types/react-dom": "18.2.6"
   },
   "peerDependencies": {
-    "classnames": "^2.3.2",
     "@canonical/react-components": "^0.47.0",
     "@types/react": "^17.0.2 || ^18.0.0",
     "@types/react-dom": "^17.0.2 || ^18.0.0",
+    "classnames": "^2.3.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-router-dom": "^6.0.0",
