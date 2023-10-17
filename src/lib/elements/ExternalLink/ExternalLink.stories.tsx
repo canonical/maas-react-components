@@ -3,7 +3,7 @@ import type { Meta } from "@storybook/react";
 import { ExternalLink } from ".";
 
 const meta: Meta<typeof ExternalLink> = {
-  title: "Components/ExternalLink",
+  title: "Elements/ExternalLink",
   component: ExternalLink,
   tags: ["autodocs"],
 };

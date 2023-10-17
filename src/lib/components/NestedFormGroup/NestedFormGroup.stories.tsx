@@ -55,6 +55,7 @@ const meta: Meta<typeof NestedFormGroup> = {
   parameters: {
     status: {
       type: "candidate",
+      url: "https://github.com/canonical/vanilla-framework/issues/4893",
     },
   },
 };
