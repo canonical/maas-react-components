@@ -1,10 +1,3 @@
-// I need to rethink this so I'm gonna chuck all my thoughts down here
-// - Navigation is top level
-// - Banner and Toggle are subcomponents that can be added individually
-// - Items/Group/List should be a subcomponent that takes list of objects for items
-// - Item should be subcomponent used inside Groups, or placed individually
-// - Item should be able to use a Button as the underlying component for calling functions e.g. log out
-
 import { ReactNode, SVGProps } from "react";
 
 import { Button, Icon as VanillaIcon, Tooltip } from "@canonical/react-components";
