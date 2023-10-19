@@ -5,11 +5,17 @@ import classNames from "classnames";
 
 export interface NavigationProps {
   children: ReactNode;
+  className?: string;
+  isCollapsed: boolean;
 }
 
-export const Navigation = ({ children }: NavigationProps) => {
+export const Navigation = ({ children, className, isCollapsed }: NavigationProps) => {
 
-  return <>{children}</>;
+  return (
+    <nav aria-label="main navigation" className={classNames("l-navigation is-maas", className, { "is-collapsed": isCollapsed, "is-pinned": !isCollapsed})}>
+      {children}
+    </nav>
+  )
 };
 
 export interface NavigationBarProps {
@@ -17,7 +23,7 @@ export interface NavigationBarProps {
   className?: string;
 }
 
-const Bar = ({ children, className }: NavigationBarProps) => {
+export const NavigationBar = ({ children, className }: NavigationBarProps) => {
   
   return (
     <header aria-label="navigation" className="l-navigation-bar">
@@ -136,21 +142,6 @@ const MenuButton = ({ children, onClick }: NavigationMenuButtonProps) => {
     <Button appearance="base" className="has-icon is-dark" onClick={onClick}>
       {children}
     </Button>
-  )
-}
-
-export interface NavigationNavProps {
-  children: ReactNode;
-  className?: string;
-  isCollapsed: boolean;
-}
-
-const Nav = ({ children, className, isCollapsed }: NavigationNavProps) => {
-
-  return (
-    <nav aria-label="main navigation" className={classNames("l-navigation is-maas", className, { "is-collapsed": isCollapsed, "is-pinned": !isCollapsed})}>
-      {children}
-    </nav>
   )
 }
 
@@ -320,16 +311,8 @@ const Label = ({ children, variant="base" }: NavigationLabelProps) => {
   )
 }
 
-Navigation.Bar = Bar;
 Navigation.Header = Header;
 Navigation.Banner = Banner;
-Navigation.Logo = Logo;
-Navigation.LogoTag = LogoTag;
-Navigation.LogoIcon = LogoIcon;
-Navigation.LogoName = LogoName;
-Navigation.PanelControls = PanelControls;
-Navigation.MenuButton = MenuButton;
-Navigation.Nav = Nav;
 Navigation.Drawer = Drawer;
 Navigation.Controls = Controls;
 Navigation.CollapseToggle = CollapseToggle;
@@ -339,3 +322,12 @@ Navigation.Item = Item;
 Navigation.Text = Text;
 Navigation.Icon = Icon;
 Navigation.Label = Label;
+
+NavigationBar.Header = Header;
+NavigationBar.Banner = Banner;
+NavigationBar.Logo = Logo;
+NavigationBar.LogoTag = LogoTag;
+NavigationBar.LogoIcon = LogoIcon;
+NavigationBar.LogoName = LogoName;
+NavigationBar.Controls = PanelControls;
+NavigationBar.MenuButton = MenuButton;
