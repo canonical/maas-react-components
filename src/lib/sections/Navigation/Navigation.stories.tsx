@@ -33,7 +33,9 @@ const meta: Meta<typeof Navigation> = {
             </Navigation.Logo>
           </Navigation.Banner>
           <Navigation.PanelControls>
-            <Navigation.MenuButton label="Menu" onClick={() => {}} />
+            <Navigation.MenuButton onClick={() => {}} >
+              Menu
+            </Navigation.MenuButton>
           </Navigation.PanelControls>
         </Navigation.Header>
       </Navigation.Bar>
@@ -51,17 +53,25 @@ const meta: Meta<typeof Navigation> = {
               <Navigation.Item>
                 <Navigation.Text>
                   <Navigation.Icon name="information" />
-                  <Navigation.Label text="Hardware" variant="group" />
+                  <Navigation.Label variant="group" >
+                    Hardware
+                  </Navigation.Label>
                 </Navigation.Text>
                 <Navigation.List>
                   <Navigation.Item>
-                    <Navigation.Label text="Machines" />
+                    <Navigation.Label>
+                      Machines
+                    </Navigation.Label>
                   </Navigation.Item>
                   <Navigation.Item>
-                    <Navigation.Label text="Controllers" />
+                    <Navigation>
+                      Controllers
+                    </Navigation>
                   </Navigation.Item>
                   <Navigation.Item>
-                    <Navigation.Label text="Devices" />
+                    <Navigation.Label>
+                      Devices
+                    </Navigation.Label>
                   </Navigation.Item>
                 </Navigation.List>
               </Navigation.Item>
