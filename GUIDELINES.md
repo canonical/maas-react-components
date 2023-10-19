@@ -16,12 +16,23 @@ We encourage separation of concerns by creating container and presentational com
 
 #### Categories
 
-Components in this library are grouped into 3 categories characterized by different levels of component complexity. This idea is borrowed from atomic design, but we decided not to use its terminology and use something that’s closer to vanilla framework for consistency.
+Components in this library are grouped into 4 categories characterized by different levels of component complexity. This idea is borrowed from atomic design, but we decided not to use its terminology and use something that’s closer to vanilla framework for consistency.
 
-- Elements
-- Components
-- Sections
-- Layout
+##### Elements
+
+These are the smallest building blocks of the UI, such as buttons, inputs, and icons. They are highly reusable and have minimal dependencies on other components
+
+##### Components
+
+These are more complex UI elements that combine multiple elements together to form a cohesive unit. Examples include navigation bars, cards, and modals. Components may have some dependencies on other components within the library.
+
+##### Sections
+
+Sections are larger UI units that represent distinct sections of a page or application. They often contain multiple components and may have specific layout requirements. Examples include headers, footers, and sidebars.
+
+##### Layout
+
+Layout components define the overall structure and arrangement of the UI. They provide a framework for organizing sections and components within a page or application. Examples include grids, containers, and responsive layout components.
 
 #### MAAS - specific Components
 
