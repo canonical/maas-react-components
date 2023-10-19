@@ -6,7 +6,7 @@ const meta: Meta<typeof Navigation> = {
   title: "Sections/Navigation",
   component: Navigation,
   render: () => (
-    <>
+    <div className="l-application">
       <NavigationBar>
         <NavigationBar.Header>
           <NavigationBar.Banner>
@@ -80,7 +80,7 @@ const meta: Meta<typeof Navigation> = {
           </Navigation.Content>
         </Navigation.Drawer>
       </Navigation>
-    </>
+    </div>
   ),
   tags: ["autodocs"],
   parameters: {
