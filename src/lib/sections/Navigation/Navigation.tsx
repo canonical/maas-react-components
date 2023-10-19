@@ -1,7 +1,24 @@
-import { ReactNode, SVGProps } from "react";
+import { ReactNode } from "react";
 
-import { Button, Icon as VanillaIcon, Tooltip } from "@canonical/react-components";
 import classNames from "classnames";
+
+import { Banner } from "./Banner/Banner";
+import { CollapseToggle } from "./CollapseToggle/CollapseToggle";
+import { Content } from "./Content/Content";
+import { Controls } from "./Controls/Controls";
+import { Drawer } from "./Drawer/Drawer";
+import { Header } from "./Header/Header";
+import { Icon } from "./Icon/Icon";
+import { Item } from "./Item/Item";
+import { Label } from "./Label/Label";
+import { List } from "./List/List";
+import { Logo } from "./Logo/Logo";
+import { LogoIcon } from "./LogoIcon/LogoIcon";
+import { LogoName } from "./LogoName/LogoName";
+import { LogoTag } from "./LogoTag/LogoTag";
+import { MenuButton } from "./MenuButton/MenuButton";
+import { PanelControls } from "./PanelControls/PanelControls";
+import { Text } from "./Text/Text";
 
 export interface NavigationProps {
   children: ReactNode;
@@ -31,283 +48,6 @@ export const NavigationBar = ({ children, className }: NavigationBarProps) => {
         {children}
       </div>
     </header>
-  )
-}
-
-export interface NavigationHeaderProps {
-  children: ReactNode;
-}
-
-const Header = ({ children }: NavigationHeaderProps) => {
-
-  return (
-    <div className="p-panel__header">
-      {children}
-    </div>
-  )
-}
-
-export interface NavigationBannerProps {
-  children: ReactNode;
-}
-
-const Banner = ({ children }: NavigationBannerProps) => {
-
-  return (
-    <>
-      {children}
-    </>
-  )
-}
-
-export interface NavigationLogoProps {
-  children: ReactNode;
-}
-
-const Logo = ({ children }: NavigationLogoProps) => {
-   return (
-    // This *should* be a Link component, but I really need
-    // the compiler to shut up about not existing within
-    // a router. This must be fixed later, maybe with an "as" prop.
-    // 
-    // eslint-disable-next-line jsx-a11y/anchor-is-valid
-    <a className="p-panel__logo" href="#">
-      <div className="p-panel__tagged-logo">
-        {children}
-      </div>
-    </a>
-  )
-}
-
-export interface NavigationLogoTagProps {
-  children: ReactNode;
-}
-
-const LogoTag = ({ children }: NavigationLogoTagProps) => {
-
-  return (
-    <div className="p-navigation__logo-tag">
-      {children}
-    </div>
-  )
-}
-
-export interface NavigationLogoIconProps {
-  children: ReactNode;
-}
-
-const LogoIcon = ({ children, ...props }: NavigationLogoIconProps & SVGProps<SVGSVGElement>) => {
-
-  return (
-    <svg {...props} className="p-panel__logo-icon p-navigation__logo-icon">
-      {children}
-    </svg>
-  )
-}
-
-export interface NavigationLogoNameProps {
-  children: ReactNode;
-}
-
-const LogoName = ({ children }: NavigationLogoNameProps) => {
-
-  return (
-    <div className="p-panel__logo-name is-fading-when-collapsed">
-      {children}
-    </div>
-  )
-}
-
-export interface NavigationPanelControlsProps {
-  children: ReactNode;
-}
-
-const PanelControls = ({ children }: NavigationPanelControlsProps) => {
-
-  return (
-    <div className="p-panel__controls u-nudge-down--small u-no-margin--top">
-      {children}
-    </div>
-  )
-}
-
-export interface NavigationMenuButtonProps {
-  children: ReactNode;
-  onClick: () => void;
-}
-
-const MenuButton = ({ children, onClick }: NavigationMenuButtonProps) => {
-
-  return (
-    <Button appearance="base" className="has-icon is-dark" onClick={onClick}>
-      {children}
-    </Button>
-  )
-}
-
-export interface NavigationDrawerProps {
-  children: ReactNode;
-}
-
-const Drawer = ({ children }: NavigationDrawerProps) => {
-
-  return (
-    <div className="l-navigation__drawer">
-      <div className="p-panel is-dark">
-        {children}
-      </div>
-    </div>
-  )
-}
-
-export interface NavigationControlsProps {
-  children: ReactNode;
-}
-
-const Controls = ({ children }: NavigationControlsProps) => {
-
-  return (
-    <div className="l-navigation__controls">
-      {children}
-    </div>
-  )
-}
-
-export interface NavigationCollapseToggleProps {
-  isCollapsed: boolean;
-  setIsCollapsed: (isCollapsed: boolean) => void;
-  className?: string;
-}
-
-const CollapseToggle = ({
-  isCollapsed,
-  setIsCollapsed,
-  className,
-}: NavigationCollapseToggleProps): JSX.Element => {
-  return (
-    // This block keeps giving this error:
-    // "Type 'Element' is not assignable to type 'ReactNode'."
-    // Might be a bug with react-components.
-    <Tooltip
-      message={
-        <>
-          {!isCollapsed ? "collapse" : "expand"}( <code>&#91;</code> )
-        </>
-      }
-      position="right"
-    >
-      <Button
-        appearance="base"
-        aria-label={`${!isCollapsed ? "collapse" : "expand"} main navigation`}
-        className={classNames(
-          "is-dense has-icon is-dark u-no-margin l-navigation-collapse-toggle",
-          className
-        )}
-        onClick={(e) => {
-          setIsCollapsed(!isCollapsed);
-          // Make sure the button does not have focus
-          // .l-navigation remains open with :focus-within
-          e.stopPropagation();
-          e.currentTarget.blur();
-        }}
-      >
-        <VanillaIcon light name="sidebar-toggle" />
-      </Button>
-    </Tooltip>
-  );
-};
-
-export interface NavigationContentProps {
-  children: ReactNode;
-}
-
-const Content = ({ children }: NavigationContentProps) => {
-
-  return (
-    <div className="p-panel__content">
-      <div className="p-side-navigaiton--icons is-dark">
-        {children}
-      </div>
-    </div>
-  )
-}
-
-export interface NavigationListProps {
-  children: ReactNode;
-}
-
-const List = ({ children }: NavigationListProps) => {
-  return (
-    <ul className="p-side-navigation__list">
-      {children}
-    </ul>
-  )
-}
-
-// Groups are kind of weird since they're basically just an item.
-// Leaving this commented out for now, might need this but might not.
-// 
-// export interface NavigationGroupProps {
-//   children: ReactNode;
-// }
-
-// const Group = ({ children }: NavigationGroupProps) => {
-  
-//   return (
-//     <Item>
-//       {children}
-//     </Item>
-//   )
-// }
-
-export interface NavigationItemProps {
-  children: ReactNode;
-}
-
-const Item = ({ children }: NavigationItemProps) => {
-  return (
-    <li className="p-side-navigation__item">
-      {children}
-    </li>
-  )
-}
-
-export interface NavigationTextProps {
-  children: ReactNode;
-}
-
-const Text = ({ children }: NavigationTextProps) => {
-
-  return (
-    <span className="p-side-navigation__text">
-      {children}
-    </span>
-  )
-}
-
-export interface NavigationIconProps {
-  light?: boolean;
-  name: string;
-}
-
-const Icon = ({ light=true, name }: NavigationIconProps) => {
-  
-  return (
-    <VanillaIcon className="p-side-navigation__icon" light={light} name={name}/>
-  )
-}
-
-export interface NavigationLabelProps {
-  children: ReactNode;
-  variant?: "base" | "group";
-}
-
-const Label = ({ children, variant="base" }: NavigationLabelProps) => {
-
-  return (
-    <span className={classNames("p-side-navigation__label", { "p-heading--small": variant === "group" })}>
-      {children}
-    </span>
   )
 }
 
