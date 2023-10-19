@@ -126,15 +126,15 @@ const PanelControls = ({ children }: NavigationPanelControlsProps) => {
 }
 
 export interface NavigationMenuButtonProps {
-  label: string;
+  children: ReactNode;
   onClick: () => void;
 }
 
-const MenuButton = ({ label, onClick }: NavigationMenuButtonProps) => {
+const MenuButton = ({ children, onClick }: NavigationMenuButtonProps) => {
 
   return (
     <Button appearance="base" className="has-icon is-dark" onClick={onClick}>
-      {label}
+      {children}
     </Button>
   )
 }
@@ -307,15 +307,15 @@ const Icon = ({ light=true, name }: NavigationIconProps) => {
 }
 
 export interface NavigationLabelProps {
-  text: string;
+  children: ReactNode;
   variant?: "base" | "group";
 }
 
-const Label = ({ text, variant="base" }: NavigationLabelProps) => {
+const Label = ({ children, variant="base" }: NavigationLabelProps) => {
 
   return (
     <span className={classNames("p-side-navigation__label", { "p-heading--small": variant === "group" })}>
-      {text}
+      {children}
     </span>
   )
 }
