@@ -92,11 +92,11 @@
     "vitest": "^0.34.5"
   },
   "resolutions": {
-    "@types/react": "18.2.14",
+    "@types/react": "18.2.21",
     "@types/react-dom": "18.2.6"
   },
   "peerDependencies": {
-    "@canonical/react-components": "^0.47.0",
+    "@canonical/react-components": "0.46.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "classnames": "^2.3.2",
