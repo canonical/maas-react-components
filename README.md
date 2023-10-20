@@ -62,3 +62,15 @@ To see the changes you make to `maas-react-components` reflected in a consuming 
    ```
 
 4. As you make changes to `maas-react-components` they will be automatically built and reflected in the consuming app.
+
+### Creating a new component
+
+Make sure to read our **[React Components Guidelines](GUIDELINES.md)** before you proceed.
+
+Run the following command from the root of the project:
+
+`npm run create-component`
+
+The script will prompt you to enter details of the new component.
+
+It will create a new directory and files based on the details you provided. New files will contain a basic setup for your new component, including a basic test and a storybook story.
