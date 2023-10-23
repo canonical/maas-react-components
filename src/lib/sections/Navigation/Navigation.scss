@@ -1,1 +1,40 @@
 @import "vanilla-framework";
+@include vanilla;
+
+.p-panel__logo {
+  color: $colors--dark-theme--text-default;
+  display: flex;
+  flex-direction: column;
+  @media only screen and (max-width: ($breakpoint-small)) {
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.p-panel__logo-name {
+  @extend %vf-heading-4;
+  font-size: #{map-get($font-sizes, h4)}rem;
+  line-height: map-get($line-heights, x-small);
+  margin-bottom: 1.25rem !important;
+  padding-top: 0 !important;
+  margin-left: 2rem !important;
+  @media only screen and (min-width: ($breakpoint-small + 1)) {
+    margin-left: 2.5rem !important;
+  }
+}
+
+.p-navigation__tagged-logo {
+  min-width: auto;
+}
+
+.p-navigation__tagged-logo .p-navigation__logo-tag {
+  height: 2.3rem;
+  left: 1rem;
+  @media only screen and (min-width: ($breakpoint-small + 1)) {
+    left: 1.5rem;
+  }
+}
