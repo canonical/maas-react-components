@@ -10,8 +10,8 @@
     margin-bottom: 0;
   }
 
-  &:hover {
-    text-decoration: none;
+  &:hover, &:visited {
+    color: $colors--dark-theme--text-default;
   }
 }
 
