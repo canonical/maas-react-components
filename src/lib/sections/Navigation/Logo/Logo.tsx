@@ -12,7 +12,7 @@ export const Logo = ({ children }: NavigationLogoProps) => {
     // 
     // eslint-disable-next-line jsx-a11y/anchor-is-valid
     <a className="p-panel__logo" href="#">
-      <div className="p-panel__tagged-logo">
+      <div className="p-navigation__tagged-logo">
         {children}
       </div>
     </a>
