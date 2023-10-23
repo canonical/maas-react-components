@@ -11,6 +11,7 @@ import { Header } from "./Header/Header";
 import { Icon } from "./Icon/Icon";
 import { Item } from "./Item/Item";
 import { Label } from "./Label/Label";
+import { Link } from "./Link/Link";
 import { List } from "./List/List";
 import { Logo } from "./Logo/Logo";
 import { LogoIcon } from "./LogoIcon/LogoIcon";
@@ -29,9 +30,9 @@ export interface NavigationProps {
 export const Navigation = ({ children, className, isCollapsed }: NavigationProps) => {
 
   return (
-    <nav aria-label="main navigation" className={classNames("l-navigation is-maas", className, { "is-collapsed": isCollapsed, "is-pinned": !isCollapsed})}>
+    <header aria-label="main navigation" className={classNames("l-navigation is-maas", className, { "is-collapsed": isCollapsed, "is-pinned": !isCollapsed})}>
       {children}
-    </nav>
+    </header>
   )
 };
 
@@ -43,11 +44,11 @@ export interface NavigationBarProps {
 export const NavigationBar = ({ children, className }: NavigationBarProps) => {
   
   return (
-    <header aria-label="navigation" className="l-navigation-bar">
+    <div aria-label="navigation" className="l-navigation-bar">
       <div className={classNames("p-panel is-dark", className)}>
         {children}
       </div>
-    </header>
+    </div>
   )
 }
 
@@ -59,6 +60,7 @@ Navigation.CollapseToggle = CollapseToggle;
 Navigation.Content = Content;
 Navigation.List = List;
 Navigation.Item = Item;
+Navigation.Link = Link;
 Navigation.Text = Text;
 Navigation.Icon = Icon;
 Navigation.Label = Label;

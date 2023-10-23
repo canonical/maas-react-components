@@ -8,9 +8,9 @@ export const Content = ({ children }: NavigationContentProps) => {
 
   return (
     <div className="p-panel__content">
-      <div className="p-side-navigaiton--icons is-dark">
+      <nav className="p-side-navigation--icons is-dark">
         {children}
-      </div>
+      </nav>
     </div>
   )
 }
