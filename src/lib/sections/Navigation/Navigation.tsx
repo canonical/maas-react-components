@@ -21,6 +21,8 @@ import { MenuButton } from "./MenuButton/MenuButton";
 import { PanelControls } from "./PanelControls/PanelControls";
 import { Text } from "./Text/Text";
 
+import "./Navigation.scss";
+
 export interface NavigationProps {
   children: ReactNode;
   className?: string;
