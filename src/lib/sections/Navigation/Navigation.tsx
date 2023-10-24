@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import classNames from "classnames";
 
 import { Banner } from "./Banner/Banner";
+import { BarControls } from "./BarControls/BarControls";
 import { CollapseToggle } from "./CollapseToggle/CollapseToggle";
 import { Content } from "./Content/Content";
 import { Controls } from "./Controls/Controls";
@@ -18,7 +19,6 @@ import { LogoIcon } from "./LogoIcon/LogoIcon";
 import { LogoName } from "./LogoName/LogoName";
 import { LogoTag } from "./LogoTag/LogoTag";
 import { MenuButton } from "./MenuButton/MenuButton";
-import { PanelControls } from "./PanelControls/PanelControls";
 import { Text } from "./Text/Text";
 
 import "./Navigation.scss";
@@ -57,7 +57,7 @@ export const NavigationBar = ({ children, className }: NavigationBarProps) => {
 Navigation.Header = Header;
 Navigation.Banner = Banner;
 Navigation.Drawer = Drawer;
-Navigation.Controls = PanelControls;
+Navigation.Controls = Controls;
 Navigation.CollapseToggle = CollapseToggle;
 Navigation.Content = Content;
 Navigation.List = List;
@@ -71,5 +71,5 @@ Navigation.LogoTag = LogoTag;
 Navigation.LogoIcon = LogoIcon;
 Navigation.LogoName = LogoName;
 
-NavigationBar.Controls = Controls;
+NavigationBar.Controls = BarControls;
 NavigationBar.MenuButton = MenuButton;
