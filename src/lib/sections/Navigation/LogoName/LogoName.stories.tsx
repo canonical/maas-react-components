@@ -1,20 +1,20 @@
 import { Meta } from "@storybook/react";
 
-import { Navigation, NavigationBar } from "@/lib/sections/Navigation/Navigation";
+import { Navigation } from "@/lib/sections/Navigation/Navigation";
 
-const meta: Meta<typeof NavigationBar.LogoName> = {
-  title: "Sections/Navigation/Bar/LogoName",
-  component: NavigationBar.LogoName,
+const meta: Meta<typeof Navigation.LogoName> = {
+  title: "Sections/Navigation/Logo/LogoName",
+  component: Navigation.LogoName,
   render: (args) => (
     <Navigation isCollapsed={false}>
       <Navigation.Drawer>
         <Navigation.Header>
           <Navigation.Banner>
-            <NavigationBar.Logo>
-              <NavigationBar.LogoName>
+            <Navigation.Logo>
+              <Navigation.LogoName>
                 {args["children"]}
-              </NavigationBar.LogoName>
-            </NavigationBar.Logo>
+              </Navigation.LogoName>
+            </Navigation.Logo>
           </Navigation.Banner>
         </Navigation.Header>
       </Navigation.Drawer>

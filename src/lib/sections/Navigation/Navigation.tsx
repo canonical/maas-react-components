@@ -66,10 +66,10 @@ Navigation.Link = Link;
 Navigation.Text = Text;
 Navigation.Icon = Icon;
 Navigation.Label = Label;
+Navigation.Logo = Logo;
+Navigation.LogoTag = LogoTag;
+Navigation.LogoIcon = LogoIcon;
+Navigation.LogoName = LogoName;
 
-NavigationBar.Logo = Logo;
-NavigationBar.LogoTag = LogoTag;
-NavigationBar.LogoIcon = LogoIcon;
-NavigationBar.LogoName = LogoName;
 NavigationBar.Controls = Controls;
 NavigationBar.MenuButton = MenuButton;
