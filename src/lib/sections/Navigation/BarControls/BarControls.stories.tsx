@@ -7,15 +7,11 @@ const meta: Meta<typeof Navigation.Controls> = {
   component: Navigation.Controls,
   render: (args) => (
     <NavigationBar>
-      <Navigation.Drawer>
-        <Navigation.Header>
-          <Navigation.Banner>
-            <NavigationBar.Controls>
-              {args["children"]}
-            </NavigationBar.Controls>
-          </Navigation.Banner>
-        </Navigation.Header>
-      </Navigation.Drawer>
+      <Navigation.Header>
+        <NavigationBar.Controls>
+          {args["children"]}
+        </NavigationBar.Controls>
+      </Navigation.Header>
     </NavigationBar>
   ),
   tags: ["autodocs"],
