@@ -67,8 +67,6 @@ Navigation.Text = Text;
 Navigation.Icon = Icon;
 Navigation.Label = Label;
 
-NavigationBar.Header = Header;
-NavigationBar.Banner = Banner;
 NavigationBar.Logo = Logo;
 NavigationBar.LogoTag = LogoTag;
 NavigationBar.LogoIcon = LogoIcon;

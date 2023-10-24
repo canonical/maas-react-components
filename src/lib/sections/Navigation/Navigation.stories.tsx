@@ -5,11 +5,11 @@ import { Navigation, NavigationBar } from "./Navigation";
 const meta: Meta<typeof Navigation> = {
   title: "Sections/Navigation",
   component: Navigation,
-  render: () => (
+  render: (args) => (
     <div className="l-application">
       <NavigationBar>
-        <NavigationBar.Header>
-          <NavigationBar.Banner>
+        <Navigation.Header>
+          <Navigation.Banner>
             <NavigationBar.Logo>
               <NavigationBar.LogoTag>
                 <NavigationBar.LogoIcon
@@ -31,16 +31,16 @@ const meta: Meta<typeof Navigation> = {
                 MAAS
               </NavigationBar.LogoName>
             </NavigationBar.Logo>
-          </NavigationBar.Banner>
+          </Navigation.Banner>
           <NavigationBar.Controls>
             <NavigationBar.MenuButton onClick={() => {}} >
               Menu
             </NavigationBar.MenuButton>
           </NavigationBar.Controls>
-        </NavigationBar.Header>
+        </Navigation.Header>
       </NavigationBar>
 
-      <Navigation isCollapsed={false}>
+      <Navigation isCollapsed={args["isCollapsed"]}>
         <Navigation.Drawer>
           <Navigation.Header>
             <Navigation.Banner>
@@ -66,7 +66,7 @@ const meta: Meta<typeof Navigation> = {
                 </NavigationBar.LogoName>
               </NavigationBar.Logo>
               <Navigation.Controls>
-                <Navigation.CollapseToggle isCollapsed={false} setIsCollapsed={() => {}} />
+                <Navigation.CollapseToggle isCollapsed={args["isCollapsed"]} setIsCollapsed={() => {}} />
               </Navigation.Controls>
             </Navigation.Banner>
           </Navigation.Header>
@@ -106,4 +106,4 @@ const meta: Meta<typeof Navigation> = {
 };
 
 export default meta;
-export const Example = {};
+export const Example = { args: { isCollapsed: false }};
