@@ -3,7 +3,6 @@ import { ReactNode } from "react";
 import classNames from "classnames";
 
 import { Banner } from "./Banner/Banner";
-import { BarControls } from "./BarControls/BarControls";
 import { CollapseToggle } from "./CollapseToggle/CollapseToggle";
 import { Content } from "./Content/Content";
 import { Controls } from "./Controls/Controls";
@@ -71,5 +70,4 @@ Navigation.LogoTag = LogoTag;
 Navigation.LogoIcon = LogoIcon;
 Navigation.LogoName = LogoName;
 
-NavigationBar.Controls = BarControls;
 NavigationBar.MenuButton = MenuButton;

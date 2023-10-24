@@ -32,11 +32,11 @@ const meta: Meta<typeof Navigation> = {
               </Navigation.LogoName>
             </Navigation.Logo>
           </Navigation.Banner>
-          <NavigationBar.Controls>
+          <Navigation.Controls>
             <NavigationBar.MenuButton onClick={() => {}} >
               Menu
             </NavigationBar.MenuButton>
-          </NavigationBar.Controls>
+          </Navigation.Controls>
         </Navigation.Header>
       </NavigationBar>
 
