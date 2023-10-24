@@ -1,8 +1,9 @@
-/** @type { import('@storybook/react').Preview } */
+import type { Preview } from "@storybook/react";
 import "./preview.scss";
 import DocumentationTemplate from "./DocumentationTemplate.mdx";
+import { theme } from "./theme";
 
-const preview = {
+const preview: Preview = {
   parameters: {
     actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
@@ -11,8 +12,10 @@ const preview = {
         date: /Date$/,
       },
     },
+    viewMode: "docs",
     docs: {
       page: DocumentationTemplate,
+      theme,
     },
     status: {
       // currently supported statuses are: legacy, candidate
