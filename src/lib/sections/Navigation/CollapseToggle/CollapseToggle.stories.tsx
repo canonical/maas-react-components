@@ -7,9 +7,13 @@ const meta: Meta<typeof Navigation.CollapseToggle> = {
   component: Navigation.CollapseToggle,
   render: (args) => (
     <Navigation.Drawer>
-      <Navigation.Controls>
-        <Navigation.CollapseToggle {...args} />
-      </Navigation.Controls>
+      <Navigation.Header>
+        <Navigation.Banner>
+          <Navigation.Controls>
+            <Navigation.CollapseToggle {...args} />
+          </Navigation.Controls>
+        </Navigation.Banner>
+      </Navigation.Header>
     </Navigation.Drawer>
   ),
   tags: ["autodocs"],
