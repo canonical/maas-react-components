@@ -1,18 +1,18 @@
 import { Meta } from "@storybook/react";
 
-import { Navigation, NavigationBar } from "@/lib/sections/Navigation/Navigation";
+import { Navigation } from "@/lib/sections/Navigation/Navigation";
 
-const meta: Meta<typeof NavigationBar.Logo> = {
-  title: "Sections/Navigation/Bar/Logo",
-  component: NavigationBar.Logo,
+const meta: Meta<typeof Navigation.Logo> = {
+  title: "Sections/Navigation/Logo",
+  component: Navigation.Logo,
   render: (args) => (
     <Navigation isCollapsed={false}>
       <Navigation.Drawer>
         <Navigation.Header>
           <Navigation.Banner>
-            <NavigationBar.Logo>
+            <Navigation.Logo>
               {args["children"]}
-            </NavigationBar.Logo>
+            </Navigation.Logo>
           </Navigation.Banner>
         </Navigation.Header>
       </Navigation.Drawer>
@@ -29,8 +29,8 @@ const meta: Meta<typeof NavigationBar.Logo> = {
 export default meta;
 export const Example = { args: { children: (
   <>
-    <NavigationBar.LogoTag>
-      <NavigationBar.LogoIcon
+    <Navigation.LogoTag>
+      <Navigation.LogoIcon
         fill="#fff"
         viewBox="0 0 165.5 174.3"
         xmlns="http://www.w3.org/2000/svg"
@@ -43,10 +43,10 @@ export const Example = { args: { children: (
         <path d="M156.94 6.5H33.1a19.15 19.15 0 0 1 2.21 5.11A18.82 18.82 0 0 1 33.42 26l-.29.46h123.81a6 6 0 0 0 6.06-5.9V12.5a6 6 0 0 0-6-6Z" />
         <ellipse cx="15.57" cy="158.94" rx="13.44" ry="13.3" />
         <path d="M156.94 149H31.88a18.88 18.88 0 0 1 .27 19.5c-.09.16-.19.31-.29.46h125.08A6 6 0 0 0 163 163v-8.06a6 6 0 0 0-6-6Z" />
-      </NavigationBar.LogoIcon>
-    </NavigationBar.LogoTag>
-    <NavigationBar.LogoName>
+      </Navigation.LogoIcon>
+    </Navigation.LogoTag>
+    <Navigation.LogoName>
       MAAS
-    </NavigationBar.LogoName>
+    </Navigation.LogoName>
   </>
 )}}
