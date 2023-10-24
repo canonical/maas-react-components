@@ -1,24 +1,16 @@
 import { Meta } from "@storybook/react";
 
-import { Navigation, NavigationBar } from "@/lib/sections/Navigation/Navigation";
+import { NavigationBar } from "@/lib/sections/Navigation/Navigation";
 
 const meta: Meta<typeof NavigationBar.LogoIcon> = {
   title: "Sections/Navigation/Bar/LogoIcon",
   component: NavigationBar.LogoIcon,
   render: (args) => (
-    <Navigation isCollapsed={false}>
-      <Navigation.Drawer>
-        <Navigation.Header>
-          <Navigation.Banner>
-            <NavigationBar.Logo>
-              <NavigationBar.LogoTag>
-                <NavigationBar.LogoIcon {...args} />
-              </NavigationBar.LogoTag>
-            </NavigationBar.Logo>
-          </Navigation.Banner>
-        </Navigation.Header>
-      </Navigation.Drawer>
-    </Navigation>
+    <NavigationBar.Logo>
+      <NavigationBar.LogoTag>
+        <NavigationBar.LogoIcon {...args} />
+      </NavigationBar.LogoTag>
+    </NavigationBar.Logo>
   ),
   tags: ["autodocs"],
   parameters: {
