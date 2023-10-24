@@ -13,9 +13,6 @@ export const CollapseToggle = ({
   className,
 }: NavigationCollapseToggleProps): JSX.Element => {
   return (
-    // This block keeps giving this error:
-    // "Type 'Element' is not assignable to type 'ReactNode'."
-    // Might be a bug with react-components.
     <Tooltip
       message={
         <>
@@ -29,7 +26,7 @@ export const CollapseToggle = ({
         aria-label={`${!isCollapsed ? "collapse" : "expand"} main navigation`}
         className={classNames(
           "is-dense has-icon is-dark u-no-margin l-navigation-collapse-toggle",
-          className
+          className,
         )}
         onClick={(e) => {
           setIsCollapsed(!isCollapsed);
