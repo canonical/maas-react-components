@@ -57,7 +57,7 @@ export const NavigationBar = ({ children, className }: NavigationBarProps) => {
 Navigation.Header = Header;
 Navigation.Banner = Banner;
 Navigation.Drawer = Drawer;
-Navigation.Controls = Controls;
+Navigation.Controls = PanelControls;
 Navigation.CollapseToggle = CollapseToggle;
 Navigation.Content = Content;
 Navigation.List = List;
@@ -71,5 +71,5 @@ NavigationBar.Logo = Logo;
 NavigationBar.LogoTag = LogoTag;
 NavigationBar.LogoIcon = LogoIcon;
 NavigationBar.LogoName = LogoName;
-NavigationBar.Controls = PanelControls;
+NavigationBar.Controls = Controls;
 NavigationBar.MenuButton = MenuButton;
