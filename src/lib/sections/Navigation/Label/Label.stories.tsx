@@ -12,9 +12,7 @@ const meta: Meta<typeof Navigation.Label> = {
           <Navigation.List>
             <Navigation.Item>
               <Navigation.Link to="#">
-                <Navigation.Label>
-                  {args["children"]}
-                </Navigation.Label>
+                <Navigation.Label {...args} />
               </Navigation.Link>
             </Navigation.Item>
           </Navigation.List>
@@ -31,4 +29,4 @@ const meta: Meta<typeof Navigation.Label> = {
 };
 
 export default meta;
-export const Example = { args: { children: "Settings"}};
+export const Example = { args: { children: "Settings", variant: "base" }};
