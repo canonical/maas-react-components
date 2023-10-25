@@ -5,14 +5,14 @@ import { Navigation, NavigationBar } from "./Navigation";
 const meta: Meta<typeof Navigation> = {
   title: "Sections/Navigation",
   component: Navigation,
-  render: () => (
+  render: (args) => (
     <div className="l-application">
       <NavigationBar>
-        <NavigationBar.Header>
-          <NavigationBar.Banner>
-            <NavigationBar.Logo>
-              <NavigationBar.LogoTag>
-                <NavigationBar.LogoIcon
+        <Navigation.Header>
+          <Navigation.Banner>
+            <Navigation.Logo>
+              <Navigation.LogoTag>
+                <Navigation.LogoIcon
                   fill="#fff"
                   viewBox="0 0 165.5 174.3"
                   xmlns="http://www.w3.org/2000/svg"
@@ -25,28 +25,28 @@ const meta: Meta<typeof Navigation> = {
                   <path d="M156.94 6.5H33.1a19.15 19.15 0 0 1 2.21 5.11A18.82 18.82 0 0 1 33.42 26l-.29.46h123.81a6 6 0 0 0 6.06-5.9V12.5a6 6 0 0 0-6-6Z" />
                   <ellipse cx="15.57" cy="158.94" rx="13.44" ry="13.3" />
                   <path d="M156.94 149H31.88a18.88 18.88 0 0 1 .27 19.5c-.09.16-.19.31-.29.46h125.08A6 6 0 0 0 163 163v-8.06a6 6 0 0 0-6-6Z" />
-                </NavigationBar.LogoIcon>
-              </NavigationBar.LogoTag>
-              <NavigationBar.LogoName>
+                </Navigation.LogoIcon>
+              </Navigation.LogoTag>
+              <Navigation.LogoName>
                 MAAS
-              </NavigationBar.LogoName>
-            </NavigationBar.Logo>
-          </NavigationBar.Banner>
-          <NavigationBar.Controls>
+              </Navigation.LogoName>
+            </Navigation.Logo>
+          </Navigation.Banner>
+          <Navigation.Controls>
             <NavigationBar.MenuButton onClick={() => {}} >
               Menu
             </NavigationBar.MenuButton>
-          </NavigationBar.Controls>
-        </NavigationBar.Header>
+          </Navigation.Controls>
+        </Navigation.Header>
       </NavigationBar>
 
-      <Navigation isCollapsed={false}>
+      <Navigation isCollapsed={args["isCollapsed"]}>
         <Navigation.Drawer>
           <Navigation.Header>
             <Navigation.Banner>
-              <NavigationBar.Logo>
-                <NavigationBar.LogoTag>
-                  <NavigationBar.LogoIcon
+              <Navigation.Logo>
+                <Navigation.LogoTag>
+                  <Navigation.LogoIcon
                     fill="#fff"
                     viewBox="0 0 165.5 174.3"
                     xmlns="http://www.w3.org/2000/svg"
@@ -59,14 +59,14 @@ const meta: Meta<typeof Navigation> = {
                     <path d="M156.94 6.5H33.1a19.15 19.15 0 0 1 2.21 5.11A18.82 18.82 0 0 1 33.42 26l-.29.46h123.81a6 6 0 0 0 6.06-5.9V12.5a6 6 0 0 0-6-6Z" />
                     <ellipse cx="15.57" cy="158.94" rx="13.44" ry="13.3" />
                     <path d="M156.94 149H31.88a18.88 18.88 0 0 1 .27 19.5c-.09.16-.19.31-.29.46h125.08A6 6 0 0 0 163 163v-8.06a6 6 0 0 0-6-6Z" />
-                  </NavigationBar.LogoIcon>
-                </NavigationBar.LogoTag>
-                <NavigationBar.LogoName>
+                  </Navigation.LogoIcon>
+                </Navigation.LogoTag>
+                <Navigation.LogoName>
                   MAAS
-                </NavigationBar.LogoName>
-              </NavigationBar.Logo>
+                </Navigation.LogoName>
+              </Navigation.Logo>
               <Navigation.Controls>
-                <Navigation.CollapseToggle isCollapsed={false} setIsCollapsed={() => {}} />
+                <Navigation.CollapseToggle isCollapsed={args["isCollapsed"]} setIsCollapsed={() => {}} />
               </Navigation.Controls>
             </Navigation.Banner>
           </Navigation.Header>
@@ -106,4 +106,4 @@ const meta: Meta<typeof Navigation> = {
 };
 
 export default meta;
-export const Example = {};
+export const Example = { args: { isCollapsed: false }};

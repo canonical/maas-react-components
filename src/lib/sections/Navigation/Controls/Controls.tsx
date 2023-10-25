@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
 
-export interface NavigationControlsProps {
+export interface NavigationPanelControlsProps {
   children: ReactNode;
 }
 
-export const Controls = ({ children }: NavigationControlsProps) => {
+export const Controls = ({ children }: NavigationPanelControlsProps) => {
 
   return (
-    <div className="l-navigation__controls">
+    <div className="p-panel__controls u-nudge-down--small u-no-margin--top">
       {children}
     </div>
   )

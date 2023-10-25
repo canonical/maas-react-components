@@ -18,7 +18,6 @@ import { LogoIcon } from "./LogoIcon/LogoIcon";
 import { LogoName } from "./LogoName/LogoName";
 import { LogoTag } from "./LogoTag/LogoTag";
 import { MenuButton } from "./MenuButton/MenuButton";
-import { PanelControls } from "./PanelControls/PanelControls";
 import { Text } from "./Text/Text";
 
 import "./Navigation.scss";
@@ -46,11 +45,11 @@ export interface NavigationBarProps {
 export const NavigationBar = ({ children, className }: NavigationBarProps) => {
   
   return (
-    <div aria-label="navigation" className="l-navigation-bar">
+    <header aria-label="navigation" className="l-navigation-bar">
       <div className={classNames("p-panel is-dark", className)}>
         {children}
       </div>
-    </div>
+    </header>
   )
 }
 
@@ -66,12 +65,9 @@ Navigation.Link = Link;
 Navigation.Text = Text;
 Navigation.Icon = Icon;
 Navigation.Label = Label;
+Navigation.Logo = Logo;
+Navigation.LogoTag = LogoTag;
+Navigation.LogoIcon = LogoIcon;
+Navigation.LogoName = LogoName;
 
-NavigationBar.Header = Header;
-NavigationBar.Banner = Banner;
-NavigationBar.Logo = Logo;
-NavigationBar.LogoTag = LogoTag;
-NavigationBar.LogoIcon = LogoIcon;
-NavigationBar.LogoName = LogoName;
-NavigationBar.Controls = PanelControls;
 NavigationBar.MenuButton = MenuButton;
