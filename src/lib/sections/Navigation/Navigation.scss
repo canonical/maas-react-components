@@ -1,5 +1,4 @@
 @import "vanilla-framework";
-@include vanilla;
 
 .p-panel__logo {
   color: $colors--dark-theme--text-default;
@@ -17,7 +16,6 @@
 }
 
 .p-panel__logo-name {
-  @extend %vf-heading-4;
   font-size: #{map-get($font-sizes, h4)}rem;
   line-height: map-get($line-heights, x-small);
   margin-bottom: 1.25rem !important;
