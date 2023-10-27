@@ -72,9 +72,94 @@ const meta: Meta<typeof Navigation> = {
           </Navigation.Header>
           <Navigation.Content>
             <Navigation.List>
+              <Navigation.Item className="has-active-child">
+                <Navigation.Text>
+                  <Navigation.Icon name="machines"/>
+                  <Navigation.Label variant="group">Hardware</Navigation.Label>
+                </Navigation.Text>
+                <Navigation.List>
+                  <Navigation.Item>
+                    <Navigation.Link href="#" aria-current="page">
+                      <Navigation.Label>Machines</Navigation.Label>
+                    </Navigation.Link>
+                    <Navigation.Link href="#">
+                      <Navigation.Label>Controllers</Navigation.Label>
+                    </Navigation.Link>
+                    <Navigation.Link href="#">
+                      <Navigation.Label>Devices</Navigation.Label>
+                    </Navigation.Link>
+                  </Navigation.Item>
+                </Navigation.List>
+              </Navigation.Item>
               <Navigation.Item>
-                <Navigation.Link href="#" aria-current="page">
-                  <Navigation.Icon name="information" />
+                <Navigation.Text>
+                  <Navigation.Icon name="pods"/>
+                  <Navigation.Label variant="group">KVM</Navigation.Label>
+                </Navigation.Text>
+                <Navigation.List>
+                  <Navigation.Item>
+                    <Navigation.Link href="#">
+                      <Navigation.Label>LXD</Navigation.Label>
+                    </Navigation.Link>
+                  </Navigation.Item>
+                </Navigation.List>
+              </Navigation.Item>
+              <Navigation.Item>
+                <Navigation.Text>
+                  <Navigation.Icon name="tag"/>
+                  <Navigation.Label variant="group">Organisation</Navigation.Label>
+                </Navigation.Text>
+                <Navigation.List>
+                  <Navigation.Item>
+                    <Navigation.Link href="#">
+                      <Navigation.Label>Tags</Navigation.Label>
+                    </Navigation.Link>
+                    <Navigation.Link href="#">
+                      <Navigation.Label>AZs</Navigation.Label>
+                    </Navigation.Link>
+                    <Navigation.Link href="#">
+                      <Navigation.Label>Pools</Navigation.Label>
+                    </Navigation.Link>
+                  </Navigation.Item>
+                </Navigation.List>
+              </Navigation.Item>
+              <Navigation.Item>
+                <Navigation.Text>
+                  <Navigation.Icon name="units"/>
+                  <Navigation.Label variant="group">Configuration</Navigation.Label>
+                </Navigation.Text>
+                <Navigation.List>
+                  <Navigation.Item>
+                    <Navigation.Link href="#">
+                      <Navigation.Label>Images</Navigation.Label>
+                    </Navigation.Link>
+                  </Navigation.Item>
+                </Navigation.List>
+              </Navigation.Item>
+              <Navigation.Item>
+                <Navigation.Text>
+                  <Navigation.Icon name="connected"/>
+                  <Navigation.Label variant="group">Networking</Navigation.Label>
+                </Navigation.Text>
+                <Navigation.List>
+                  <Navigation.Item>
+                    <Navigation.Link href="#">
+                      <Navigation.Label>Subnets</Navigation.Label>
+                    </Navigation.Link>
+                    <Navigation.Link href="#">
+                      <Navigation.Label>DNS</Navigation.Label>
+                    </Navigation.Link>
+                    <Navigation.Link href="#">
+                      <Navigation.Label>Discovery</Navigation.Label>
+                    </Navigation.Link>
+                  </Navigation.Item>
+                </Navigation.List>
+              </Navigation.Item>
+            </Navigation.List>
+            <Navigation.List>
+              <Navigation.Item>
+                <Navigation.Link href="#">
+                  <Navigation.Icon name="settings" />
                   <Navigation.Label>Settings</Navigation.Label>
                 </Navigation.Link>
               </Navigation.Item>
@@ -82,7 +167,7 @@ const meta: Meta<typeof Navigation> = {
             <Navigation.List>
               <Navigation.Item>
                 <Navigation.Link href="#">
-                  <Navigation.Icon name="user" />
+                  <Navigation.Icon name="profile" />
                   <Navigation.Label>admin</Navigation.Label>
                 </Navigation.Link>
               </Navigation.Item>
