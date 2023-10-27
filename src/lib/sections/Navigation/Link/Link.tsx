@@ -1,15 +1,25 @@
-import { AriaAttributes, ReactNode } from "react";
+import { ComponentProps, ElementType } from "react";
 
-export interface NavigationLinkProps {
-  children: ReactNode;
-  to: string;
-  current?: AriaAttributes["aria-current"]
+import classNames from "classnames";
+
+interface AsProp<C extends ElementType> {
+  as?: C;
 }
 
-export const Link = ({ children, current, to }: NavigationLinkProps) => {
+export interface NavigationLinkProps extends ComponentProps<typeof Link> {}
+
+export const Link = <
+  C extends ElementType = "a",
+  T extends ComponentProps<C> = ComponentProps<C>,
+>({
+  as,
+  ...props
+}: AsProp<C> & Omit<T, "as">) => {
+  const Component = as || "a";
   return (
-    <a className="p-side-navigation__link" href={to} aria-current={current}>
-      {children}
-    </a>
-  )
-}
+    <Component
+      className={classNames("p-side-navigation__link", props.className)}
+      {...props}
+    />
+  );
+};
