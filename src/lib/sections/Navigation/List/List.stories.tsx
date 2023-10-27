@@ -28,13 +28,13 @@ export default meta;
 export const Example = { args: { children: (
   <>
     <Navigation.Item>
-      <Navigation.Link to="#" current="page">
+      <Navigation.Link href="#" aria-current="page">
         <Navigation.Icon name="code" />
         <Navigation.Label>Settings</Navigation.Label>
       </Navigation.Link>
     </Navigation.Item>
     <Navigation.Item>
-      <Navigation.Link to="#">
+      <Navigation.Link href="#">
         <Navigation.Icon name="user" />
         <Navigation.Label>Account</Navigation.Label>
       </Navigation.Link>

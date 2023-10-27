@@ -27,9 +27,15 @@ const meta: Meta<typeof Navigation.Link> = {
 };
 
 export default meta;
-export const Example = { args: { to: "#", current: "page", children: (
-  <>
-    <Navigation.Icon name="code" />
-    <Navigation.Label>Settings</Navigation.Label>
-  </>
-)}};
+export const Example = {
+  args: {
+    href: "#",
+    "aria-current": "page",
+    children: (
+      <>
+        <Navigation.Icon name="code" />
+        <Navigation.Label>Settings</Navigation.Label>
+      </>
+    ),
+  },
+};
