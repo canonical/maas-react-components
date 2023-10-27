@@ -28,7 +28,7 @@ const meta: Meta<typeof Navigation.Item> = {
 
 export default meta;
 export const Example = { args: { children: (
-  <Navigation.Link to="#">
+  <Navigation.Link href="#">
     <Navigation.Icon name="code" />
     <Navigation.Label>Settings</Navigation.Label>
   </Navigation.Link>

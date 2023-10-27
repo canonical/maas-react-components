@@ -11,7 +11,7 @@ const meta: Meta<typeof Navigation.Label> = {
         <Navigation.Content>
           <Navigation.List>
             <Navigation.Item>
-              <Navigation.Link to="#">
+              <Navigation.Link href="#">
                 <Navigation.Label {...args} />
               </Navigation.Link>
             </Navigation.Item>

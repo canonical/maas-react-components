@@ -73,7 +73,7 @@ const meta: Meta<typeof Navigation> = {
           <Navigation.Content>
             <Navigation.List>
               <Navigation.Item>
-                <Navigation.Link to="#" current="page">
+                <Navigation.Link href="#" aria-current="page">
                   <Navigation.Icon name="information" />
                   <Navigation.Label>Settings</Navigation.Label>
                 </Navigation.Link>
@@ -81,13 +81,13 @@ const meta: Meta<typeof Navigation> = {
             </Navigation.List>
             <Navigation.List>
               <Navigation.Item>
-                <Navigation.Link to="#">
+                <Navigation.Link href="#">
                   <Navigation.Icon name="user" />
                   <Navigation.Label>admin</Navigation.Label>
                 </Navigation.Link>
               </Navigation.Item>
               <Navigation.Item>
-                <Navigation.Link to="#">
+                <Navigation.Link as="button">
                   <Navigation.Label>Log out</Navigation.Label>
                 </Navigation.Link>
               </Navigation.Item>
