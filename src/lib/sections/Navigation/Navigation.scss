@@ -19,7 +19,8 @@
     margin-bottom: 0;
   }
 
-  &:hover, &:visited {
+  &:hover,
+  &:visited {
     color: $colors--dark-theme--text-default;
     text-decoration: none;
   }
@@ -46,4 +47,12 @@
   @media only screen and (min-width: ($breakpoint-small + 1)) {
     left: 1.5rem;
   }
+}
+
+// link button styling
+button.p-side-navigation__link {
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  justify-content: flex-start;
 }
