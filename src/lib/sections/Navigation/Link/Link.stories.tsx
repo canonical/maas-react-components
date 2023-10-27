@@ -29,6 +29,7 @@ const meta: Meta<typeof Navigation.Link> = {
 export default meta;
 export const Example = {
   args: {
+    as: "a",
     href: "#",
     "aria-current": "page",
     children: (
