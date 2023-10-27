@@ -56,3 +56,10 @@ button.p-side-navigation__link {
   width: 100%;
   justify-content: flex-start;
 }
+
+.p-side-navigation__label--group {
+  @extend %table-header-label;
+  color: $color-light;
+  margin-bottom: $sp-unit * 0.25;
+  text-transform: uppercase;
+}

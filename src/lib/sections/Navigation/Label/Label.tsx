@@ -10,7 +10,7 @@ export interface NavigationLabelProps {
 export const Label = ({ children, variant="base" }: NavigationLabelProps) => {
 
   return (
-    <span className={classNames("p-side-navigation__label", { "p-heading--small": variant === "group" })}>
+    <span className={classNames("p-side-navigation__label", { "p-side-navigation__label--group": variant === "group" })}>
       {children}
     </span>
   )
