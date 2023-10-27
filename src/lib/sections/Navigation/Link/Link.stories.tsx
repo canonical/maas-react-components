@@ -40,3 +40,14 @@ export const Example = {
     ),
   },
 };
+
+export const ButtonExample = {
+  args: {
+    as: "button",
+    children: (
+      <>
+        <Navigation.Label>Log out</Navigation.Label>
+      </>
+    ),
+  },
+};
