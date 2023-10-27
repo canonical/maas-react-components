@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
 
-import { Button } from "@canonical/react-components";
+import { Button, ButtonProps } from "@canonical/react-components";
 
 export interface NavigationMenuButtonProps {
   children: ReactNode;
-  onClick: () => void;
+  onClick: ButtonProps["onClick"];
 }
 
 export const MenuButton = ({ children, onClick }: NavigationMenuButtonProps) => {
