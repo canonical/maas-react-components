@@ -13,6 +13,37 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' width='16px' height='16px' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0 7.743 L 6.742 14.485 L 7.899 13.329 L 2.311 7.743 L 7.899 2.157 L 6.742 1 L 0 7.743 Z M 7.899 7.743 L 14.642 14.485 L 15.797 13.329 L 10.21 7.743 L 15.797 2.157 L 14.642 1 L 7.899 7.743 Z' fill='%23FFF' style=''/%3E%3C/svg%3E");
 }
 
+.l-navigation.is-collapsed {
+  .l-navigation-collapse-toggle,
+  .l-navigation__controls {
+    i {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.l-navigation__controls {
+  margin-left: auto;
+  padding-top: 0.65rem;
+  z-index: 103;
+  @include vf-transition(
+    $property: #{opacity,
+    visibility,
+    transform,
+    background},
+    $duration: fast
+  );
+  @media only screen and (min-width: ($breakpoint-small + 1)) {
+    opacity: 1;
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-top: 0;
+    transform: translateX(1rem) translateY(2.6rem);
+  }
+}
+
 .p-icon--sidebar-toggle {
   @extend %icon;
   @include maas-icon-sidebar-collapse();
@@ -70,4 +101,25 @@ button.p-side-navigation__link {
   color: $color-light;
   margin-bottom: $sp-unit * 0.25;
   text-transform: uppercase;
+}
+
+.p-side-navigation--icons
+  .p-side-navigation__item
+  .p-side-navigation__item
+  .p-side-navigation__link {
+  padding-left: 4rem;
+}
+
+.p-panel__content {
+  padding-top: 0;
+}
+
+.p-side-navigation--icons {
+  & > .p-side-navigation__list:last-of-type::after {
+    content: "";
+  }
+  .p-side-navigation__list::after {
+    left: 1rem;
+    opacity: 1;
+  }
 }
