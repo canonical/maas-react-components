@@ -72,7 +72,7 @@ const meta: Meta<typeof Navigation> = {
           </Navigation.Header>
           <Navigation.Content>
             <Navigation.List>
-              <Navigation.Item className="has-active-child">
+              <Navigation.Item hasActiveChild>
                 <Navigation.Text>
                   <Navigation.Icon name="machines"/>
                   <Navigation.Label variant="group">Hardware</Navigation.Label>
