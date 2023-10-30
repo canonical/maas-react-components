@@ -1,3 +1,4 @@
+import { Button } from "@canonical/react-components";
 import { Meta } from "@storybook/react";
 
 import { Navigation } from "@/lib/sections/Navigation/Navigation";
@@ -43,7 +44,8 @@ export const Example = {
 
 export const ButtonExample = {
   args: {
-    as: "button",
+    as: Button,
+    appearance: "link",
     children: (
       <>
         <Navigation.Label>Log out</Navigation.Label>
