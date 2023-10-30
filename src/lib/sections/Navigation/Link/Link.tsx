@@ -2,9 +2,7 @@ import { ComponentProps, ElementType } from "react";
 
 import classNames from "classnames";
 
-interface AsProp<C extends ElementType> {
-  as?: C;
-}
+import { AsProp } from "@/lib/sections/Navigation/types";
 
 export interface NavigationLinkProps extends ComponentProps<typeof Link> {}
 

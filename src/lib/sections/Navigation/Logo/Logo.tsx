@@ -1,15 +1,23 @@
-import { ReactNode } from "react";
+import { ComponentProps, ElementType, ReactNode } from "react";
 
-export interface NavigationLogoProps {
+import classNames from "classnames";
+
+import { AsProp } from "@/lib/sections/Navigation/types";
+
+export interface NavigationLogoProps extends ComponentProps<typeof Logo> {
   children: ReactNode;
 }
 
-export const Logo = ({ children }: NavigationLogoProps) => {
+export const Logo = <
+C extends ElementType = "a",
+T extends ComponentProps<C> = ComponentProps<C>,
+>({ as, children, className, ...props }: AsProp<C> & Omit<T, "as">) => {
+  const Component = as || "a";
    return (
-    <a className="p-panel__logo" href="/">
+    <Component className={classNames("p-panel__logo", className)} {...props}>
       <div className="p-navigation__tagged-logo">
         {children}
       </div>
-    </a>
+    </Component>
   )
 }
