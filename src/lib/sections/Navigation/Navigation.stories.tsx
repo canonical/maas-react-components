@@ -1,3 +1,4 @@
+import { Button } from "@canonical/react-components";
 import { Meta } from "@storybook/react";
 
 import { Navigation, NavigationBar } from "./Navigation";
@@ -27,13 +28,11 @@ const meta: Meta<typeof Navigation> = {
                   <path d="M156.94 149H31.88a18.88 18.88 0 0 1 .27 19.5c-.09.16-.19.31-.29.46h125.08A6 6 0 0 0 163 163v-8.06a6 6 0 0 0-6-6Z" />
                 </Navigation.LogoIcon>
               </Navigation.LogoTag>
-              <Navigation.LogoName>
-                MAAS
-              </Navigation.LogoName>
+              <Navigation.LogoName>MAAS</Navigation.LogoName>
             </Navigation.Logo>
           </Navigation.Banner>
           <Navigation.Controls>
-            <NavigationBar.MenuButton onClick={() => {}} >
+            <NavigationBar.MenuButton onClick={() => {}}>
               Menu
             </NavigationBar.MenuButton>
           </Navigation.Controls>
@@ -61,12 +60,13 @@ const meta: Meta<typeof Navigation> = {
                     <path d="M156.94 149H31.88a18.88 18.88 0 0 1 .27 19.5c-.09.16-.19.31-.29.46h125.08A6 6 0 0 0 163 163v-8.06a6 6 0 0 0-6-6Z" />
                   </Navigation.LogoIcon>
                 </Navigation.LogoTag>
-                <Navigation.LogoName>
-                  MAAS
-                </Navigation.LogoName>
+                <Navigation.LogoName>MAAS</Navigation.LogoName>
               </Navigation.Logo>
               <Navigation.Controls>
-                <Navigation.CollapseToggle isCollapsed={args["isCollapsed"]} setIsCollapsed={() => {}} />
+                <Navigation.CollapseToggle
+                  isCollapsed={args["isCollapsed"]}
+                  setIsCollapsed={() => {}}
+                />
               </Navigation.Controls>
             </Navigation.Banner>
           </Navigation.Header>
@@ -172,7 +172,7 @@ const meta: Meta<typeof Navigation> = {
                 </Navigation.Link>
               </Navigation.Item>
               <Navigation.Item>
-                <Navigation.Link as="button">
+                <Navigation.Link as={Button} appearance="link">
                   <Navigation.Label>Log out</Navigation.Label>
                 </Navigation.Link>
               </Navigation.Item>
@@ -191,4 +191,4 @@ const meta: Meta<typeof Navigation> = {
 };
 
 export default meta;
-export const Example = { args: { isCollapsed: false }};
+export const Example = { args: { isCollapsed: false } };
