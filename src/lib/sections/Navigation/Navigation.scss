@@ -76,6 +76,13 @@ $side-navigation-z-index: 103;
       padding-top: 0;
       transform: translateX(1rem) translateY(2.6rem);
     }
+
+    .p-side-navigation__tooltip-wrapper {
+      display: none;
+      @media only screen and (min-width: ($breakpoint-small + 1)) {
+        display: inherit;
+      }
+    }
   }
   
   // link button styling
