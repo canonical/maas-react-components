@@ -48,14 +48,6 @@ $side-navigation-z-index: 103;
       opacity: 1;
       visibility: visible;
 
-      button {
-        background-color: rgb(255 255 255 / 5%);
-
-        &.b-btn-transparent {
-          background-color: transparent;
-        }
-      }
-
       @media only screen and (min-width: ($breakpoint-small + 1)) {
         transform: translateX(#{$application-layout--side-nav-width-expanded - 3rem});
       }
@@ -105,10 +97,6 @@ $side-navigation-z-index: 103;
     .p-side-navigation__link {
     padding-left: 4rem;
   }
-  
-  // .p-panel__content {
-  //   padding-top: 0;
-  // }
   
   .p-side-navigation--icons {
     & > .p-side-navigation__list:last-of-type::after {
