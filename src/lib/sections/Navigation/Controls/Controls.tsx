@@ -7,7 +7,7 @@ export interface NavigationPanelControlsProps {
 export const Controls = ({ children }: NavigationPanelControlsProps) => {
 
   return (
-    <div className="p-panel__controls u-nudge-down--small u-no-margin--top">
+    <div className="p-panel__controls u-no-margin--top">
       {children}
     </div>
   )

@@ -20,6 +20,7 @@ export const CollapseToggle = ({
         </>
       }
       position="right"
+      tooltipClassName="p-side-navigation__tooltip"
     >
       <Button
         appearance="base"
