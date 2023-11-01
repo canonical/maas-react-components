@@ -168,12 +168,23 @@ $side-navigation-z-index: 103;
   }
 }
 
-.l-navigation, .l-navigation-bar {
+.p-panel__footer {
+  margin-top: auto;
+}
+
+.l-navigation,
+.l-navigation-bar {
   .p-panel__controls {
     padding-top: 0.75rem;
   }
 }
 
+.l-navigation__drawer {
+  .p-panel {
+    display: flex;
+    flex-direction: column;
+  }
+}
 
 .p-side-navigation__tooltip {
   z-index: $side-navigation-z-index + 1;
