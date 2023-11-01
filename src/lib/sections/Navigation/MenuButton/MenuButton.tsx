@@ -12,7 +12,7 @@ export interface NavigationMenuButtonProps {
 export const MenuButton = ({ children, className, onClick }: NavigationMenuButtonProps) => {
 
   return (
-    <Button appearance="base" className={classNames("has-icon is-dark", className)} onClick={onClick}>
+    <Button appearance="base" className={classNames("p-side-navigation__button--menu has-icon is-dark", className)} onClick={onClick}>
       {children}
     </Button>
   )

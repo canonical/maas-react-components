@@ -67,6 +67,9 @@ const meta: Meta<typeof Navigation> = {
                   isCollapsed={args["isCollapsed"]}
                   setIsCollapsed={() => {}}
                 />
+                <NavigationBar.MenuButton onClick={() => {}}>
+                  Close menu
+                </NavigationBar.MenuButton>
               </Navigation.Controls>
             </Navigation.Banner>
           </Navigation.Header>
