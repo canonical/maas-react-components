@@ -74,7 +74,7 @@ const meta: Meta<typeof Navigation> = {
             <Navigation.List>
               <Navigation.Item hasActiveChild>
                 <Navigation.Text>
-                  <Navigation.Icon name="machines"/>
+                  <Navigation.Icon name="machines" />
                   <Navigation.Label variant="group">Hardware</Navigation.Label>
                 </Navigation.Text>
                 <Navigation.List>
@@ -93,7 +93,7 @@ const meta: Meta<typeof Navigation> = {
               </Navigation.Item>
               <Navigation.Item>
                 <Navigation.Text>
-                  <Navigation.Icon name="pods"/>
+                  <Navigation.Icon name="pods" />
                   <Navigation.Label variant="group">KVM</Navigation.Label>
                 </Navigation.Text>
                 <Navigation.List>
@@ -106,8 +106,10 @@ const meta: Meta<typeof Navigation> = {
               </Navigation.Item>
               <Navigation.Item>
                 <Navigation.Text>
-                  <Navigation.Icon name="tag"/>
-                  <Navigation.Label variant="group">Organisation</Navigation.Label>
+                  <Navigation.Icon name="tag" />
+                  <Navigation.Label variant="group">
+                    Organisation
+                  </Navigation.Label>
                 </Navigation.Text>
                 <Navigation.List>
                   <Navigation.Item>
@@ -125,8 +127,10 @@ const meta: Meta<typeof Navigation> = {
               </Navigation.Item>
               <Navigation.Item>
                 <Navigation.Text>
-                  <Navigation.Icon name="units"/>
-                  <Navigation.Label variant="group">Configuration</Navigation.Label>
+                  <Navigation.Icon name="units" />
+                  <Navigation.Label variant="group">
+                    Configuration
+                  </Navigation.Label>
                 </Navigation.Text>
                 <Navigation.List>
                   <Navigation.Item>
@@ -138,8 +142,10 @@ const meta: Meta<typeof Navigation> = {
               </Navigation.Item>
               <Navigation.Item>
                 <Navigation.Text>
-                  <Navigation.Icon name="connected"/>
-                  <Navigation.Label variant="group">Networking</Navigation.Label>
+                  <Navigation.Icon name="connected" />
+                  <Navigation.Label variant="group">
+                    Networking
+                  </Navigation.Label>
                 </Navigation.Text>
                 <Navigation.List>
                   <Navigation.Item>
@@ -178,6 +184,24 @@ const meta: Meta<typeof Navigation> = {
               </Navigation.Item>
             </Navigation.List>
           </Navigation.Content>
+          <Navigation.Footer>
+            <Navigation.Content>
+              <Navigation.List>
+                <Navigation.Item>
+                  <Navigation.Link href="#">
+                    <Navigation.Icon name="information" />
+                    <Navigation.Label>Documentation</Navigation.Label>
+                  </Navigation.Link>
+                </Navigation.Item>
+                <Navigation.Item>
+                  <Navigation.Link href="#">
+                    <Navigation.Icon name="help" />
+                    <Navigation.Label>Report a bug</Navigation.Label>
+                  </Navigation.Link>
+                </Navigation.Item>
+              </Navigation.List>
+            </Navigation.Content>
+          </Navigation.Footer>
         </Navigation.Drawer>
       </Navigation>
     </div>
