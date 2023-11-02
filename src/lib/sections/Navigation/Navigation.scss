@@ -93,10 +93,9 @@ $side-navigation-z-index: 103;
     }
 
     .p-side-navigation__button--menu {
-      @media only screen and (min-width: ($breakpoint-x-small)){
+      @media only screen and (min-width: ($breakpoint-x-small)) {
         display: none;
       }
-
     }
   }
 
@@ -147,8 +146,8 @@ $side-navigation-z-index: 103;
     color: $colors--dark-theme--text-default;
     display: flex;
     flex-direction: column;
+    margin-top: 0.25rem;
     @media only screen and (max-width: ($breakpoint-small)) {
-      margin-top: 1.25rem;
       margin-bottom: 0;
     }
 
@@ -157,29 +156,38 @@ $side-navigation-z-index: 103;
       color: $colors--dark-theme--text-default;
       text-decoration: none;
     }
-  }
 
-  .p-panel__logo-name {
-    font-size: #{map-get($font-sizes, h4)}rem;
-    line-height: map-get($line-heights, x-small);
-    margin-bottom: 1.25rem !important;
-    padding-top: 0 !important;
-    margin-left: 2rem !important;
-    text-wrap: nowrap;
-    @media only screen and (min-width: ($breakpoint-small + 1)) {
-      margin-left: 2.5rem !important;
+    .p-panel__logo-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+
+      .p-panel__logo-name {
+        font-size: #{map-get($font-sizes, h4)}rem;
+        line-height: map-get($line-heights, x-small);
+        margin-bottom: 0;
+        padding-top: 0;
+        margin-left: 2rem;
+        text-wrap: nowrap;
+      }
+
+      .p-panel__logo-name--small {
+        font-size: 0.6rem;
+        margin-bottom: 0;
+        padding-left: 0.1rem;
+      }
     }
-  }
 
-  .p-navigation__tagged-logo {
-    min-width: auto;
-  }
+    .p-navigation__tagged-logo {
+      min-width: auto;
+    }
 
-  .p-navigation__tagged-logo .p-navigation__logo-tag {
-    height: 2.3rem;
-    left: 1rem;
-    @media only screen and (min-width: ($breakpoint-small + 1)) {
-      left: 1.5rem;
+    .p-navigation__tagged-logo .p-navigation__logo-tag {
+      height: 2.3rem;
+      left: 1rem;
+      @media only screen and (min-width: ($breakpoint-small + 1)) {
+        left: 1.5rem;
+      }
     }
   }
 }

@@ -18,6 +18,7 @@ import { Logo } from "./Logo/Logo";
 import { LogoIcon } from "./LogoIcon/LogoIcon";
 import { LogoName } from "./LogoName/LogoName";
 import { LogoTag } from "./LogoTag/LogoTag";
+import { LogoText } from "./LogoText/LogoText";
 import { MenuButton } from "./MenuButton/MenuButton";
 import { Text } from "./Text/Text";
 
@@ -71,5 +72,6 @@ Navigation.Logo = Logo;
 Navigation.LogoTag = LogoTag;
 Navigation.LogoIcon = LogoIcon;
 Navigation.LogoName = LogoName;
+Navigation.LogoText = LogoText;
 
 NavigationBar.MenuButton = MenuButton;

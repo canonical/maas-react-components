@@ -11,9 +11,9 @@ const meta: Meta<typeof Navigation.LogoName> = {
         <Navigation.Header>
           <Navigation.Banner>
             <Navigation.Logo>
-              <Navigation.LogoName>
-                {args["children"]}
-              </Navigation.LogoName>
+              <Navigation.LogoText>
+                <Navigation.LogoName {...args} />
+              </Navigation.LogoText>
             </Navigation.Logo>
           </Navigation.Banner>
         </Navigation.Header>
@@ -29,4 +29,5 @@ const meta: Meta<typeof Navigation.LogoName> = {
 };
 
 export default meta;
-export const Example = { args: { children: "MAAS" }}
+export const Example = { args: { children: "MAAS", variant: "base" }}
+export const SmallExample = { args: { children: "Canonical", variant: "small" }}

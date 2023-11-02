@@ -28,7 +28,10 @@ const meta: Meta<typeof Navigation> = {
                   <path d="M156.94 149H31.88a18.88 18.88 0 0 1 .27 19.5c-.09.16-.19.31-.29.46h125.08A6 6 0 0 0 163 163v-8.06a6 6 0 0 0-6-6Z" />
                 </Navigation.LogoIcon>
               </Navigation.LogoTag>
-              <Navigation.LogoName>MAAS</Navigation.LogoName>
+              <Navigation.LogoText>
+                <Navigation.LogoName variant="small">Canonical</Navigation.LogoName>
+                <Navigation.LogoName>MAAS</Navigation.LogoName>
+              </Navigation.LogoText>
             </Navigation.Logo>
           </Navigation.Banner>
           <Navigation.Controls>
@@ -60,7 +63,10 @@ const meta: Meta<typeof Navigation> = {
                     <path d="M156.94 149H31.88a18.88 18.88 0 0 1 .27 19.5c-.09.16-.19.31-.29.46h125.08A6 6 0 0 0 163 163v-8.06a6 6 0 0 0-6-6Z" />
                   </Navigation.LogoIcon>
                 </Navigation.LogoTag>
-                <Navigation.LogoName>MAAS</Navigation.LogoName>
+                <Navigation.LogoText>
+                  <Navigation.LogoName variant="small">Canonical</Navigation.LogoName>
+                  <Navigation.LogoName>MAAS</Navigation.LogoName>
+                </Navigation.LogoText>
               </Navigation.Logo>
               <Navigation.Controls>
                 <Navigation.CollapseToggle
