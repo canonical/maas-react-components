@@ -1,14 +1,10 @@
-import { ReactNode, SVGProps } from "react";
+import { ReactElement, cloneElement } from "react";
 
 export interface NavigationLogoIconProps {
-  children: ReactNode;
+  children: ReactElement;
 }
 
-export const LogoIcon = ({ children, ...props }: NavigationLogoIconProps & SVGProps<SVGSVGElement>) => {
+export const LogoIcon = ({ children }: NavigationLogoIconProps) => {
 
-  return (
-    <svg {...props} className="p-panel__logo-icon p-navigation__logo-icon">
-      {children}
-    </svg>
-  )
+  return cloneElement(children, { className: "p-panel__logo-icon p-navigation__logo-icon"})
 }
