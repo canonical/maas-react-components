@@ -12,7 +12,6 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
-    layout: "fullscreen",
     viewMode: "docs",
     docs: {
       page: DocumentationTemplate,

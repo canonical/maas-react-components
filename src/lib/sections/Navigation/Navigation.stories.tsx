@@ -224,6 +224,7 @@ const meta: Meta<typeof Navigation> = {
     status: {
       type: "candidate",
     },
+    layout: "fullscreen",
   },
 };
 
