@@ -1,9 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
 import { Navigation, NavigationBar } from "./Navigation";
-import { Button, Link } from "@canonical/react-components";
-import { userEvent } from "@testing-library/user-event";
-import { vi } from "vitest";
 
 describe("Navigation", () => {
 
