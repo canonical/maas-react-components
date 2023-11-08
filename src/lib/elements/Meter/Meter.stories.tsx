@@ -6,21 +6,36 @@ const meta: Meta<typeof Meter> = {
   title: "Elements/Meter",
   component: Meter,
   tags: ["autodocs"],
-  parameters: {
-    status: {
-      type: "legacy",
-    },
+  args: {
+    variant: "regular",
+    size: "regular",
   },
 };
 export default meta;
 
-export const Example = {
+const data = [
+  { value: 200, color: meterColor.link },
+  { value: 30.8, color: meterColor.linkFaded },
+  { value: 400, color: "black" },
+];
+
+export const Regular = {
   args: {
-    data: [
-      { value: 200, color: meterColor.link },
-      { value: 30.8, color: meterColor.linkFaded },
-      { value: 400, color: "black" },
-    ],
+    data,
+  },
+};
+
+export const Segmented = {
+  args: {
+    data,
+    variant: "segmented",
+  },
+};
+
+export const WithLabel = {
+  args: {
+    data,
+    children: <Meter.Label>Label</Meter.Label>,
   },
 };
 

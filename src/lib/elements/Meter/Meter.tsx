@@ -22,23 +22,22 @@ export const defaultFilledColors = [
   meterColor.negative,
   meterColor.caution,
 ];
-export const defaultEmptyColor = meterColor.linkFaded;
-export const defaultOverColor = meterColor.caution;
-export const defaultSeparatorColor = meterColor.light;
+const emptyColor = meterColor.linkFaded;
+const overColor = meterColor.caution;
+const separatorColor = meterColor.light;
 const minimumSegmentWidth = 2;
 const separatorWidth = 1;
 
 const calculateWidths = (
   el: React.MutableRefObject<Element | null>,
   maximum: number,
-  setSegmentWidth: (size: number) => void,
 ) => {
   const boundingWidth = el?.current?.getBoundingClientRect()?.width || 0;
   const segmentWidth =
     boundingWidth > maximum * minimumSegmentWidth
       ? boundingWidth / maximum
       : minimumSegmentWidth;
-  setSegmentWidth(segmentWidth);
+  return segmentWidth;
 };
 
 type MeterDatum = {
@@ -46,18 +45,15 @@ type MeterDatum = {
   value: number;
 };
 
-type Props = {
+export interface MeterProps
+  extends React.PropsWithChildren,
+    React.ComponentProps<"div"> {
   className?: string;
   data: MeterDatum[];
-  emptyColor?: string;
-  label?: string | JSX.Element;
-  labelClassName?: string;
   max?: number;
-  overColor?: string;
-  segmented?: boolean;
-  separatorColor?: string;
-  small?: boolean;
-};
+  variant?: "regular" | "segmented";
+  size?: "regular" | "small";
+}
 
 export const testIds = {
   bar: "meter-bar",
@@ -68,24 +64,90 @@ export const testIds = {
   segments: "meter-segments",
 };
 
-const MeterSegment = ({
+const Meter = ({
+  className,
+  children,
   data,
-  datumWidths,
-  maximum,
-  overColor,
-  segmentWidth,
-  separatorColor,
-}: Props & {
+  max,
+  variant = "regular",
+  size = "regular",
+  ...props
+}: MeterProps) => {
+  const el = useRef(null);
+  const valueSum = data?.reduce((sum, datum) => sum + datum.value, 0);
+  const maximum = max || valueSum;
+  const datumWidths = data.map((datum) => (datum.value / maximum) * 100);
+  const [segmentWidth, setSegmentWidth] = useState(0);
+
+  useEffect(() => {
+    if (variant === "segmented") {
+      setSegmentWidth(calculateWidths(el, maximum));
+    } else {
+      setSegmentWidth(0);
+    }
+  }, [maximum, variant]);
+
+  const onResize = useCallback(() => {
+    setSegmentWidth(calculateWidths(el, maximum));
+  }, [el, maximum, setSegmentWidth]);
+
+  useListener(window, onResize, "resize", true, variant === "segmented");
+
+  return (
+    <div
+      className={classNames("p-meter", className, {
+        "p-meter--small": size === "small",
+      })}
+      aria-label={props?.["aria-label"]}
+      data-testid={testIds.container}
+      ref={el}
+    >
+      <MeterBar>
+        <MeterSegments
+          {...{
+            data,
+            datumWidths,
+            maximum,
+            overColor,
+            segmentWidth,
+            separatorColor,
+          }}
+        />
+      </MeterBar>
+      {children}
+    </div>
+  );
+};
+
+const MeterBar = ({ children }: React.PropsWithChildren) => {
+  return (
+    <div
+      className="p-meter__bar"
+      data-testid={testIds.bar}
+      style={{ backgroundColor: emptyColor }}
+    >
+      {children}
+    </div>
+  );
+};
+
+export interface MeterSegmentProps extends Omit<MeterProps, "children"> {
   datumWidths: number[];
   maximum: number;
   segmentWidth: number;
-}) => {
+}
+const MeterSegments = ({
+  data,
+  datumWidths,
+  maximum,
+  segmentWidth,
+}: MeterSegmentProps) => {
   const isOverflowing = () =>
-    data.reduce((sum, datum) => sum + datum.value, 0) > maximum;
+    data?.reduce((sum, datum) => sum + datum.value, 0) > maximum;
 
   const filledStyle = (datum: MeterDatum, i: number) => ({
     backgroundColor: datum.color,
-    left: `${datumWidths.reduce(
+    left: `${datumWidths?.reduce(
       (leftPos, width, j) => (i > j ? leftPos + width : leftPos),
       0,
     )}%`,
@@ -111,7 +173,7 @@ const MeterSegment = ({
           style={{ backgroundColor: overColor, width: "100%" }}
         ></div>
       ) : (
-        data.map((datum, i) => (
+        data?.map((datum, i) => (
           <div
             className="p-meter__filled"
             data-testid={testIds.filled}
@@ -132,70 +194,19 @@ const MeterSegment = ({
 };
 
 const MeterLabel = ({
-  labelClassName,
-  label,
-}: Pick<Props, "labelClassName" | "label">) => {
+  className,
+  children,
+}: React.PropsWithChildren<Pick<MeterProps, "className">>) => {
   return (
     <div
-      className={classNames("p-meter__label", labelClassName)}
+      className={classNames("p-meter__label", className)}
       data-testid={testIds.label}
     >
-      {label}
+      {children}
     </div>
   );
 };
 
-export const Meter = ({
-  className,
-  data,
-  emptyColor = defaultEmptyColor,
-  label,
-  labelClassName,
-  max,
-  overColor = defaultOverColor,
-  segmented = false,
-  separatorColor = defaultSeparatorColor,
-  small = false,
-}: Props): JSX.Element => {
-  const el = useRef(null);
-  const valueSum = data.reduce((sum, datum) => sum + datum.value, 0);
-  const maximum = max || valueSum;
-  const datumWidths = data.map((datum) => (datum.value / maximum) * 100);
-  const [segmentWidth, setSegmentWidth] = useState(0);
+Meter.Label = MeterLabel;
 
-  useEffect(() => {
-    if (segmented) {
-      calculateWidths(el, maximum, setSegmentWidth);
-    }
-  }, [maximum, segmented]);
-
-  const onResize = useCallback(() => {
-    calculateWidths(el, maximum, setSegmentWidth);
-  }, [el, maximum, setSegmentWidth]);
-
-  useListener(window, onResize, "resize", true, segmented);
-
-  return (
-    <div
-      className={classNames("p-meter", { "p-meter--small": small }, className)}
-      data-testid={testIds.container}
-      ref={el}
-    >
-      <div
-        className="p-meter__bar"
-        data-testid={testIds.bar}
-        style={{ backgroundColor: emptyColor }}
-      >
-        <MeterSegment
-          data={data}
-          datumWidths={datumWidths}
-          maximum={maximum}
-          overColor={overColor}
-          segmentWidth={segmentWidth}
-          separatorColor={separatorColor}
-        />
-      </div>
-      {label && <MeterLabel label={label} labelClassName={labelClassName} />}
-    </div>
-  );
-};
+export { Meter };
