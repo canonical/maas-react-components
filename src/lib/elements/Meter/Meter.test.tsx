@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
-import { Meter, defaultSeparatorColor, testIds } from "./Meter";
+import { Meter, meterColor, testIds } from "./Meter";
 
 const mockClientRect = ({
   bottom = 0,
@@ -29,23 +29,19 @@ const mockClientRect = ({
   });
 
 it("can be made small", async () => {
-  render(<Meter data={[]} small />);
+  render(<Meter data={[]} size="small" />);
 
   expect(screen.getByTestId(testIds.container)).toHaveClass("p-meter--small");
 });
 
 it("can be given a label", () => {
-  render(<Meter data={[{ value: 1 }, { value: 3 }]} label="Meter label" />);
+  render(
+    <Meter data={[{ value: 1 }, { value: 3 }]}>
+      <Meter.Label>Meter label</Meter.Label>
+    </Meter>,
+  );
 
   expect(screen.getByTestId(testIds.label).textContent).toBe("Meter label");
-});
-
-it("can be given a custom empty colour", () => {
-  render(<Meter data={[]} emptyColor="#ABC" />);
-
-  expect(screen.getByTestId(testIds.bar)).toHaveStyle({
-    backgroundColor: "#ABC",
-  });
 });
 
 it("can be given custom bar colours", () => {
@@ -66,12 +62,10 @@ it("can be given custom bar colours", () => {
 });
 
 it("changes colour if values exceed given maximum value", () => {
-  render(
-    <Meter data={[{ color: "#ABC", value: 100 }]} max={10} overColor="#DEF" />,
-  );
+  render(<Meter data={[{ color: "#ABC", value: 100 }]} max={10} />);
 
   expect(screen.getByTestId(testIds.meteroverflow)).toHaveStyle({
-    backgroundColor: "#DEF",
+    backgroundColor: meterColor.caution,
   });
 });
 
@@ -114,19 +108,9 @@ it("correctly calculates datum positions", () => {
 });
 
 it("can be made segmented", () => {
-  render(<Meter data={[{ value: 2 }]} max={10} segmented />);
+  render(<Meter data={[{ value: 2 }]} max={10} variant="segmented" />);
 
   expect(screen.getByTestId(testIds.segments)).toBeInTheDocument();
-});
-
-it("can set the segment separator color", () => {
-  render(
-    <Meter data={[{ value: 2 }]} max={10} segmented separatorColor="#abc123" />,
-  );
-
-  expect(screen.getByTestId(testIds.segments)).toHaveStyle({
-    background: "rgb(171, 193, 35);",
-  });
 });
 
 it("sets segment width to 1px if not enough space to show all segments", () => {
@@ -134,9 +118,9 @@ it("sets segment width to 1px if not enough space to show all segments", () => {
   Element.prototype.getBoundingClientRect = mockClientRect({
     width: 128,
   });
-  render(<Meter data={[{ value: 10 }]} max={100} segmented />);
+  render(<Meter data={[{ value: 10 }]} max={100} variant="segmented" />);
 
   expect(screen.getByTestId(testIds.segments)).toHaveStyle({
-    background: `repeating-linear-gradient(to right, transparent 0, transparent 1px, ${defaultSeparatorColor} 1px, ${defaultSeparatorColor} 2px );`,
+    background: `repeating-linear-gradient(to right, transparent 0, transparent 1px, ${meterColor.light} 1px, ${meterColor.light} 2px );`,
   });
 });
