@@ -108,7 +108,9 @@ $side-navigation-z-index: 103;
     .p-side-navigation__link {
       width: 100%;
       justify-content: flex-start;
-  
+    }
+
+    .p-side-navigation__link[aria-current=page] {
       &:hover,:active {
         cursor: pointer;
       }
