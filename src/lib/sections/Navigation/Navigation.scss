@@ -103,10 +103,16 @@ $side-navigation-z-index: 103;
     }
   }
 
-  // link button styling
-  .p-side-navigation__link {
-    width: 100%;
-    justify-content: flex-start;
+  .p-side-navigation__item {
+    // link button styling
+    .p-side-navigation__link {
+      width: 100%;
+      justify-content: flex-start;
+  
+      &:hover,:active {
+        cursor: pointer;
+      }
+    }
   }
 
   .p-side-navigation__label--group {
