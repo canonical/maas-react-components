@@ -26,7 +26,7 @@ export const Example = {
     onInputChange: () => {},
     onNextClick: () => {},
     onPreviousClick: () => {},
-    noItems: false,
+    pageNumber: 1,
     totalPages: 10,
   }, 
 };

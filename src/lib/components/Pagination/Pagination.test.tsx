@@ -12,7 +12,7 @@ it("renders without crashing", () => {
       onInputChange={vi.fn()}
       onNextClick={vi.fn()}
       onPreviousClick={vi.fn()}
-      noItems={false}
+      pageNumber={1}
       totalPages={10}
     />,
   );
