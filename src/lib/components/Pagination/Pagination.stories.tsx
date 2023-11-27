@@ -17,4 +17,16 @@ const meta: Meta<typeof Pagination> = {
 };
 
 export default meta;
-export const Example = {};
+export const Example = { 
+  args: {
+    currentPage: 1,
+    error: "",
+    isLoading: false,
+    onInputBlur: () => {},
+    onInputChange: () => {},
+    onNextClick: () => {},
+    onPreviousClick: () => {},
+    noItems: false,
+    totalPages: 10,
+  }, 
+};
