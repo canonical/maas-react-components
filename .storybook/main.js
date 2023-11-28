@@ -12,6 +12,7 @@ const config = {
     "@storybook/addon-a11y",
     "@etchteam/storybook-addon-status",
     "sb-addon-permutation-table",
+    "@storybook/addon-mdx-gfm"
   ],
   framework: {
     name: "@storybook/react-vite",
