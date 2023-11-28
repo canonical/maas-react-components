@@ -10,8 +10,6 @@
 - [ ]  Ensure the component is displayed correctly across all breakpoints
 - [ ] 
 
-<!-- Steps for QA. -->
-
 ## Fixes
 
 Fixes: 
