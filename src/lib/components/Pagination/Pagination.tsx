@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 import "./Pagination.scss";
 import { Button, Icon, Input } from "@canonical/react-components";
@@ -6,7 +6,7 @@ import { Button, Icon, Input } from "@canonical/react-components";
 export interface PaginationProps {
   currentPage: number | undefined;
   error?: string;
-  isLoading: boolean;
+  disabled: boolean;
   onInputBlur: () => void;
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onNextClick: () => void;
@@ -18,7 +18,7 @@ export interface PaginationProps {
 export const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   error,
-  isLoading,
+  disabled,
   onInputBlur,
   onInputChange,
   onNextClick,
@@ -32,7 +32,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <Button
           aria-label="Previous page"
           className="p-pagination__link--previous"
-          disabled={currentPage === 1 || isLoading}
+          disabled={currentPage === 1 || disabled}
           onClick={onPreviousClick}
           type="button"
         >
@@ -42,7 +42,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <Input
           aria-label="page number"
           className="p-pagination__input"
-          disabled={isLoading}
+          disabled={disabled}
           error={error}
           min={1}
           onBlur={onInputBlur}
@@ -55,7 +55,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <Button
           aria-label="Next page"
           className="p-pagination__link--next"
-          disabled={currentPage === totalPages || isLoading}
+          disabled={currentPage === totalPages || disabled}
           onClick={onNextClick}
           type="button"
         >
@@ -68,20 +68,17 @@ export const Pagination: React.FC<PaginationProps> = ({
 
 export interface PaginationContainerProps {
   currentPage: PaginationProps["currentPage"];
-  debounceInterval: number;
-  isLoading: PaginationProps["isLoading"];
+  disabled: PaginationProps["disabled"];
   paginate: (page: number) => void;
   totalPages: PaginationProps["totalPages"];
 }
 
 export const PaginationContainer: React.FC<PaginationContainerProps> = ({
   currentPage,
-  debounceInterval,
-  isLoading,
+  disabled,
   paginate,
   totalPages,
 }: PaginationContainerProps) => {
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [pageNumber, setPageNumber] = useState<number | undefined>(currentPage);
   const [error, setError] = useState("");
 
@@ -91,21 +88,16 @@ export const PaginationContainer: React.FC<PaginationContainerProps> = ({
   };
 
   const onInputChange: PaginationProps["onInputChange"] = (e) => {
-    if (e.target.value) {
-      setPageNumber(e.target.valueAsNumber);
-      if (intervalRef.current) {
-        clearTimeout(intervalRef.current);
+    const { value, valueAsNumber } = e.target;
+    if (value) {
+      setPageNumber(valueAsNumber);
+      if (valueAsNumber > totalPages || valueAsNumber < 1) {
+        setError(`${valueAsNumber} is not a valid page number.`);
+      } else {
+        setError("");
+        paginate(valueAsNumber);
       }
-      intervalRef.current = setTimeout(() => {
-        if (e.target.valueAsNumber > totalPages || e.target.valueAsNumber < 1) {
-          setError(`"${e.target.valueAsNumber}" is not a valid page number.`);
-        } else {
-          setError("");
-          paginate(e.target.valueAsNumber);
-        }
-      }, debounceInterval);
     } else {
-      setPageNumber(undefined);
       setError("Enter a page number.");
     }
   };
@@ -120,20 +112,11 @@ export const PaginationContainer: React.FC<PaginationContainerProps> = ({
     paginate(Number(currentPage) + 1);
   };
 
-  // Clear the timeout when the component is unmounted.
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearTimeout(intervalRef.current);
-      }
-    };
-  }, []);
-
   return (
     <Pagination
       currentPage={currentPage}
       error={error}
-      isLoading={isLoading}
+      disabled={disabled}
       onInputBlur={onInputBlur}
       onInputChange={onInputChange}
       onNextClick={onNextClick}

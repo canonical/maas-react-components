@@ -21,7 +21,7 @@ export const Example = {
   args: {
     currentPage: 1,
     error: "",
-    isLoading: false,
+    disabled: false,
     onInputBlur: () => {},
     onInputChange: () => {},
     onNextClick: () => {},

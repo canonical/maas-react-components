@@ -7,7 +7,7 @@ it("renders without crashing", () => {
   render(
     <Pagination
       currentPage={1}
-      isLoading={false}
+      disabled={false}
       onInputBlur={vi.fn()}
       onInputChange={vi.fn()}
       onNextClick={vi.fn()}
