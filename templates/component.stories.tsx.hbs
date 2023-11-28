@@ -1,0 +1,20 @@
+import { Meta } from "@storybook/react";
+
+import { {{pascalCase name}} } from "@/lib/{{category}}s/{{pascalCase name}}/{{pascalCase name}}";
+
+const meta: Meta<typeof {{pascalCase name}}> = {
+  title: "{{category}}s/{{pascalCase name}}",
+  component: {{pascalCase name}},
+  tags: ["autodocs"],
+  parameters: {
+    status: {
+      type: "candidate",
+    },
+  },
+};
+
+export default meta;
+
+export const Example = {
+  args: {},
+};
