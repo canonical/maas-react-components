@@ -31,6 +31,11 @@ module.exports = function (plop) {
         templateFile: "templates/component.test.tsx.hbs",
       },
       {
+        type: "add",
+        path: "src/lib/{{category}}s/{{pascalCase name}}/{{pascalCase name}}.stories.tsx",
+        templateFile: "templates/component.stories.tsx.hbs",
+      },
+      {
         type: "append",
         path: "src/lib/{{category}}s/index.ts",
         template: 'export * from "./{{pascalCase name}}";',
