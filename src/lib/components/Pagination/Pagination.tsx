@@ -4,7 +4,6 @@ import "./Pagination.scss";
 import { Button, Icon, Input } from "@canonical/react-components";
 
 export interface PaginationProps {
-  currentPage: number | undefined;
   error?: string;
   disabled: boolean;
   onInputBlur: () => void;
@@ -16,7 +15,6 @@ export interface PaginationProps {
 }
 
 export const Pagination: React.FC<PaginationProps> = ({
-  currentPage,
   error,
   disabled,
   onInputBlur,
@@ -32,7 +30,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <Button
           aria-label="Previous page"
           className="p-pagination__link--previous"
-          disabled={currentPage === 1 || disabled}
+          disabled={pageNumber === 1 || disabled}
           onClick={onPreviousClick}
           type="button"
         >
@@ -55,7 +53,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <Button
           aria-label="Next page"
           className="p-pagination__link--next"
-          disabled={currentPage === totalPages || disabled}
+          disabled={pageNumber === totalPages || disabled}
           onClick={onNextClick}
           type="button"
         >
@@ -67,7 +65,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 };
 
 export interface PaginationContainerProps {
-  currentPage: PaginationProps["currentPage"];
+  currentPage: PaginationProps["pageNumber"];
   disabled: PaginationProps["disabled"];
   paginate: (page: number) => void;
   totalPages: PaginationProps["totalPages"];
@@ -114,7 +112,6 @@ export const PaginationContainer: React.FC<PaginationContainerProps> = ({
 
   return (
     <Pagination
-      currentPage={currentPage}
       error={error}
       disabled={disabled}
       onInputBlur={onInputBlur}

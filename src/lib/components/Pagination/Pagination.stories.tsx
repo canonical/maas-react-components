@@ -19,7 +19,6 @@ const meta: Meta<typeof Pagination> = {
 export default meta;
 export const Example = { 
   args: {
-    currentPage: 1,
     error: "",
     disabled: false,
     onInputBlur: () => {},
