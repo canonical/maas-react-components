@@ -54,13 +54,13 @@ const ControlledTemplate = () => {
 
   return (
     <Pagination 
+      currentPage={pageNumber}
       error={error}
       disabled={disabled}
       onInputBlur={onInputBlur}
       onInputChange={onInputChange}
       onNextClick={onNextClick}
       onPreviousClick={onPreviousClick}
-      pageNumber={pageNumber}
       totalPages={totalPages}
     />
   )
@@ -70,13 +70,13 @@ const ControlledTemplate = () => {
 export default meta;
 export const Example = { 
   args: {
+    currentPage: 1,
     error: "",
     disabled: false,
     onInputBlur: () => {},
     onInputChange: () => {},
     onNextClick: () => {},
     onPreviousClick: () => {},
-    pageNumber: 1,
     totalPages: 10,
   }, 
 };

@@ -11,7 +11,7 @@ it("renders without crashing", () => {
       onInputChange={vi.fn()}
       onNextClick={vi.fn()}
       onPreviousClick={vi.fn()}
-      pageNumber={1}
+      currentPage={1}
       totalPages={10}
     />,
   );

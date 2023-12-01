@@ -4,24 +4,24 @@ import "./Pagination.scss";
 import { Button, Icon, Input } from "@canonical/react-components";
 
 export interface PaginationProps {
+  currentPage: number | undefined;
   error?: string;
   disabled: boolean;
   onInputBlur: () => void;
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onNextClick: () => void;
   onPreviousClick: () => void;
-  pageNumber: number | undefined;
   totalPages: number;
 }
 
 export const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
   error,
   disabled,
   onInputBlur,
   onInputChange,
   onNextClick,
   onPreviousClick,
-  pageNumber,
   totalPages,
 }: PaginationProps) => {
   return (
@@ -30,7 +30,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <Button
           aria-label="Previous page"
           className="p-pagination__link--previous"
-          disabled={pageNumber === 1 || disabled}
+          disabled={currentPage === 1 || disabled}
           onClick={onPreviousClick}
           type="button"
         >
@@ -47,13 +47,13 @@ export const Pagination: React.FC<PaginationProps> = ({
           onChange={onInputChange}
           required
           type="number"
-          value={pageNumber}
+          value={currentPage}
         />{" "}
         <strong className="u-no-wrap"> of {totalPages}</strong>
         <Button
           aria-label="Next page"
           className="p-pagination__link--next"
-          disabled={pageNumber === totalPages || disabled}
+          disabled={currentPage === totalPages || disabled}
           onClick={onNextClick}
           type="button"
         >
@@ -65,7 +65,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 };
 
 export interface PaginationContainerProps {
-  currentPage: PaginationProps["pageNumber"];
+  currentPage: PaginationProps["currentPage"];
   disabled: PaginationProps["disabled"];
   paginate: (page: number) => void;
   totalPages: PaginationProps["totalPages"];
@@ -112,13 +112,13 @@ export const PaginationContainer: React.FC<PaginationContainerProps> = ({
 
   return (
     <Pagination
+      currentPage={pageNumber}
       error={error}
       disabled={disabled}
       onInputBlur={onInputBlur}
       onInputChange={onInputChange}
       onNextClick={onNextClick}
       onPreviousClick={onPreviousClick}
-      pageNumber={pageNumber}
       totalPages={totalPages}
     />
   );
