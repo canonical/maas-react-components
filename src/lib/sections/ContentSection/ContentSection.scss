@@ -1,0 +1,22 @@
+@import "vanilla-framework";
+
+$section-padding: 1.5rem;
+
+section.content-section {
+  padding: $section-padding 0 0;
+
+  .content-section__footer {
+    background: white;
+    width: 100%;
+    position: sticky;
+    margin-top: $section-padding;
+    bottom: 0;
+    border-top: $border;
+    padding: 1rem 0;
+
+    // Reduce the margin of all direct descendants for consistent spacing
+    > * {
+      margin-bottom: 0;
+    }
+  }
+}
