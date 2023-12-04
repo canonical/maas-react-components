@@ -5,9 +5,8 @@
   container-type: inline-size;
   column-gap: 1.5rem;
   align-items: baseline;
-  margin-bottom: $spv--large;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
+
   // The negative margin-bottom counteracts the default bottom margin of nested inputs. 
   // This allows the toolbar to dictate the spacing.
   margin-bottom: -#{$input-margin-bottom};
@@ -27,8 +26,7 @@
     flex: 1;
 
     &--stacked {
-      flex-wrap: wrap;
-      flex-direction: column;
+      flex-flow: column wrap;
       width: 100%;
     }
 

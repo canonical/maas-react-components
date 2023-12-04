@@ -14,7 +14,7 @@ section.content-section {
     bottom: 0;
     border-top: $border;
     padding: $footer-padding 0 0 0;
-    align: right;
+    text-align: right;
 
     // Reduce the margin of all direct descendants for consistent spacing
     > * {
