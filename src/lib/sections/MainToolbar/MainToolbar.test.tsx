@@ -15,7 +15,7 @@ afterEach(() => {
   window.ResizeObserver = originalObserver;
 });
 
-test("renders correctly", () => {
+it("renders correctly", () => {
   const title = "Toolbar title";
   const buttonLabel = "Toolbar button";
 
@@ -30,4 +30,21 @@ test("renders correctly", () => {
 
   expect(screen.getByRole("heading", { name: title })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: buttonLabel })).toBeInTheDocument();
+});
+
+it("renders custom className and title element", () => {
+  const title = "Toolbar title";
+  const customClassName = "custom-class";
+
+  render(
+    <MainToolbar>
+      <MainToolbar.Title as="h5" className={customClassName}>
+        {title}
+      </MainToolbar.Title>
+    </MainToolbar>,
+  );
+
+  const heading = screen.getByRole("heading", { name: title, level: 5 });
+  expect(heading).toBeInTheDocument();
+  expect(heading).toHaveClass(customClassName);
 });

@@ -3,6 +3,7 @@ import * as React from "react";
 import classNames from "classnames";
 
 import "./MainToolbar.scss";
+import { AsProp } from "@/types";
 
 function useResizeObserver(ref: React.RefObject<HTMLElement>) {
   const [dimensions, setDimensions] = React.useState<DOMRect | null>(null);
@@ -77,15 +78,27 @@ export const MainToolbar = ({ children }: MainToolbarProps) => {
   );
 };
 
-const MainToolbarTitle = ({ children, ...props }: React.PropsWithChildren) => {
+interface MainToolbarTitleProps
+  extends React.PropsWithChildren,
+    AsProp<React.ElementType>,
+    React.HTMLAttributes<HTMLElement> {
+  className?: string;
+}
+const MainToolbarTitle = ({
+  as,
+  children,
+  className,
+  ...props
+}: MainToolbarTitleProps) => {
+  const Component = as || "h1";
   return (
-    <h1
-      className="main-toolbar__title p-heading--4"
+    <Component
+      className={classNames("main-toolbar__title p-heading--4", className)}
       data-testid="main-toolbar-heading"
       {...props}
     >
       {children}
-    </h1>
+    </Component>
   );
 };
 
