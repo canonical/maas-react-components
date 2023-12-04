@@ -1,6 +1,7 @@
 @import "vanilla-framework";
 
-$section-padding: 1.5rem;
+$section-padding: 0.75rem;
+$footer-padding: 1rem;
 
 section.content-section {
   padding: $section-padding 0 0;
@@ -12,11 +13,12 @@ section.content-section {
     margin-top: $section-padding;
     bottom: 0;
     border-top: $border;
-    padding: 1rem 0;
+    padding: $footer-padding 0 0 0;
+    align: right;
 
     // Reduce the margin of all direct descendants for consistent spacing
     > * {
-      margin-bottom: 0;
+      margin-bottom: $footer-padding;
     }
   }
 }
