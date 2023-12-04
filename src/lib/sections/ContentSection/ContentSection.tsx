@@ -8,7 +8,6 @@ import { AsProp } from "@/types";
 
 interface CommonContentSectionProps extends React.PropsWithChildren {
   className?: string;
-  align?: "left" | "center" | "right";
 }
 export interface ContentSectionProps
   extends CommonContentSectionProps,
