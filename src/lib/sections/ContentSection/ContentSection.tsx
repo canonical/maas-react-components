@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Col } from "@canonical/react-components";
+import { Col, Row } from "@canonical/react-components";
 import classNames from "classnames";
 
 import "./ContentSection.scss";
@@ -29,12 +29,18 @@ export const ContentSection = ({
   children,
   className,
   as,
+  variant = "wide",
   ...props
-}: ContentSectionProps) => {
+}: ContentSectionProps & {
+  variant?: "narrow" | "wide";
+}) => {
   const Component = as || "section";
+  const sectionClass = classNames("content-section", className);
   return (
-    <Component {...props} className={classNames("content-section", className)}>
-      <Col size={12}>{children}</Col>
+    <Component {...props} className={sectionClass}>
+      <Row>
+        <Col size={variant === "narrow" ? 6 : 12}>{children}</Col>
+      </Row>
     </Component>
   );
 };
