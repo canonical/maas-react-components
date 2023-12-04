@@ -53,5 +53,6 @@ export const WithForm = {
         </ContentSection.Footer>
       </>
     ),
+    variant: "narrow",
   },
 };
