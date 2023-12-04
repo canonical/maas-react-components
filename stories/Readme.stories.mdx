@@ -1,0 +1,25 @@
+import GUIDELINES from "../GUIDELINES.md?raw";
+
+import { Markdown, Unstyled } from "@storybook/blocks";
+import { Meta } from "@storybook/addon-docs/blocks";
+import { DocsContainer } from "@storybook/blocks";
+import { name, description } from "../package.json";
+
+<Meta title="Readme" />
+
+<Unstyled>
+<img
+  src="https://assets.ubuntu.com/v1/142ae045-Canonical%20MAAS.png"
+  alt="Canonical MAAS"
+  width="180"
+/>
+<br />
+
+<p className="p-heading--3">{name}</p>
+
+<p>{description}</p>
+</Unstyled>
+
+<Unstyled>
+  <Markdown>{GUIDELINES}</Markdown>
+</Unstyled>

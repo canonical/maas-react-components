@@ -4,7 +4,7 @@
 
 The primary goal of this library is to address the issue of duplicated React components across MAAS UI projects and encourage better component design and separation of concerns.
 
-It is not meant to be a replacement for @canonical/react-components.
+It is not meant to be a replacement for [@canonical/react-components](https://github.com/canonical/react-components).
 
 This library contains either components that are specific to, or only used in MAAS, such as components not yet approved by the design team for wide use across all web team sites and applications. General purpose components should be added to @canonical/react-components and not @canonical/maas-react-components.
 
@@ -16,12 +16,23 @@ We encourage separation of concerns by creating container and presentational com
 
 #### Categories
 
-Components in this library are grouped into 3 categories characterized by different levels of component complexity. This idea is borrowed from atomic design, but we decided not to use its terminology and use something that’s closer to vanilla framework for consistency.
+Components in this library are grouped into 4 categories characterized by different levels of component complexity. This idea is borrowed from atomic design, but we decided not to use its terminology and use something that’s closer to vanilla framework for consistency.
 
-- Elements
-- Components
-- Sections
-- Layout
+##### Elements
+
+These are the smallest building blocks of the UI, such as buttons, inputs, and icons. They are highly reusable and have minimal dependencies on other components
+
+##### Components
+
+These are more complex UI elements that combine multiple elements together to form a cohesive unit. Examples include navigation bars, cards, and modals. Components may have some dependencies on other components within the library.
+
+##### Sections
+
+Sections are larger UI units that represent distinct sections of a page or application. They often contain multiple components and may have specific layout requirements. Examples include headers, footers, and sidebars.
+
+##### Layout
+
+Layout components define the overall structure and arrangement of the UI. They provide a framework for organizing sections and components within a page or application. Examples include grids, containers, and responsive layout components.
 
 #### MAAS - specific Components
 
@@ -35,7 +46,11 @@ Each component added to the library needs must meet the following criteria:
 
 It is acceptable to initially add a component to the MAAS React Component Library, even if it is known or planned for wider use. However, this should be clearly documented and communicated to the relevant team members.
 
-Every such component should be labeled as “planned for wider use”/”potential for wider use”  in the live documentation. This is to ensure that those components are revisited regularly and eventually either migrated to @canonical/react-component or have the label removed.
+Every such component should be labeled as "candidate"  in the live documentation indicating that they're a candidate for wider use. This is to ensure that those components are revisited regularly and eventually either migrated to @canonical/react-component or have the label removed.
+
+#### Legacy components
+
+Components labeled as "legacy" do not adhere to all component library guidelines and aren't a good example to follow. They've been added for practical reasons, and we plan to phase them out eventually.
 
 #### Recommended patterns
 
