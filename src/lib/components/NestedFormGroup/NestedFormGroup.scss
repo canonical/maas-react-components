@@ -12,6 +12,7 @@
     background: $color-mid-light;
     opacity: inherit;
     visibility: inherit;
+
     @include vf-transition(#{transform, opacity, visibility}, fast);
   }
 }
@@ -36,9 +37,10 @@
 
 .p-form__nested-group {
   position: relative;
-  margin-top:-(map-get($nudges, x-small));
+  margin-top:-(map_get($nudges, x-small));
   margin-left: calc($form-tick-box-size / 2 - ($input-border-thickness / 2));
-  padding-left: calc($sph--large + $form-tick-box-size/2);
+  padding-left: calc($sph--large + $form-tick-box-size / 2);
+
   @include accordion-reveal;
   @include vertical-line;
   
