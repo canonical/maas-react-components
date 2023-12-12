@@ -31,7 +31,9 @@ const meta: Meta<typeof Navigation> = {
                 </Navigation.LogoIcon>
               </Navigation.LogoTag>
               <Navigation.LogoText>
-                <Navigation.LogoName variant="small">Canonical</Navigation.LogoName>
+                <Navigation.LogoName variant="small">
+                  Canonical
+                </Navigation.LogoName>
                 <Navigation.LogoName>MAAS</Navigation.LogoName>
               </Navigation.LogoText>
             </Navigation.Logo>
@@ -68,7 +70,9 @@ const meta: Meta<typeof Navigation> = {
                   </Navigation.LogoIcon>
                 </Navigation.LogoTag>
                 <Navigation.LogoText>
-                  <Navigation.LogoName variant="small">Canonical</Navigation.LogoName>
+                  <Navigation.LogoName variant="small">
+                    Canonical
+                  </Navigation.LogoName>
                   <Navigation.LogoName>MAAS</Navigation.LogoName>
                 </Navigation.LogoText>
               </Navigation.Logo>
@@ -217,6 +221,7 @@ const meta: Meta<typeof Navigation> = {
           </Navigation.Footer>
         </Navigation.Drawer>
       </Navigation>
+      <div className="l-application__content">{args.children}</div>
     </div>
   ),
   tags: ["autodocs"],
@@ -230,3 +235,22 @@ const meta: Meta<typeof Navigation> = {
 
 export default meta;
 export const Example = { args: { isCollapsed: false } };
+
+import { ContentSection } from "@/lib/sections/ContentSection/ContentSection";
+import { WithInputGroup } from "@/lib/sections/FormSection/FormSection.stories";
+import { Example as MainToolbarExample } from "@/lib/sections/MainToolbar/MainToolbar.stories";
+
+export const Layout = {
+  args: {
+    children: (
+      <ContentSection>
+        <ContentSection.Header>
+          <MainToolbarExample.render />
+        </ContentSection.Header>
+        <ContentSection.Content>
+          <WithInputGroup.render />
+        </ContentSection.Content>
+      </ContentSection>
+    ),
+  },
+};
