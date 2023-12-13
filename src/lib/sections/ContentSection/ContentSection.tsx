@@ -57,6 +57,12 @@ const Title = ({ children, className, as, ...props }: ContentSectionProps) => {
   );
 };
 
+const Header = ({ children, className }: CommonContentSectionProps) => (
+  <div className={classNames("content-section__header", className)}>
+    {children}
+  </div>
+);
+
 const Content = ({ children, className }: CommonContentSectionProps) => (
   <div className={classNames("content-section__body", className)}>
     {children}
@@ -70,5 +76,6 @@ const Footer = ({ children, className }: CommonContentSectionProps) => (
 );
 
 ContentSection.Title = Title;
+ContentSection.Header = Header;
 ContentSection.Content = Content;
 ContentSection.Footer = Footer;
