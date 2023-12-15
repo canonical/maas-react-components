@@ -72,3 +72,19 @@ export const WithToolbar = {
     ),
   },
 };
+
+export const WithNestedFooter = {
+  args: {
+    children: (
+      <>
+        <ContentSection.Header>
+          <ContentSection.Title>Section Title</ContentSection.Title>
+        </ContentSection.Header>
+        <ContentSection.Content>
+          Section Content
+          <ContentSection.Footer>Section Footer</ContentSection.Footer>
+        </ContentSection.Content>
+      </>
+    ),
+  },
+};
