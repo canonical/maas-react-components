@@ -58,9 +58,9 @@ const Title = ({ children, className, as, ...props }: ContentSectionProps) => {
 };
 
 const Header = ({ children, className }: CommonContentSectionProps) => (
-  <div className={classNames("content-section__header", className)}>
+  <header className={classNames("content-section__header", className)}>
     {children}
-  </div>
+  </header>
 );
 
 const Content = ({ children, className }: CommonContentSectionProps) => (
@@ -70,9 +70,9 @@ const Content = ({ children, className }: CommonContentSectionProps) => (
 );
 
 const Footer = ({ children, className }: CommonContentSectionProps) => (
-  <div className={classNames("content-section__footer", className)}>
+  <footer className={classNames("content-section__footer", className)}>
     {children}
-  </div>
+  </footer>
 );
 
 ContentSection.Title = Title;
