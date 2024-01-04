@@ -1,0 +1,21 @@
+@import "vanilla-framework";
+@include vf-base;
+@include vf-p-buttons;
+
+.file-upload {
+  background: linear-gradient(to right, $color-mid-light 50%, transparent 50%) 0 0,
+    linear-gradient(to right, $color-mid-light 50%, transparent 50%) 0 100%,
+    linear-gradient(to bottom, $color-mid-light 50%, transparent 50%) 0 0,
+    linear-gradient(to bottom, $color-mid-light 50%, transparent 50%) 100% 0;
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 10px $input-border-thickness, 10px $input-border-thickness, $input-border-thickness 10px, $input-border-thickness 10px;
+}
+
+.file-upload__button {
+  @extend .p-button--link;
+
+  text-align: left;
+  width: 100%;
+  padding: $spv--x-small $sph--small $sph--x-large $spv--small;
+  margin-bottom: 0;
+}
