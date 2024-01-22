@@ -6,6 +6,11 @@ $footer-padding: 1rem;
 section.content-section {
   padding: $section-padding 0 0;
 
+  .content-section__header {
+    padding-top: 0.051rem;
+    margin-bottom: $input-margin-bottom;
+  }
+
   .content-section__footer {
     background: white;
     width: 100%;

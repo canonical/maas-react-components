@@ -3,6 +3,7 @@ import { Meta } from "@storybook/react";
 
 import { ContentSection } from "@/lib/sections/ContentSection/ContentSection";
 import { WithInputGroup } from "@/lib/sections/FormSection/FormSection.stories";
+import { Example as MainToolbarExample } from "@/lib/sections/MainToolbar/MainToolbar.stories";
 
 const meta: Meta<typeof ContentSection> = {
   title: "sections/ContentSection",
@@ -54,5 +55,36 @@ export const WithForm = {
       </>
     ),
     variant: "narrow",
+  },
+};
+
+export const WithToolbar = {
+  args: {
+    children: (
+      <>
+        <ContentSection.Header>
+          <MainToolbarExample.render />
+        </ContentSection.Header>
+        <ContentSection.Content>
+          <WithInputGroup.render />
+        </ContentSection.Content>
+      </>
+    ),
+  },
+};
+
+export const WithNestedFooter = {
+  args: {
+    children: (
+      <>
+        <ContentSection.Header>
+          <ContentSection.Title>Section Title</ContentSection.Title>
+        </ContentSection.Header>
+        <ContentSection.Content>
+          Section Content
+          <ContentSection.Footer>Section Footer</ContentSection.Footer>
+        </ContentSection.Content>
+      </>
+    ),
   },
 };

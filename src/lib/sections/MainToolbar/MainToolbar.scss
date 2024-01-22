@@ -16,6 +16,10 @@
     align-items: flex-start;
   }
 
+  .main-toolbar__title {
+    padding-top: 0.051rem;
+  }
+
   .main-toolbar__controls,
   .main-toolbar__controls--observer {
     display: flex;

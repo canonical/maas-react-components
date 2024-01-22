@@ -1,0 +1,66 @@
+@import "vanilla-framework";
+@include vf-base;
+@include vf-p-lists;
+@include vf-p-stepped-list;
+
+$padding-left: 2rem;
+$left: 3px;
+$top: 10px;
+$height: 1.5rem;
+
+.stepper {
+  margin-bottom: $spv--medium;
+
+  @extend .p-stepped-list;
+
+  .stepper__item {
+    @extend .p-stepped-list__item;
+
+    padding-bottom: $spv--x-small;
+    width: auto;
+
+    &:not(:last-of-type) {
+      margin-right: $sp-xx-large;
+    }
+  }
+ 
+  .stepper__title {
+    @extend .p-stepped-list__title;
+
+    margin-bottom: $spv--x-small;
+    padding-left: $padding-left;
+
+    &::before {
+      content: counter(li);
+      border-radius: 50%;
+      text-align: center;
+      background-color: $color-light;
+      height: $height;
+
+      @include vf-transition(#{background-color}, slow);
+    }
+  }
+
+  .stepper__title--is-active {
+    &::before {
+      background-color: $color-dark;
+      color: $color-x-light;
+    }
+  }
+
+  .stepper__title--is-complete {
+    &::before {
+      content: "";
+    }
+    
+    &::after {
+      @include vf-icon-task-outstanding($color-dark);
+      @include vf-icon-size($default-icon-size);
+  
+      content: "";
+      left: $left;
+      position: absolute;
+      top: $top;
+    }
+  }
+}
