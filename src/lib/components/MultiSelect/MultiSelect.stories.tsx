@@ -33,8 +33,8 @@ export default meta;
 
 export const Example = {
   args: {
-    items: Array.from({ length: 10 }, (_, i) => `Item ${i + 1}`),
-    selectedItems: ["Item 1", "Item 2"],
-    disabledItems: ["Item 1", "Item 3"],
+    items: Array.from({ length: 10 }, (_, i) => ({ label: `Item ${i + 1}`, value: i + 1 })),
+    selectedItems: [{ label: "Item 1", value: 1 }, { label: "Item 2", value: 2 }],
+    disabledItems: [{ label: "Item 1", value: 1 }, { label: "Item 3", value: 3 }],
   },
 };

@@ -12,7 +12,10 @@ import {
 import "./MultiSelect.scss";
 import { FadeInDown } from "@/lib/components/FadeInDown";
 
-export type MultiSelectItem = string;
+export type MultiSelectItem = {
+  label: string;
+  value: string | number;
+};
 
 export type MultiSelectProps = {
   disabled?: boolean;
@@ -31,11 +34,11 @@ export type MultiSelectProps = {
 
 type MultiSelectDropdownProps = {
   isOpen: boolean;
-  items: string[];
-  selectedItems: string[];
-  disabledItems: string[];
+  items: MultiSelectItem[];
+  selectedItems: MultiSelectItem[];
+  disabledItems: MultiSelectItem[];
   header?: ReactNode;
-  updateItems: (newItems: string[]) => void;
+  updateItems: (newItems: MultiSelectItem[]) => void;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
@@ -53,15 +56,15 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         {header && <h5 className="multi-select__dropdown-header">{header}</h5>}
         <ul className="multi-select__dropdown-list">
           {items.map((item) => (
-            <li key={item} className="multi-select__dropdown-item">
+            <li key={item.value} className="multi-select__dropdown-item">
               <CheckboxInput
-                disabled={disabledItems.includes(item)}
-                label={item}
-                checked={selectedItems.includes(item)}
+                disabled={disabledItems.some(disabledItem => disabledItem.value === item.value)}
+                label={item.label}
+                checked={selectedItems.some(selectedItem => selectedItem.value === item.value)}
                 onChange={() =>
                   updateItems(
-                    selectedItems.includes(item)
-                      ? selectedItems.filter((i) => i !== item)
+                    selectedItems.some(selectedItem => selectedItem.value === item.value)
+                      ? selectedItems.filter((i) => i.value !== item.value)
                       : [...selectedItems, item],
                   )
                 }
@@ -74,7 +77,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
             appearance="link"
             onClick={() => {
               const enabledItems = items.filter(
-                (item) => !disabledItems.includes(item),
+                (item) => !disabledItems.some(disabledItem => disabledItem.value === item.value),
               );
               updateItems([...selectedItems, ...enabledItems]);
             }}
@@ -86,7 +89,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
             appearance="link"
             onClick={() => {
               const disabledSelectedItems = selectedItems.filter((item) =>
-                disabledItems.includes(item),
+                disabledItems.some(disabledItem => disabledItem.value === item.value),
               );
               updateItems(disabledSelectedItems);
             }}
@@ -127,7 +130,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     }
   }, [isDropdownOpen]);
 
-  const [internalSelectedItems, setInternalSelectedItems] = useState<string[]>(
+  const [internalSelectedItems, setInternalSelectedItems] = useState<MultiSelectItem[]>(
     [],
   );
   const selectedItems = externalSelectedItems || internalSelectedItems;
@@ -139,8 +142,8 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   };
 
   const selectedElements = selectedItems.map((item) => (
-    <li key={item} className="multi-select__selected-item" aria-label={item}>
-      {item}
+    <li key={item.value} className="multi-select__selected-item" aria-label={item.label}>
+      {item.label}
     </li>
   ));
 
@@ -176,7 +179,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
           isOpen={isDropdownOpen}
           items={
             filter.length > 0
-              ? items.filter((item) => item.includes(filter))
+              ? items.filter((item) => item.label.includes(filter))
               : items
           }
           selectedItems={selectedItems}
