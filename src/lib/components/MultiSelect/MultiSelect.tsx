@@ -218,21 +218,20 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             className="multi-select__input"
           />
         ) : (
-          <Button
+          <button
             role="combobox"
+            type="button"
             aria-label={label || placeholder || "Select items"}
             aria-controls={dropdownId}
             aria-expanded={isDropdownOpen}
             className="multi-select__select-button"
-            multiple
             onFocus={() => setIsDropdownOpen(true)}
             onClick={() => setIsDropdownOpen(true)}
-            options={items}
           >
             {selectedItems.length > 0
               ? selectedItemsLabel
               : placeholder ?? "Select items"}
-          </Button>
+          </button>
         )}
         <MultiSelectDropdown
           id={dropdownId}

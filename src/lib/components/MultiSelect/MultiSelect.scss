@@ -112,7 +112,7 @@
   white-space: nowrap;
 }
 
-.multi-select__select-button {
+button.multi-select__select-button {
   @extend %vf-input-elements;
 
   position: relative;
