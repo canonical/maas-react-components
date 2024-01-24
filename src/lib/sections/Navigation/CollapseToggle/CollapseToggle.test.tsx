@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { vi } from "vitest";
 
@@ -29,7 +29,11 @@ it("displays a tooltip on hover", async () => {
   await userEvent.hover(
     screen.getByRole("button", { name: "collapse main navigation" }),
   );
-  expect(screen.getByRole("button", { name: /collapse/i })).toBeInTheDocument();
+  await waitFor(() =>
+    expect(
+      screen.getByRole("tooltip", { name: /collapse/i }),
+    ).toBeInTheDocument(),
+  );
 });
 
 it("calls the provided function on click", async () => {

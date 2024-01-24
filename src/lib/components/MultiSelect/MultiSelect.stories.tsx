@@ -36,7 +36,6 @@ export const CondensedExample = {
     items: Array.from({ length: 10 }, (_, i) => ({
       label: `Item ${i + 1}`,
       value: i + 1,
-      selected: true,
     })),
     selectedItems: [
       { label: "Item 1", value: 1 },
