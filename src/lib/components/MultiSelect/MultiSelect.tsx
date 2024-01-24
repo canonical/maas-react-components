@@ -141,7 +141,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     onItemsUpdate && onItemsUpdate(uniqueItems);
   };
 
-  const selectedElements = selectedItems.map((item) => (
+  const selectedElements = selectedItems.filter((selectedItem) => items.some(item => item.value === selectedItem.value)).map((item) => (
     <li key={item.value} className="multi-select__selected-item" aria-label={item.label}>
       {item.label}
     </li>
