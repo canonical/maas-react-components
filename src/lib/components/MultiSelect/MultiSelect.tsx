@@ -228,9 +228,11 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             onFocus={() => setIsDropdownOpen(true)}
             onClick={() => setIsDropdownOpen(true)}
           >
-            {selectedItems.length > 0
-              ? selectedItemsLabel
-              : placeholder ?? "Select items"}
+            <span className="multi-select__condensed-text">
+              {selectedItems.length > 0
+                ? selectedItemsLabel
+                : placeholder ?? "Select items"}
+            </span>
           </button>
         )}
         <MultiSelectDropdown
