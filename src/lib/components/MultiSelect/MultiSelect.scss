@@ -17,6 +17,7 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  margin-right: $sph--large + $sph--x-small;
 }
 
 .multi-select__input {
@@ -130,13 +131,17 @@ button.multi-select__select-button {
   z-index: 0;
 
     &::after {
+      position: absolute;
+      right: $sph--small;
+      top: 50%;
+
         @extend %icon;
         @include vf-icon-chevron($color-mid-dark);
         @include vf-transition($property: transform, $duration: fast);
     
         content: '';
         margin-left: $sph--large;
-        transform: rotate(-180deg);
+        transform: translateY(-50%) rotate(-180deg);
       }
 
       &[aria-expanded='true'] {
@@ -145,7 +150,7 @@ button.multi-select__select-button {
     
       &[aria-expanded='false'] {
         &::after {
-          transform: rotate(0);
+          transform: translateY(-50%) rotate(0);
         }
       }
     }
