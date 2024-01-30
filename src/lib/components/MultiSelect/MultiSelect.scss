@@ -3,7 +3,7 @@
 @include vf-base;
 @include vf-p-lists;
 
-  $dropdown-max-height: 20rem;
+$dropdown-max-height: 20rem;
 
 .multi-select {
   position: relative;
@@ -46,6 +46,8 @@
   position: absolute;
   right: 0;
   top: calc(100% - #{$input-margin-bottom});
+  max-height: $dropdown-max-height;
+  overflow: auto;
 }
 
 .multi-select__dropdown--side-by-side {
@@ -61,13 +63,14 @@
   @extend %vf-list;
 
   margin-bottom: $sph--x-small;
-  max-height: $dropdown-max-height;
-  overflow: auto;
 }
 
 .multi-select__footer {
+  background: white;
   display: flex;
   flex-wrap: wrap;
+  position: sticky;
+  bottom: 0;
   justify-content: space-between;
   border-top: 1px solid $color-mid-light;
   padding: $sph--small $sph--large 0 $sph--large;

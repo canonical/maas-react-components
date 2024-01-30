@@ -35,6 +35,11 @@ export type MultiSelectProps = {
   variant?: "condensed" | "search";
 };
 
+type ValueSet = Set<MultiSelectItem["value"]>;
+type GroupFn = (
+  items: Parameters<typeof getGroupedItems>[0],
+) => ReturnType<typeof getGroupedItems>;
+type SortFn = typeof sortAlphabetically;
 type MultiSelectDropdownProps = {
   isOpen: boolean;
   items: MultiSelectItem[];
@@ -43,30 +48,39 @@ type MultiSelectDropdownProps = {
   header?: ReactNode;
   updateItems: (newItems: MultiSelectItem[]) => void;
   footer?: ReactNode;
+  groupFn?: GroupFn;
+  sortFn?: SortFn;
   shouldPinSelectedItems?: boolean;
-  groupFn?: (
-    items: Parameters<typeof getGroupedItems>[0],
-  ) => ReturnType<typeof getGroupedItems>;
-  sortFn?: (
-    items: Parameters<typeof getSortedItems>[0],
-  ) => ReturnType<typeof getSortedItems>;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-const getSortedItems = (items: MultiSelectItem[]) =>
-  [...items].sort((a, b) =>
-    a.label.localeCompare(b.label, "en", { numeric: true }),
-  );
+const sortAlphabetically = (a: MultiSelectItem, b: MultiSelectItem) => {
+  return a.label.localeCompare(b.label, "en", { numeric: true });
+};
 
-const getGroupedItems = (items: MultiSelectItem[]) =>
-  items.reduce(
-    (groups, item) => {
-      const group = item.group || "Ungrouped";
-      groups[group] = groups[group] || [];
-      groups[group].push(item);
-      return groups;
-    },
-    {} as Record<string, MultiSelectItem[]>,
-  );
+const createSortSelectedItems =
+  (previouslySelectedItemValues: ValueSet) =>
+  (a: MultiSelectItem, b: MultiSelectItem) => {
+    if (previouslySelectedItemValues) {
+      const aIsPreviouslySelected = previouslySelectedItemValues.has(a.value);
+      const bIsPreviouslySelected = previouslySelectedItemValues.has(b.value);
+      if (aIsPreviouslySelected && !bIsPreviouslySelected) return -1;
+      if (!aIsPreviouslySelected && bIsPreviouslySelected) return 1;
+    }
+    return 0;
+  };
+
+const getGroupedItems = (items: MultiSelectItem[]) => {
+  const groups = new Map<string, MultiSelectItem[]>();
+
+  items.forEach((item) => {
+    const group = item.group || "Ungrouped";
+    const groupItems = groups.get(group) || [];
+    groupItems.push(item);
+    groups.set(group, groupItems);
+  });
+
+  return Array.from(groups, ([group, items]) => ({ group, items }));
+};
 
 export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   items,
@@ -76,17 +90,10 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   updateItems,
   isOpen,
   footer,
-  sortFn = getSortedItems,
+  sortFn = sortAlphabetically,
   groupFn = getGroupedItems,
   ...props
 }: MultiSelectDropdownProps) => {
-  const hasGroup = useMemo(() => items.some((item) => item.group), [items]);
-  const sortedItems = useMemo(() => sortFn(items), [items, sortFn]);
-  const groupedItems = useMemo(
-    () => (hasGroup ? groupFn(sortedItems) : { Ungrouped: sortedItems }),
-    [items, groupFn],
-  );
-
   const selectedItemValues = useMemo(
     () => new Set(selectedItems.map((item) => item.value)),
     [selectedItems],
@@ -95,39 +102,56 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     () => new Set(disabledItems.map((item) => item.value)),
     [disabledItems],
   );
+  const [previouslySelectedItemValues, setPreviouslySelectedItemValues] =
+    useState<ValueSet>(new Set(selectedItemValues));
+
+  useEffect(() => {
+    if (isOpen) {
+      setPreviouslySelectedItemValues(new Set(selectedItemValues));
+    }
+  }, [isOpen]);
+
+  const hasGroup = useMemo(() => items.some((item) => item.group), [items]);
+  const groupedItems = useMemo(
+    () => (hasGroup ? groupFn(items) : [{ group: "Ungrouped", items }]),
+    [items, groupFn],
+  );
+  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked, value } = event.target;
+    const foundItem = items.find((item) => `${item.value}` === value);
+    if (foundItem) {
+      const newSelectedItems = checked
+        ? [...selectedItems, foundItem]
+        : selectedItems.filter((item) => `${item.value}` !== value) ?? [];
+      updateItems(newSelectedItems);
+    }
+  };
 
   return (
     <FadeInDown isVisible={isOpen} className={"put-above"}>
       <div className="multi-select__dropdown" role="listbox" {...props}>
         {header ? header : null}
-        {Object.entries(groupedItems).map(([group, items]) => (
+        {groupedItems.map(({ group, items }) => (
           <div className="multi-select__group" key={group}>
             {hasGroup ? (
               <h5 className="multi-select__dropdown-header">{group}</h5>
             ) : null}
             <ul className="multi-select__dropdown-list" aria-label={group}>
-              {items.map((item) => {
-                const isSelected = selectedItemValues.has(item.value);
-                const isDisabled = disabledItemValues.has(item.value);
-                return (
+              {items
+                .sort(sortFn)
+                .sort(createSortSelectedItems(previouslySelectedItemValues))
+                .map((item) => (
                   <li key={item.value} className="multi-select__dropdown-item">
                     <CheckboxInput
-                      disabled={isDisabled}
+                      disabled={disabledItemValues.has(item.value)}
                       label={item.label}
-                      checked={isSelected}
-                      onChange={() =>
-                        updateItems(
-                          isSelected
-                            ? selectedItems.filter(
-                                (i) => i.value !== item.value,
-                              )
-                            : [...selectedItems, item],
-                        )
-                      }
+                      checked={selectedItemValues.has(item.value)}
+                      value={item.value}
+                      onChange={handleOnChange}
+                      key={item.value}
                     />
                   </li>
-                );
-              })}
+                ))}
             </ul>
           </div>
         ))}
@@ -225,8 +249,9 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             aria-controls={dropdownId}
             aria-expanded={isDropdownOpen}
             className="multi-select__select-button"
-            onFocus={() => setIsDropdownOpen(true)}
-            onClick={() => setIsDropdownOpen(true)}
+            onClick={() => {
+              setIsDropdownOpen((isOpen) => !isOpen);
+            }}
           >
             <span className="multi-select__condensed-text">
               {selectedItems.length > 0
