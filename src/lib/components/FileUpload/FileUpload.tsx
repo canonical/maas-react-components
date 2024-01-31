@@ -15,7 +15,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
   return (
     <div {...getRootProps()} className="file-upload" data-testid="file-upload">
-      <button className="file-upload__button">
+      <button className="file-upload__button" type="button">
         Drag and drop files here or click to upload
       </button>
     </div>
