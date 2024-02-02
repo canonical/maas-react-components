@@ -5,12 +5,7 @@ import { getUtilStoryComponent } from "@/utils";
 
 const meta: Meta<typeof formatBytes> = {
   title: "utils/formatBytes",
-  component: getUtilStoryComponent(formatBytes),
-  parameters: {
-    status: {
-      type: "legacy",
-    },
-  },
+  component: getUtilStoryComponent("formatBytes", formatBytes),
 };
 
 export default meta;
