@@ -33,12 +33,18 @@ export default meta;
 
 export const CondensedExample = {
   args: {
-    items: Array.from({ length: 10 }, (_, i) => ({
-      label: `Item ${i + 1}`,
-      value: i + 1,
-    })),
+    items: [
+      ...Array.from({ length: 26 }, (_, i) => ({
+        label: `${String.fromCharCode(i + 65)}`,
+        value: `${String.fromCharCode(i + 65)}`,
+      })),
+      ...Array.from({ length: 26 }, (_, i) => ({
+        label: `Item ${i + 1}`,
+        value: i + 1,
+      })),
+    ],
     selectedItems: [
-      { label: "Item 1", value: 1 },
+      { label: "A", value: "A" },
       { label: "Item 2", value: 2 },
     ],
     variant: "condensed",

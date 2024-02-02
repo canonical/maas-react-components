@@ -168,13 +168,18 @@ it("sorts grouped options alphabetically", async () => {
   render(<MultiSelect items={itemsUnsorted} />);
   await userEvent.click(screen.getByRole("combobox"));
 
-  const checkGroupOrder = (groupName: string, expectedLabels: string[]) => {
+  const checkGroupOrder = async (
+    groupName: string,
+    expectedLabels: string[],
+  ) => {
     const group = screen.getByRole("list", { name: groupName });
-    within(group)
-      .getAllByRole("listitem")
-      .forEach((item, index) => {
-        expect(item).toHaveTextContent(expectedLabels[index]);
-      });
+    await waitFor(() =>
+      within(group)
+        .getAllByRole("listitem")
+        .forEach((item, index) =>
+          expect(item).toHaveTextContent(expectedLabels[index]),
+        ),
+    );
   };
 
   checkGroupOrder("Group 1", ["item A", "item B"]);
@@ -199,4 +204,32 @@ it("hides group title when no items match the search query", async () => {
     screen.queryByRole("heading", { name: "Group 1" }),
   ).not.toBeInTheDocument();
   expect(screen.getByRole("heading", { name: "Group 2" })).toBeInTheDocument();
+});
+
+it("displays previously selected items at the top of the list in a sorted order", async () => {
+  const items = [
+    { label: "item two", value: 2 },
+    { label: "item one", value: 1 },
+  ];
+  const unSortedSelectedItems = [items[1], items[0]];
+
+  render(<MultiSelect items={items} selectedItems={unSortedSelectedItems} />);
+
+  await userEvent.click(screen.getByRole("combobox"));
+
+  const listItems = screen.getAllByRole("listitem");
+
+  await waitFor(() => {
+    expect(listItems[0]).toHaveTextContent("item one");
+    expect(listItems[1]).toHaveTextContent("item two");
+  });
+});
+
+it("opens and closes the dropdown on click", async () => {
+  render(<MultiSelect variant="condensed" items={items} />);
+  expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+  await userEvent.click(screen.getByRole("combobox"));
+  expect(screen.getByRole("listbox")).toBeInTheDocument();
+  await userEvent.click(screen.getByRole("combobox"));
+  expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 });
