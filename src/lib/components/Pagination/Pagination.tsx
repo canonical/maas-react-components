@@ -2,12 +2,14 @@ import { ChangeEvent, useState } from "react";
 
 import "./Pagination.scss";
 import { Button, Icon, Input } from "@canonical/react-components";
+import classNames from "classnames";
 
-export interface PaginationProps {
+export interface PaginationProps extends React.AriaAttributes {
+  className?: string;
   currentPage: number | undefined;
   error?: string;
-  disabled: boolean;
-  onInputBlur: () => void;
+  disabled?: boolean;
+  onInputBlur?: () => void;
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onNextClick: () => void;
   onPreviousClick: () => void;
@@ -15,6 +17,7 @@ export interface PaginationProps {
 }
 
 export const Pagination: React.FC<PaginationProps> = ({
+  className,
   currentPage,
   error,
   disabled,
@@ -23,9 +26,13 @@ export const Pagination: React.FC<PaginationProps> = ({
   onNextClick,
   onPreviousClick,
   totalPages,
+  ...props
 }: PaginationProps) => {
   return (
-    <nav aria-label="pagination" className="p-pagination">
+    <nav
+      aria-label={props?.["aria-label"] || "pagination"}
+      className={classNames("p-pagination", className)}
+    >
       <span className="p-pagination--items">
         <Button
           aria-label="Previous page"

@@ -16,7 +16,9 @@ it("renders without crashing", () => {
       totalPages={10}
     />,
   );
-  expect(screen.getByRole("navigation", { name: "pagination"})).toBeInTheDocument();
+  expect(
+    screen.getByRole("navigation", { name: "pagination" }),
+  ).toBeInTheDocument();
 });
 
 it("displays the current page number in the input box", () => {
@@ -33,7 +35,24 @@ it("displays the current page number in the input box", () => {
   );
 
   expect(screen.getByRole("spinbutton")).toHaveValue(1);
-})
+});
+
+it("allows for a custom accessible label", () => {
+  render(
+    <Pagination
+      aria-label="Custom label"
+      disabled={false}
+      onInputBlur={vi.fn()}
+      onInputChange={vi.fn()}
+      onNextClick={vi.fn()}
+      onPreviousClick={vi.fn()}
+      currentPage={1}
+      totalPages={10}
+    />,
+  );
+
+  expect(screen.getByLabelText("Custom label")).toBeInTheDocument();
+});
 
 it("disables the buttons and input box when the disabled prop is true", () => {
   render(
@@ -51,7 +70,7 @@ it("disables the buttons and input box when the disabled prop is true", () => {
   expect(screen.getByRole("spinbutton")).toBeDisabled();
   expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
   expect(screen.getByRole("button", { name: "Previous page" })).toBeDisabled();
-})
+});
 
 it("disables the 'Previous page' button when on the first page", () => {
   render(
@@ -67,7 +86,7 @@ it("disables the 'Previous page' button when on the first page", () => {
   );
 
   expect(screen.getByRole("button", { name: "Previous page" })).toBeDisabled();
-})
+});
 
 it("disables the 'Next page' button when on the last page", () => {
   render(
@@ -83,7 +102,7 @@ it("disables the 'Next page' button when on the last page", () => {
   );
 
   expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
-})
+});
 
 it("can call a function when the 'Next page' button is pressed", async () => {
   const onNextClick = vi.fn();
@@ -102,7 +121,7 @@ it("can call a function when the 'Next page' button is pressed", async () => {
   await userEvent.click(screen.getByRole("button", { name: "Next page" }));
 
   expect(onNextClick).toHaveBeenCalled();
-})
+});
 
 it("can call a function when the 'Previous page' button is pressed", async () => {
   const onPreviousClick = vi.fn();
@@ -121,7 +140,7 @@ it("can call a function when the 'Previous page' button is pressed", async () =>
   await userEvent.click(screen.getByRole("button", { name: "Previous page" }));
 
   expect(onPreviousClick).toHaveBeenCalled();
-})
+});
 
 it("can call a function when the input box's value is changed", async () => {
   const onInputChange = vi.fn();
@@ -141,7 +160,7 @@ it("can call a function when the input box's value is changed", async () => {
   await userEvent.clear(screen.getByRole("spinbutton"));
 
   expect(onInputChange).toHaveBeenCalled();
-})
+});
 
 it("can call a function when the input box is blurred", async () => {
   const onInputBlur = vi.fn();
@@ -165,4 +184,4 @@ it("can call a function when the input box is blurred", async () => {
   // blur the input
   await userEvent.click(screen.getByText("of 10"));
   expect(onInputBlur).toHaveBeenCalled();
-})
+});
