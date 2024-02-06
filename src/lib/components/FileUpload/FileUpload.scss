@@ -2,13 +2,16 @@
 @include vf-base;
 @include vf-p-buttons;
 
+.file-upload__wrapper {
+  padding-bottom: $spv--medium;
+}
+
 .file-upload {
-  background: linear-gradient(to right, $color-mid-light 50%, transparent 50%) 0 0,
-    linear-gradient(to right, $color-mid-light 50%, transparent 50%) 0 100%,
-    linear-gradient(to bottom, $color-mid-light 50%, transparent 50%) 0 0,
-    linear-gradient(to bottom, $color-mid-light 50%, transparent 50%) 100% 0;
-  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
-  background-size: 10px $input-border-thickness, 10px $input-border-thickness, $input-border-thickness 10px, $input-border-thickness 10px;
+  border: 0.0625rem dashed $color-mid-light;
+
+  &:hover {
+    border: 0.125rem solid $color-link;
+  }
 }
 
 .file-upload__button {
@@ -18,4 +21,40 @@
   width: 100%;
   padding: $spv--x-small $sph--small $sph--x-large $spv--small;
   margin-bottom: 0;
+}
+
+.file-upload__file {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: $sph--small;
+  background-color: $color-light;
+  opacity: $inactive-text-opacity-amount;
+  height: 2.25rem;
+  width: 100%;
+  margin-bottom: $spv--large;
+
+  &.is-rejected {
+    background-color: $color-negative-background;
+  }
+}
+
+.file-upload__files-list {
+  max-height: 15.25rem;
+  overflow-y: auto;
+  padding-right: $sph--small;
+}
+
+.file-upload__file-remove-button {
+  margin-bottom: 0;
+}
+
+.is-error {
+  .file-upload {
+    border: 0.0625rem dashed $color-negative;
+  }
+
+  .file-upload__button {
+    background-color: $color-negative-background;
+  }
 }
