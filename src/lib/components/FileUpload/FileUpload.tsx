@@ -6,6 +6,7 @@ import { useDropzone, DropzoneOptions, FileRejection } from "react-dropzone";
 import "./FileUpload.scss";
 
 export interface FileUploadProps {
+  accept?: DropzoneOptions["accept"];
   error?: ReactNode;
   files: File[];
   help?: string;
@@ -19,6 +20,7 @@ export interface FileUploadProps {
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
+  accept,
   error,
   files,
   help,
@@ -31,6 +33,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   removeRejectedFile,
 }: FileUploadProps) => {
   const { getRootProps } = useDropzone({
+    accept,
     maxFiles,
     maxSize,
     onDrop: onFileUpload,
@@ -113,12 +116,16 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 };
 
 export const FileUploadContainer = ({
+  accept,
   error,
   help,
   label,
   maxFiles,
   maxSize,
-}: Pick<FileUploadProps, "error" | "help" | "label" | "maxFiles" | "maxSize">) => {
+}: Pick<
+  FileUploadProps,
+  "accept" | "error" | "help" | "label" | "maxFiles" | "maxSize"
+>) => {
   const [files, setFiles] = useState<File[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
 
@@ -144,6 +151,7 @@ export const FileUploadContainer = ({
 
   return (
     <FileUpload
+      accept={accept}
       error={error}
       files={files}
       rejectedFiles={rejectedFiles}
