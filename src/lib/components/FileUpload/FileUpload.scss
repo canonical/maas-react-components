@@ -7,7 +7,7 @@
 }
 
 .file-upload {
-  border: 0.0625rem dashed $color-mid-light;
+  border: 0.125rem solid $color-transparent;
 
   &:hover {
     border: 0.125rem solid $color-link;
@@ -21,6 +21,12 @@
   width: 100%;
   padding: $spv--x-small $sph--small $sph--x-large $spv--small;
   margin-bottom: 0;
+  border: 0.0625rem dashed $color-mid-light;
+  transition: none;
+
+  &:hover {
+    border-color: $color-transparent;
+  }
 }
 
 .file-upload__file {

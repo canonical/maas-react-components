@@ -113,24 +113,19 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 };
 
 export const FileUploadContainer = ({
+  error,
   help,
   label,
   maxFiles,
   maxSize,
-}: Pick<FileUploadProps, "help" | "label" | "maxFiles" | "maxSize">) => {
+}: Pick<FileUploadProps, "error" | "help" | "label" | "maxFiles" | "maxSize">) => {
   const [files, setFiles] = useState<File[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
-  const [error, setError] = useState("");
 
   const onFileUpload = useCallback(
     (acceptedFiles: File[], fileRejections: FileRejection[]) => {
       setFiles([...files, ...acceptedFiles]);
       setRejectedFiles([...rejectedFiles, ...fileRejections]);
-      if (fileRejections.length > 0) {
-        setError("Some files were rejected.");
-      } else {
-        setError("");
-      }
     },
     [files, rejectedFiles],
   );
@@ -145,9 +140,6 @@ export const FileUploadContainer = ({
     const newRejectedFiles = [...rejectedFiles];
     newRejectedFiles.splice(newRejectedFiles.indexOf(fileRejection), 1);
     setRejectedFiles(newRejectedFiles);
-    if (newRejectedFiles.length === 0) {
-      setError("");
-    }
   };
 
   return (

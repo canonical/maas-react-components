@@ -13,6 +13,7 @@ export default meta;
 
 export const Example = {
   args: {
+    error: "",
     help: "Max file size is 2GB.",
     label: "Upload files",
     maxFiles: 7,
