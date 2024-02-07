@@ -7,6 +7,8 @@
 }
 
 .file-upload {
+  @include vf-transition(border, fast);
+
   border: 0.125rem solid $color-transparent;
 
   &:hover {
@@ -22,7 +24,6 @@
   padding: $spv--x-small $sph--small $sph--x-large $spv--small;
   margin-bottom: 0;
   border: 0.0625rem dashed $color-mid-light;
-  transition: none;
 
   &:hover {
     border-color: $color-transparent;
