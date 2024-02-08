@@ -7,10 +7,12 @@ import { useDropzone, DropzoneOptions, FileRejection } from "react-dropzone";
 import "./FileUpload.scss";
 import { ProgressIndicator } from "@/lib/elements";
 
+type FileUploadFile = File & { percentUploaded?: number };
+
 export interface FileUploadProps {
   accept?: DropzoneOptions["accept"];
   error?: ReactNode;
-  files: File[];
+  files: FileUploadFile[];
   help?: string;
   label?: string;
   maxFiles?: number;
@@ -19,7 +21,6 @@ export interface FileUploadProps {
   rejectedFiles: FileRejection[];
   removeFile: (file: File) => void;
   removeRejectedFile: (fileRejection: FileRejection) => void;
-  uploadingFiles?: { name: string; percentComplete: number }[];
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
@@ -34,7 +35,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   rejectedFiles,
   removeFile,
   removeRejectedFile,
-  uploadingFiles,
 }: FileUploadProps) => {
   const { getRootProps } = useDropzone({
     accept,
@@ -54,7 +54,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       {label && <Label id={labelId}>{label}</Label>}
       {help && <p className="p-form-help-text">{help}</p>}
       <div className="p-form__control">
-        {!uploadingFiles && (!maxFiles || files.length < maxFiles) ? (
+        {!maxFiles || files.length < maxFiles ? (
           <div className="file-upload__wrapper">
             <div
               {...getRootProps()}
@@ -76,7 +76,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         ) : null}
         <div className="file-upload__files-list">
           {rejectedFiles &&
-            !uploadingFiles &&
             rejectedFiles.map((rejection) => (
               <span className="is-error" key={rejection.file.name}>
                 <div className="file-upload__file is-rejected">
@@ -101,25 +100,21 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               </span>
             ))}
           {files &&
-            !uploadingFiles &&
             files.map((file) => (
               <div className="file-upload__file" key={file.name}>
                 {file.name}
-                <Button
-                  appearance="base"
-                  className="file-upload__file-remove-button"
-                  onClick={() => removeFile(file)}
-                  type="button"
-                >
-                  <Icon name="close">Remove file</Icon>
-                </Button>
-              </div>
-            ))}
-          {uploadingFiles &&
-            uploadingFiles.map((file) => (
-              <div className="file-upload__file" key={file.name}>
-                {file.name}
-                <ProgressIndicator percentComplete={file.percentComplete} />
+                {file.percentUploaded !== undefined ? (
+                  <ProgressIndicator percentComplete={file.percentUploaded} />
+                ) : (
+                  <Button
+                    appearance="base"
+                    className="file-upload__file-remove-button"
+                    onClick={() => removeFile(file)}
+                    type="button"
+                  >
+                    <Icon name="close">Remove file</Icon>
+                  </Button>
+                )}
               </div>
             ))}
         </div>
@@ -135,16 +130,9 @@ export const FileUploadContainer = ({
   label,
   maxFiles,
   maxSize,
-  uploadingFiles,
 }: Pick<
   FileUploadProps,
-  | "accept"
-  | "error"
-  | "help"
-  | "label"
-  | "maxFiles"
-  | "maxSize"
-  | "uploadingFiles"
+  "accept" | "error" | "help" | "label" | "maxFiles" | "maxSize"
 >) => {
   const [files, setFiles] = useState<File[]>([]);
   const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
@@ -182,7 +170,6 @@ export const FileUploadContainer = ({
       onFileUpload={onFileUpload}
       removeFile={removeFile}
       removeRejectedFile={removeRejectedFile}
-      uploadingFiles={uploadingFiles}
     />
   );
 };
