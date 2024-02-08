@@ -20,3 +20,27 @@ export const Example = {
     maxSize: 2000000000,
   },
 };
+
+export const UploadingExample = {
+  args: {
+    error: "",
+    help: "Max file size is 2GB.",
+    label: "Upload files",
+    maxFiles: 3,
+    maxSize: 20000000000,
+    uploadingFiles: [
+      {
+        name: "notes.txt",
+        percentComplete: 100,
+      },
+      {
+        name: "content.mp4",
+        percentComplete: 69,
+      },
+      {
+        name: "meme.png",
+        percentComplete: 0,
+      },
+    ],
+  },
+};
