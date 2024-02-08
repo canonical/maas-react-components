@@ -1,0 +1,11 @@
+@import "vanilla-framework";
+@include vf-base;
+
+.progress-indicator {
+  margin: 0;
+  padding: 0 $spv--small 0 0;
+
+  .progress-indicator__spinner {
+    padding-left: $spv--x-small;
+  }
+}

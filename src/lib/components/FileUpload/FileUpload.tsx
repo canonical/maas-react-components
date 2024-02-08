@@ -3,12 +3,16 @@ import { ReactNode, useCallback, useId, useState } from "react";
 import { Button, Icon, Label } from "@canonical/react-components";
 import classNames from "classnames";
 import { useDropzone, DropzoneOptions, FileRejection } from "react-dropzone";
+
 import "./FileUpload.scss";
+import { ProgressIndicator } from "@/lib/elements";
+
+type FileUploadFile = File & { percentUploaded?: number };
 
 export interface FileUploadProps {
   accept?: DropzoneOptions["accept"];
   error?: ReactNode;
-  files: File[];
+  files: FileUploadFile[];
   help?: string;
   label?: string;
   maxFiles?: number;
@@ -99,14 +103,18 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             files.map((file) => (
               <div className="file-upload__file" key={file.name}>
                 {file.name}
-                <Button
-                  appearance="base"
-                  className="file-upload__file-remove-button"
-                  onClick={() => removeFile(file)}
-                  type="button"
-                >
-                  <Icon name="close">Remove file</Icon>
-                </Button>
+                {file.percentUploaded !== undefined ? (
+                  <ProgressIndicator percentComplete={file.percentUploaded} />
+                ) : (
+                  <Button
+                    appearance="base"
+                    className="file-upload__file-remove-button"
+                    onClick={() => removeFile(file)}
+                    type="button"
+                  >
+                    <Icon name="close">Remove file</Icon>
+                  </Button>
+                )}
               </div>
             ))}
         </div>
