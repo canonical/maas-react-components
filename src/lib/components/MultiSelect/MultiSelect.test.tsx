@@ -186,6 +186,21 @@ it("sorts grouped options alphabetically", async () => {
   checkGroupOrder("Group 2", ["other A", "other B"]);
 });
 
+it("sorts input field value alphabetically", async () => {
+  const itemA = { label: "item A", value: 1 };
+  const itemB = { label: "item B", value: 2 };
+
+  render(
+    <MultiSelect
+      items={[itemA, itemB]}
+      selectedItems={[itemB, itemA]}
+      variant="condensed"
+    />,
+  );
+
+  expect(screen.getByRole("combobox")).toHaveTextContent("item A, item B");
+});
+
 it("hides group title when no items match the search query", async () => {
   const itemsWithGroup = [
     { label: "item one", value: 1, group: "Group 1" },
