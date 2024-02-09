@@ -214,6 +214,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     .filter((selectedItem) =>
       items.some((item) => item.value === selectedItem.value),
     )
+    .sort(sortAlphabetically)
     .map((el) => el.label)
     .join(", ");
   return (
