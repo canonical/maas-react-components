@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useId, useState } from "react";
+import { ReactNode, useCallback, useId, useReducer } from "react";
 
 import { Button, Icon, Label } from "@canonical/react-components";
 import classNames from "classnames";
@@ -19,7 +19,7 @@ export interface FileUploadProps {
   maxSize?: number;
   onFileUpload: NonNullable<DropzoneOptions["onDrop"]>;
   rejectedFiles: FileRejection[];
-  removeFile: (file: File) => void;
+  removeFile: (file: FileUploadFile) => void;
   removeRejectedFile: (fileRejection: FileRejection) => void;
 }
 
@@ -123,6 +123,58 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   );
 };
 
+export type FileUploadState = {
+  acceptedFiles: FileUploadFile[];
+  fileRejections: FileRejection[];
+};
+
+type AddFiles = {
+  type: "add-files";
+  payload: { acceptedFiles: FileUploadFile[]; fileRejections: FileRejection[] };
+};
+type RemoveAcceptedFile = { type: "remove-accepted"; payload: FileUploadFile };
+type RemoveRejectedFile = { type: "remove-rejected"; payload: FileRejection };
+
+export type FileUploadActions =
+  | AddFiles
+  | RemoveAcceptedFile
+  | RemoveRejectedFile;
+
+const fileUploadReducer = (
+  state: FileUploadState,
+  action: FileUploadActions,
+): FileUploadState => {
+  switch (action.type) {
+    case "add-files":
+      return {
+        acceptedFiles: [
+          ...state.acceptedFiles,
+          ...action.payload.acceptedFiles,
+        ],
+        fileRejections: [
+          ...state.fileRejections,
+          ...action.payload.fileRejections,
+        ],
+      };
+    case "remove-accepted": {
+      const newFiles = [...state.acceptedFiles];
+      newFiles.splice(newFiles.indexOf(action.payload), 1);
+      return {
+        acceptedFiles: [...newFiles],
+        fileRejections: [...state.fileRejections],
+      };
+    }
+    case "remove-rejected": {
+      const newRejectedFiles = [...state.fileRejections];
+      newRejectedFiles.splice(newRejectedFiles.indexOf(action.payload), 1);
+      return {
+        acceptedFiles: [...state.acceptedFiles],
+        fileRejections: [...newRejectedFiles],
+      };
+    }
+  }
+};
+
 export const FileUploadContainer = ({
   accept,
   error,
@@ -134,35 +186,32 @@ export const FileUploadContainer = ({
   FileUploadProps,
   "accept" | "error" | "help" | "label" | "maxFiles" | "maxSize"
 >) => {
-  const [files, setFiles] = useState<File[]>([]);
-  const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
+  const [state, dispatch] = useReducer(fileUploadReducer, {
+    acceptedFiles: [],
+    fileRejections: [],
+  });
 
   const onFileUpload = useCallback(
-    (acceptedFiles: File[], fileRejections: FileRejection[]) => {
-      setFiles([...files, ...acceptedFiles]);
-      setRejectedFiles([...rejectedFiles, ...fileRejections]);
-    },
-    [files, rejectedFiles],
+    (acceptedFiles: FileUploadFile[], fileRejections: FileRejection[]) =>
+      dispatch({
+        type: "add-files",
+        payload: { acceptedFiles, fileRejections },
+      }),
+    [dispatch],
   );
 
-  const removeFile = (file: File) => {
-    const newFiles = [...files];
-    newFiles.splice(newFiles.indexOf(file), 1);
-    setFiles(newFiles);
-  };
+  const removeFile = (file: FileUploadFile) =>
+    dispatch({ type: "remove-accepted", payload: file });
 
-  const removeRejectedFile = (fileRejection: FileRejection) => {
-    const newRejectedFiles = [...rejectedFiles];
-    newRejectedFiles.splice(newRejectedFiles.indexOf(fileRejection), 1);
-    setRejectedFiles(newRejectedFiles);
-  };
+  const removeRejectedFile = (fileRejection: FileRejection) =>
+    dispatch({ type: "remove-rejected", payload: fileRejection });
 
   return (
     <FileUpload
       accept={accept}
       error={error}
-      files={files}
-      rejectedFiles={rejectedFiles}
+      files={state.acceptedFiles}
+      rejectedFiles={state.fileRejections}
       help={help}
       label={label}
       maxFiles={maxFiles}
