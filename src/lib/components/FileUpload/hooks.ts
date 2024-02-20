@@ -39,19 +39,19 @@ export const useFileUpload = () => {
           ],
         };
       case "remove-accepted": {
-        const newFiles = [...state.acceptedFiles];
-        newFiles.splice(newFiles.indexOf(action.payload), 1);
         return {
-          acceptedFiles: [...newFiles],
-          fileRejections: [...state.fileRejections],
+          ...state,
+          acceptedFiles: state.acceptedFiles.filter(
+            (file) => file !== action.payload,
+          ),
         };
       }
       case "remove-rejected": {
-        const newRejectedFiles = [...state.fileRejections];
-        newRejectedFiles.splice(newRejectedFiles.indexOf(action.payload), 1);
         return {
-          acceptedFiles: [...state.acceptedFiles],
-          fileRejections: [...newRejectedFiles],
+          ...state,
+          fileRejections: state.fileRejections.filter(
+            (rejection) => rejection !== action.payload,
+          ),
         };
       }
     }
