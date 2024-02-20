@@ -1,13 +1,15 @@
-import { ReactNode, useCallback, useId, useState } from "react";
+import { ReactNode, useId } from "react";
 
 import { Button, Icon, Label } from "@canonical/react-components";
 import classNames from "classnames";
 import { useDropzone, DropzoneOptions, FileRejection } from "react-dropzone";
 
 import "./FileUpload.scss";
+import { useFileUpload } from "./hooks";
+
 import { ProgressIndicator } from "@/lib/elements";
 
-type FileUploadFile = File & { percentUploaded?: number };
+export type FileUploadFile = File & { percentUploaded?: number };
 
 export interface FileUploadProps {
   accept?: DropzoneOptions["accept"];
@@ -19,7 +21,7 @@ export interface FileUploadProps {
   maxSize?: number;
   onFileUpload: NonNullable<DropzoneOptions["onDrop"]>;
   rejectedFiles: FileRejection[];
-  removeFile: (file: File) => void;
+  removeFile: (file: FileUploadFile) => void;
   removeRejectedFile: (fileRejection: FileRejection) => void;
 }
 
@@ -134,35 +136,20 @@ export const FileUploadContainer = ({
   FileUploadProps,
   "accept" | "error" | "help" | "label" | "maxFiles" | "maxSize"
 >) => {
-  const [files, setFiles] = useState<File[]>([]);
-  const [rejectedFiles, setRejectedFiles] = useState<FileRejection[]>([]);
-
-  const onFileUpload = useCallback(
-    (acceptedFiles: File[], fileRejections: FileRejection[]) => {
-      setFiles([...files, ...acceptedFiles]);
-      setRejectedFiles([...rejectedFiles, ...fileRejections]);
-    },
-    [files, rejectedFiles],
-  );
-
-  const removeFile = (file: File) => {
-    const newFiles = [...files];
-    newFiles.splice(newFiles.indexOf(file), 1);
-    setFiles(newFiles);
-  };
-
-  const removeRejectedFile = (fileRejection: FileRejection) => {
-    const newRejectedFiles = [...rejectedFiles];
-    newRejectedFiles.splice(newRejectedFiles.indexOf(fileRejection), 1);
-    setRejectedFiles(newRejectedFiles);
-  };
+  const {
+    acceptedFiles,
+    fileRejections,
+    onFileUpload,
+    removeFile,
+    removeRejectedFile,
+  } = useFileUpload();
 
   return (
     <FileUpload
       accept={accept}
       error={error}
-      files={files}
-      rejectedFiles={rejectedFiles}
+      files={acceptedFiles}
+      rejectedFiles={fileRejections}
       help={help}
       label={label}
       maxFiles={maxFiles}
