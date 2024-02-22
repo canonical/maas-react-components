@@ -9,6 +9,10 @@ import { AsProp } from "@/types";
 interface CommonContentSectionProps extends React.PropsWithChildren {
   className?: string;
 }
+
+interface ContentSectionHeaderProps extends CommonContentSectionProps {
+  isPinned?: boolean;
+}
 export interface ContentSectionProps
   extends CommonContentSectionProps,
     React.HTMLAttributes<HTMLElement>,
@@ -18,7 +22,8 @@ export interface ContentSectionProps
 /**
  * A content section layout component for one of the primary content areas (e.g. main or sidebar).
  *
- * `ContentSection` has three child components:
+ * `ContentSection` has four child components:
+ * - `ContentSection.Header`
  * - `ContentSection.Title`
  * - `ContentSection.Content`
  * - `ContentSection.Footer`
@@ -57,8 +62,18 @@ const Title = ({ children, className, as, ...props }: ContentSectionProps) => {
   );
 };
 
-const Header = ({ children, className }: CommonContentSectionProps) => (
-  <header className={classNames("content-section__header", className)}>
+const Header = ({
+  children,
+  className,
+  isPinned,
+}: ContentSectionHeaderProps) => (
+  <header
+    className={classNames(
+      "content-section__header",
+      { "is-pinned": isPinned },
+      className,
+    )}
+  >
     {children}
   </header>
 );
