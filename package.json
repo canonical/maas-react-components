@@ -103,7 +103,7 @@
     "@types/react-dom": "18.2.18"
   },
   "peerDependencies": {
-    "@canonical/react-components": "0.47.4",
+    "@canonical/react-components": "0.50.3",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "classnames": "^2.3.2",
