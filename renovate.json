@@ -1,6 +1,53 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
+  "extends": ["config:base"],
+  "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "^eslint",
+        "prettier",
+        "^husky",
+        "plop",
+        "^@typescript-eslint"
+      ],
+      "groupName": "development-tools",
+      "groupSlug": "development-tools"
+    },
+    {
+      "matchPackagePatterns": [
+        "^@storybook",
+        "storybook-addon-.*",
+        "@etchteam/storybook-addon-status",
+        "sb-addon-permutation-table",
+        "storybook-addon-tags"
+      ],
+      "groupName": "storybook-and-addons",
+      "groupSlug": "storybook-and-addons"
+    },
+    {
+      "matchPackagePatterns": ["^@testing-library", "vitest", "jsdom"],
+      "groupName": "testing-libraries",
+      "groupSlug": "testing-libraries"
+    },
+    {
+      "matchPackagePatterns": [
+        "react",
+        "react-dom",
+        "@types/react",
+        "@types/react-dom"
+      ],
+      "groupName": "react-ecosystem",
+      "groupSlug": "react-ecosystem"
+    },
+    {
+      "matchPackagePatterns": [
+        "vite",
+        "^@vitejs",
+        "vite-plugin-dts",
+        "typescript"
+      ],
+      "groupName": "build-tools",
+      "groupSlug": "build-tools"
+    }
   ]
 }
