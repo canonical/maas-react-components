@@ -47,12 +47,7 @@
     // overrides to fix the search box wrapping to the next line
     .p-search-box {
       .p-search-box__input {
-        position: static;
         padding-right: initial;
-      }
-
-      .p-search-box__button {
-        position: absolute;
       }
     }
 
