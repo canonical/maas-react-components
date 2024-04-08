@@ -1,4 +1,4 @@
-import type { ReactNode, CSSProperties } from "react";
+import type { ReactNode } from "react";
 import "./Placeholder.scss";
 
 import classNames from "classnames";
@@ -6,7 +6,6 @@ import classNames from "classnames";
 export type PlaceholderProps = {
   className?: string;
   isPending?: boolean;
-  style?: CSSProperties;
 } & (
   | {
       text?: never;
@@ -23,7 +22,6 @@ export const Placeholder = ({
   children,
   className,
   isPending = false,
-  style,
 }: PlaceholderProps) => {
   const delay = Math.floor(Math.random() * 750);
   if (isPending) {
@@ -32,7 +30,7 @@ export const Placeholder = ({
         aria-label="loading"
         className={classNames("p-placeholder", className)}
         role="progressbar"
-        style={{ animationDelay: `${delay}ms`, ...style }}
+        style={{ animationDelay: `${delay}ms` }}
       >
         <span aria-hidden="true">{text || children || "Loading"}</span>
       </span>
