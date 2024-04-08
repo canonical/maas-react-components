@@ -18,7 +18,6 @@ export default meta;
 export const TextExample = {
   args: {
     isPending: true,
-    style: { opacity: 0.9 },
     text: "XXXxxxx.xxxxxxxxx",
   },
 };
@@ -26,7 +25,6 @@ export const TextExample = {
 export const ComponentExample = {
   args: {
     isPending: true,
-    style: { opacity: 0.9 },
     children: <span>XXXxxxx.xxxxxxxxx</span>,
   },
 };
