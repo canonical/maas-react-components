@@ -16,6 +16,13 @@ import "./DynamicTable.scss";
 
 export type DynamicTableProps = PropsWithChildren<{ className?: string }>;
 
+/**
+ * A table based on tanstack/react-table with a fixed header, where the table body can be scrolled vertically independent of the page itself.
+ *
+ * @param className A class name to apply to the <table> element
+ * @param children The markup of the table itself, composed of <thead> and DynamicTable.Body
+ * @returns
+ */
 export const DynamicTable = ({
   className,
   children,

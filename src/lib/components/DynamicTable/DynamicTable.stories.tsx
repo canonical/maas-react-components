@@ -1,4 +1,4 @@
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 import {
   ColumnDef,
   flexRender,
@@ -99,17 +99,17 @@ const meta: Meta<typeof DynamicTable> = {
   title: "components/DynamicTable",
   component: DynamicTable,
   tags: ["autodocs"],
-  parameters: {
-    status: {
-      type: "candidate",
-    },
-  },
+  render: () => (
+    <DynamicTable>
+      <TableChildren />
+    </DynamicTable>
+  ),
 };
 
 export default meta;
 
-export const Example = {
+export const Example: StoryObj<typeof DynamicTable> = {
   args: {
-    children: <TableChildren />,
+    className: "machines-table",
   },
 };

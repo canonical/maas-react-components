@@ -111,9 +111,7 @@
     "react-dom": "18.2.0",
     "react-dropzone": "14.2.3",
     "react-router-dom": "^6.0.0",
-    "vanilla-framework": "^4.6.0"
-  },
-  "dependencies": {
+    "vanilla-framework": "^4.6.0",
     "@tanstack/react-table": "^8.15.3"
   }
 }

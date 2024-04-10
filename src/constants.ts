@@ -1,3 +1,4 @@
+// Vanilla breakpoint values https://vanillaframework.io/docs/settings/breakpoint-settings
 export const BREAKPOINTS = {
   // Mobile (portrait)
   xSmall: 460,
