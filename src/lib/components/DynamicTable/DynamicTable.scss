@@ -1,0 +1,53 @@
+@import "vanilla-framework";
+
+.p-table-dynamic {
+  margin-bottom: 0;
+
+  thead,
+  tbody {
+    display: block;
+    overflow: hidden auto;
+  }
+
+  thead {
+    scrollbar-gutter: stable;
+  }
+
+  thead tr,
+  tbody tr {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  tbody {
+    height: auto;
+    min-height: auto;
+  }
+
+  &:not([aria-busy="true"]) tbody:not([aria-busy="true"]) {
+    tr:hover,
+    tr:focus-within {
+      @include vf-transition($property: #{background}, $duration: fast);
+
+      background-color: $colors--light-theme--background-hover;
+    }
+  }
+
+  thead th:last-child,
+  tbody td:last-child {
+    text-align: right;
+  }
+
+  thead th button {
+    padding-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+.p-table-dynamic.p-table-dynamic--with-select {
+  thead th:first-child,
+  tbody td:first-child {
+    width: 3rem;
+  }
+}
