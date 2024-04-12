@@ -5,3 +5,4 @@ export * from "./FileUpload";
 export * from "./MultiSelect";
 
 export * from "./DynamicTable";
+export * from "./TableCaption";
