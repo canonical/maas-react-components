@@ -4,14 +4,10 @@ import { DynamicTable } from "@/lib/components/DynamicTable";
 import { TableCaption } from "@/lib/components/TableCaption/TableCaption";
 
 const meta: Meta<typeof TableCaption> = {
-  title: "components/TableCaption",
+  title: "components/DynamicTable/TableCaption",
   component: TableCaption,
   tags: ["autodocs"],
-  parameters: {
-    status: {
-      type: "candidate",
-    },
-  },
+  parameters: {},
 };
 
 export default meta;
