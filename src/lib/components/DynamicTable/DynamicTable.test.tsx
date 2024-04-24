@@ -23,7 +23,7 @@ beforeAll(() => {
   } as DOMRect);
 });
 
-it("sets a fixed table body height based on top offset on large screens", async () => {
+it("sets a fixed table body height based on top offset on large screens in full-height variant", async () => {
   vi.spyOn(window, "innerWidth", "get").mockReturnValue(BREAKPOINTS.xSmall);
 
   await act(async () => {
@@ -31,7 +31,7 @@ it("sets a fixed table body height based on top offset on large screens", async 
   });
 
   const { container } = render(
-    <DynamicTable>
+    <DynamicTable variant="full-height">
       <DynamicTable.Body className="test-class">
         <tr>
           <td>Test content</td>
@@ -48,6 +48,7 @@ it("sets a fixed table body height based on top offset on large screens", async 
 
   // does not alter the height on small screens
   expect(tbody).toHaveStyle("height: undefined");
+  expect(container.querySelector("table")).toHaveClass("is-full-height");
 
   vi.spyOn(window, "innerWidth", "get").mockReturnValue(BREAKPOINTS.large);
 
@@ -60,9 +61,27 @@ it("sets a fixed table body height based on top offset on large screens", async 
   );
 });
 
+it("does not apply dynamic height in regular variant", async () => {
+  vi.spyOn(window, "innerWidth", "get").mockReturnValue(BREAKPOINTS.large);
+  const { container } = render(
+    <DynamicTable variant="regular">
+      <DynamicTable.Body>
+        <tr>
+          <td>Test content</td>
+        </tr>
+      </DynamicTable.Body>
+    </DynamicTable>,
+  );
+  await act(async () => {
+    fireEvent(window, new Event("resize"));
+  });
+  const tbody = container.querySelector("tbody");
+  await vi.waitFor(() => expect(tbody).toHaveStyle("height: undefined"));
+});
+
 it("displays loading state", () => {
   const { container } = render(
-    <DynamicTable>
+    <DynamicTable variant="regular">
       <DynamicTable.Loading />
     </DynamicTable>,
   );
