@@ -104,6 +104,7 @@
   },
   "peerDependencies": {
     "@canonical/react-components": "0.52.0",
+    "@tanstack/react-table": "^8.15.3",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "classnames": "^2.3.2",
@@ -111,7 +112,6 @@
     "react-dom": "18.2.0",
     "react-dropzone": "14.2.3",
     "react-router-dom": "^6.0.0",
-    "vanilla-framework": "^4.6.0",
-    "@tanstack/react-table": "^8.15.3"
+    "vanilla-framework": "^4.10.0"
   }
 }
