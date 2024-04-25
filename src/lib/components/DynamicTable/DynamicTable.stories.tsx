@@ -21,6 +21,7 @@ export default meta;
 export const Example: StoryObj<typeof DynamicTable> = {
   args: {
     className: "machines-table",
+    variant: "full-height",
     children: (
       <>
         <thead>
@@ -50,6 +51,74 @@ export const Example: StoryObj<typeof DynamicTable> = {
             </tr>
           ))}
         </DynamicTable.Body>
+      </>
+    ),
+  },
+};
+
+export const TwoTablesExample: StoryObj<typeof DynamicTable> = {
+  render: (args) => <div>{args.children}</div>,
+  args: {
+    children: (
+      <>
+        <DynamicTable className="first-table" variant="regular">
+          <thead>
+            <tr>
+              <th>FQDN</th>
+              <th>IP address</th>
+              <th>Zone</th>
+              <th>Owner</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <DynamicTable.Body>
+            {data.slice(0, 10).map((item) => (
+              <tr key={item.fqdn}>
+                <td>{item.fqdn}</td>
+                <td>{item.ipAddress}</td>
+                <td>{item.zone}</td>
+                <td>{item.owner}</td>
+                <td>
+                  <Button
+                    appearance="base"
+                    style={{ marginBottom: 0, padding: 0 }}
+                  >
+                    <Icon name="delete" />
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </DynamicTable.Body>
+        </DynamicTable>
+        <DynamicTable className="second-table" variant="regular">
+          <thead>
+            <tr>
+              <th>FQDN</th>
+              <th>IP address</th>
+              <th>Zone</th>
+              <th>Owner</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <DynamicTable.Body>
+            {data.slice(10, 20).map((item) => (
+              <tr key={item.fqdn}>
+                <td>{item.fqdn}</td>
+                <td>{item.ipAddress}</td>
+                <td>{item.zone}</td>
+                <td>{item.owner}</td>
+                <td>
+                  <Button
+                    appearance="base"
+                    style={{ marginBottom: 0, padding: 0 }}
+                  >
+                    <Icon name="delete" />
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </DynamicTable.Body>
+        </DynamicTable>
       </>
     ),
   },

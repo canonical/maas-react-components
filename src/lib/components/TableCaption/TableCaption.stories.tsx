@@ -24,7 +24,7 @@ export const Example: StoryObj<typeof TableCaption> = {
     ),
   },
   render: (args) => (
-    <DynamicTable>
+    <DynamicTable variant="regular">
       <thead>
         <tr>
           <th>FQDN</th>

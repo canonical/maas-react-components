@@ -5,6 +5,9 @@ import {
   useLayoutEffect,
   useRef,
   useCallback,
+  createContext,
+  useContext,
+  useMemo,
 } from "react";
 
 import type { RowData, Table } from "@tanstack/react-table";
@@ -14,24 +17,42 @@ import { BREAKPOINTS } from "@/constants";
 import { Placeholder } from "@/lib/elements";
 import "./DynamicTable.scss";
 
-export type DynamicTableProps = PropsWithChildren<{ className?: string }>;
+const DynamicTableContext = createContext<{
+  variant: "full-height" | "regular";
+}>({ variant: "regular" });
+
+export type DynamicTableProps = PropsWithChildren<{
+  className?: string;
+  variant: "full-height" | "regular";
+}>;
 
 /**
- * A table based on tanstack/react-table with a fixed header, where the table body can be scrolled vertically independent of the page itself.
+ * A table based on tanstack/react-table.
+ * In a full-height variant has a fixed header and the table body can be scrolled vertically independent of the page itself. The table body will take up the remaining height of the viewport.
+ * In a regular variant, the table body will scroll with the page and the header is sticky.
  *
  * @param className A class name to apply to the <table> element
+ * @param variant The variant of the table ("full-height" or "regular").
  * @param children The markup of the table itself, composed of <thead> and DynamicTable.Body
  * @returns
  */
 export const DynamicTable = ({
   className,
   children,
+  variant,
   ...props
 }: DynamicTableProps) => {
   return (
-    <table {...props} className={classNames("p-table-dynamic", className)}>
-      {children}
-    </table>
+    <DynamicTableContext.Provider value={{ variant }}>
+      <table
+        {...props}
+        className={classNames("p-table-dynamic", className, {
+          "is-full-height": variant === "full-height",
+        })}
+      >
+        {children}
+      </table>
+    </DynamicTableContext.Provider>
   );
 };
 
@@ -77,15 +98,21 @@ const DynamicTableLoading = <TData extends RowData>({
     </>
   );
 };
-/**
- * sets a fixed height for the table body
- * allowing it to be scrolled independently of the page
- */
+
+interface DynamicTableBodyProps extends AriaAttributes {
+  className?: string;
+  children: React.ReactNode;
+  height?: string;
+  style?: React.CSSProperties;
+}
+
 const DynamicTableBody = ({
   className,
   children,
+  style,
   ...props
-}: PropsWithChildren<{ className?: string } & AriaAttributes>) => {
+}: DynamicTableBodyProps) => {
+  const { variant } = useContext(DynamicTableContext);
   const tableBodyRef: RefObject<HTMLTableSectionElement> = useRef(null);
   const [offset, setOffset] = useState<number | null>(null);
 
@@ -107,23 +134,28 @@ const DynamicTableBody = ({
     return () => window.removeEventListener("resize", handleResize);
   }, [handleResize]);
 
+  const dynamicStyle = useMemo(() => {
+    if (variant === "full-height" && offset) {
+      return {
+        height: `calc(100vh - ${offset}px)`,
+        minHeight: `calc(100vh - ${offset}px)`,
+        ...style,
+      };
+    }
+    return style;
+  }, [variant, offset, style]);
+
   return (
     <tbody
       className={className}
       ref={tableBodyRef}
-      style={
-        offset
-          ? {
-              height: `calc(100vh - ${offset}px)`,
-              minHeight: `calc(100vh - ${offset}px)`,
-            }
-          : undefined
-      }
+      style={dynamicStyle}
       {...props}
     >
       {children}
     </tbody>
   );
 };
+
 DynamicTable.Body = DynamicTableBody;
 DynamicTable.Loading = DynamicTableLoading;
