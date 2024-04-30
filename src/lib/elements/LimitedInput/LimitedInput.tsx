@@ -20,11 +20,12 @@ export const LimitedInput = ({
 }: LimitedInputProps) => {
   const limitedInputRef: RefObject<HTMLDivElement> = useRef(null);
 
-  const inputWrapper = limitedInputRef.current?.firstElementChild;
-
   useEffect(() => {
+    const inputWrapper = limitedInputRef.current?.firstElementChild;
     if (inputWrapper) {
       if (props.label) {
+        // CSS variable "--immutable" is the content of the :before element, which shows the immutable octets
+        // "--top" is the `top` property of the :before element, which is adjusted if there is a label to prevent overlap
         inputWrapper.setAttribute(
           "style",
           `--top: 2.5rem; --immutable: "${immutableText}"`,
@@ -35,12 +36,14 @@ export const LimitedInput = ({
 
       const width = window.getComputedStyle(inputWrapper, ":before").width;
 
+      // Adjust the left padding of the input to be the same width as the immutable octets.
+      // This displays the user input and the unchangeable text together as one IP address.
       inputWrapper.lastElementChild?.firstElementChild?.setAttribute(
         "style",
         `padding-left: ${width}`,
       );
     }
-  }, [inputWrapper]);
+  }, [limitedInputRef, immutableText, props.label]);
 
   return (
     <div className="limited-input" ref={limitedInputRef}>
