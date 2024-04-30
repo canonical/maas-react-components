@@ -24,7 +24,6 @@ export const LimitedInput = ({
 
   useEffect(() => {
     if (inputWrapper) {
-      console.log("AHAHAHAHAHHA");
       if (props.label) {
         inputWrapper.setAttribute(
           "style",
