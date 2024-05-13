@@ -68,8 +68,14 @@ it("disables the buttons and input box when the disabled prop is true", () => {
   );
 
   expect(screen.getByRole("spinbutton")).toBeDisabled();
-  expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
-  expect(screen.getByRole("button", { name: "Previous page" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Next page" })).toHaveAttribute(
+    "aria-disabled",
+    "true",
+  );
+  expect(screen.getByRole("button", { name: "Previous page" })).toHaveAttribute(
+    "aria-disabled",
+    "true",
+  );
 });
 
 it("disables the 'Previous page' button when on the first page", () => {
@@ -85,7 +91,10 @@ it("disables the 'Previous page' button when on the first page", () => {
     />,
   );
 
-  expect(screen.getByRole("button", { name: "Previous page" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Previous page" })).toHaveAttribute(
+    "aria-disabled",
+    "true",
+  );
 });
 
 it("disables the 'Next page' button when on the last page", () => {
@@ -101,7 +110,10 @@ it("disables the 'Next page' button when on the last page", () => {
     />,
   );
 
-  expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Next page" })).toHaveAttribute(
+    "aria-disabled",
+    "true",
+  );
 });
 
 it("can call a function when the 'Next page' button is pressed", async () => {
