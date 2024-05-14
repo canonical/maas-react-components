@@ -1,0 +1,15 @@
+@import "vanilla-framework";
+
+.limited-input {
+  position: relative;
+
+  &__wrapper::before {
+    position: absolute;
+    pointer-events: none;
+    padding-left: $spv--small;
+    padding-bottom: calc(0.4rem - 1px);
+    padding-top: calc(0.4rem - 1px);
+    content: var(--immutable, "");
+    top: var(--top, "inherit");
+  }
+}
