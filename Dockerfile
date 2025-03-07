@@ -9,7 +9,7 @@ COPY . .
 FROM npm-dependencies AS build-js
 RUN npm run build-storybook
 
-FROM ubuntu:jammy
+FROM ubuntu:noble
 ENV LANG C.UTF-8
 WORKDIR /srv
 RUN apt-get update && apt-get install --no-install-recommends --yes python3
