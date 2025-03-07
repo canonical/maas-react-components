@@ -4,3 +4,5 @@ storybook-static
 coverage
 
 *.DS_Store
+
+.idea

@@ -5,7 +5,7 @@ import { vi } from "vitest";
 import { NavigationBar } from "@/lib/sections/Navigation/Navigation";
 
 it("renders without crashing", () => {
-  render(<NavigationBar.MenuButton onClick={vi.fn}>Menu</NavigationBar.MenuButton>);
+  render(<NavigationBar.MenuButton onClick={vi.fn()}>Menu</NavigationBar.MenuButton>);
   expect(screen.getByRole("button", { name: "Menu" })).toBeInTheDocument();
 });
 
