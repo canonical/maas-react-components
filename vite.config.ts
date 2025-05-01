@@ -13,6 +13,15 @@ export default defineConfig({
       insertTypesEntry: true,
     }),
   ],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern",
+        quietDeps: true,
+        silenceDeprecations: ["import", "global-builtin"],
+      },
+    },
+  },
   resolve: {
     alias: { "@": path.resolve(__dirname, "src") },
   },
