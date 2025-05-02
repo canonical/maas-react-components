@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 import classNames from "classnames";
 import "./Stepper.scss";
 
@@ -12,7 +14,7 @@ type Props = {
   items: string[];
 };
 
-export const Stepper = ({ activeStep, items }: Props): JSX.Element => {
+export const Stepper = ({ activeStep, items }: Props): ReactNode => {
   return (
     <ol className="stepper">
       {items.map((step, i) => {

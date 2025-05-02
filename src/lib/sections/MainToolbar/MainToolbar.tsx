@@ -5,7 +5,7 @@ import classNames from "classnames";
 import "./MainToolbar.scss";
 import { AsProp } from "@/types";
 
-function useResizeObserver(ref: React.RefObject<HTMLElement>) {
+function useResizeObserver(ref: React.RefObject<HTMLElement | null>) {
   const [dimensions, setDimensions] = React.useState<DOMRect | null>(null);
   const animationFrameId = React.useRef<number | null>(null);
 
@@ -59,7 +59,7 @@ type MainToolbarProps = {
  * `MainToolbar.Controls` switches to a stacked layout when it overflows the container.
  */
 export const MainToolbar = ({ children }: MainToolbarProps) => {
-  const ref = React.useRef(null);
+  const ref = React.useRef<HTMLElement>(null);
   const rect = useResizeObserver(ref);
   const [isStacked, setIsStacked] = React.useState(false);
   return (

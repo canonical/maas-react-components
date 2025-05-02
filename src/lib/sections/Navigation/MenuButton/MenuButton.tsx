@@ -31,7 +31,9 @@ export const MenuButton = ({
         e.currentTarget.blur();
       }}
     >
-      {children}
+      <>
+        {children}
+      </>
     </Button>
   );
 };

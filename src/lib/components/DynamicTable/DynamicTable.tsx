@@ -1,4 +1,4 @@
-import type { AriaAttributes, PropsWithChildren, RefObject } from "react";
+import type { AriaAttributes, PropsWithChildren } from "react";
 import {
   useState,
   useEffect,
@@ -113,7 +113,7 @@ const DynamicTableBody = ({
   ...props
 }: DynamicTableBodyProps) => {
   const { variant } = useContext(DynamicTableContext);
-  const tableBodyRef: RefObject<HTMLTableSectionElement> = useRef(null);
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const [offset, setOffset] = useState<number | null>(null);
 
   const handleResize = useCallback(() => {
