@@ -39,7 +39,7 @@ export const ContentSection = ({
   return (
     <Component {...props} className={sectionClass}>
       <Row>
-        <Col size={variant === "narrow" ? 6 : 12}>{children}</Col>
+        <Col size={variant === "narrow" ? 6 : 12}><>{children}</></Col>
       </Row>
     </Component>
   );

@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 import { Button, Tooltip, Icon } from "@canonical/react-components";
 import classNames from "classnames";
 
@@ -11,7 +13,7 @@ export const CollapseToggle = ({
   isCollapsed,
   setIsCollapsed,
   className,
-}: NavigationCollapseToggleProps): JSX.Element => {
+}: NavigationCollapseToggleProps): ReactNode => {
   return (
     <Tooltip
       className="p-side-navigation__tooltip-wrapper"

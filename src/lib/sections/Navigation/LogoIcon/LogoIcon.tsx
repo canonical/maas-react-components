@@ -1,7 +1,7 @@
-import { ReactElement, cloneElement } from "react";
+import { ReactElement, cloneElement, SVGAttributes, HTMLAttributes } from "react";
 
 export interface NavigationLogoIconProps {
-  children: ReactElement;
+  children: ReactElement<SVGAttributes<SVGElement> & HTMLAttributes<HTMLElement>>;
 }
 
 export const LogoIcon = ({ children }: NavigationLogoIconProps) => {
