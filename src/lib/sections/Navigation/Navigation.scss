@@ -1,3 +1,4 @@
+@use "sass:map";
 @import "vanilla-framework";
 @include vf-base;
 @include vf-p-icon-machines;
@@ -178,8 +179,8 @@ $side-navigation-z-index: 103;
       justify-content: flex-end;
 
       .p-panel__logo-name {
-        font-size: #{map_get($font-sizes, h4)}rem;
-        line-height: map_get($line-heights, x-small);
+        font-size: #{map.get($font-sizes, h4)}rem;
+        line-height: map.get($line-heights, x-small);
         margin-bottom: 0;
         padding-top: 0;
         margin-left: 2rem;
