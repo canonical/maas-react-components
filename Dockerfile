@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:experimental
 
-FROM node:20 AS npm-dependencies
+FROM node:22 AS npm-dependencies
 WORKDIR /srv
 COPY package*.json ./
 RUN --mount=type=cache,target=~/.npm npm ci
