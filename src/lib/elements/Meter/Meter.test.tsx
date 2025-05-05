@@ -120,7 +120,6 @@ it("sets segment width to 1px if not enough space to show all segments", () => {
   });
   render(<Meter data={[{ value: 10 }]} max={100} variant="segmented" />);
 
-  expect(screen.getByTestId(testIds.segments)).toHaveStyle({
-    background: `repeating-linear-gradient(to right, transparent 0, transparent 1px, ${meterColor.light} 1px, ${meterColor.light} 2px );`,
-  });
+  const expectedStyle = `background: repeating-linear-gradient( to right, transparent 0, transparent 1px, ${meterColor.light} 1px, ${meterColor.light} 2px );`;
+  expect(screen.getByTestId(testIds.segments)).toHaveStyle(expectedStyle);
 });
