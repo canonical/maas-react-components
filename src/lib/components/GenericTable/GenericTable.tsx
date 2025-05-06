@@ -31,7 +31,9 @@ import {
 import classNames from "classnames";
 
 import ColumnHeader from "@/lib/components/GenericTable/ColumnHeader";
-import PaginationBar, { PaginationBarProps } from "@/lib/components/GenericTable/PaginationBar";
+import PaginationBar, {
+  PaginationBarProps,
+} from "@/lib/components/GenericTable/PaginationBar";
 import TableCheckbox from "@/lib/components/GenericTable/TableCheckbox";
 
 import "./GenericTable.scss";
@@ -168,7 +170,12 @@ const GenericTable = <T extends { id: number | string }>({
         id: "p-generic-table__select",
         accessorKey: "id",
         enableSorting: false,
-        header: "",
+        header: ({ table }: HeaderContext<T, Partial<T>>) => {
+          if (groupBy) {
+            return "";
+          }
+          return <TableCheckbox.All table={table} />;
+        },
         cell: ({ row }: CellContext<T, Partial<T>>) =>
           !row.getIsGrouped() ? <TableCheckbox row={row} /> : null,
       },
@@ -289,10 +296,7 @@ const GenericTable = <T extends { id: number | string }>({
   const renderLoadingRows = () => {
     return (
       <tr>
-        <td
-          className="p-generic-table__loading"
-          colSpan={columns.length}
-        >
+        <td className="p-generic-table__loading" colSpan={columns.length}>
           <Spinner text="Loading..." />
         </td>
       </tr>
@@ -304,10 +308,7 @@ const GenericTable = <T extends { id: number | string }>({
     if (table.getRowModel().rows.length < 1) {
       return (
         <tr>
-          <td
-            className="p-generic-table__no-data"
-            colSpan={columns.length}
-          >
+          <td className="p-generic-table__no-data" colSpan={columns.length}>
             {noData}
           </td>
         </tr>
@@ -341,10 +342,7 @@ const GenericTable = <T extends { id: number | string }>({
               return filterCells(row, cell.column);
             })
             .map((cell) => (
-              <td
-                className={classNames(`${cell.column.id}`)}
-                key={cell.id}
-              >
+              <td className={classNames(`${cell.column.id}`)} key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}
@@ -367,6 +365,7 @@ const GenericTable = <T extends { id: number | string }>({
           itemsPerPage={pagination.itemsPerPage}
           setCurrentPage={pagination.setCurrentPage}
           totalItems={pagination.totalItems}
+          pageSizes={pagination.pageSizes}
         />
       )}
 
@@ -377,6 +376,7 @@ const GenericTable = <T extends { id: number | string }>({
         className={classNames("p-generic-table__table", {
           "p-generic-table__is-full-height": variant === "full-height",
           "p-generic-table__is-selectable": canSelect,
+          "p-generic-table__is-grouped": groupBy !== undefined,
         })}
         role="grid"
       >

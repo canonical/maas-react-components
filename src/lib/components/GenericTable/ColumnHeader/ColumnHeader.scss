@@ -3,6 +3,7 @@
 
 .p-button--table-header {
   @extend %table-header-label;
+
   color: $color-dark;
   margin: 0;
   padding: 0;
@@ -13,6 +14,7 @@
 
   [class*="p-icon"] {
     @include vf-icon-size(0.875rem);
+
     margin-left: $sp-x-small;
   }
 }

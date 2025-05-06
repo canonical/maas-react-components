@@ -21,16 +21,16 @@
     }
 
     &__right {
+      display: flex;
       width: 100%;
       margin-left: auto;
       margin-right: 0;
 
       .p-pagination {
         z-index: 2;
-        padding-right: 2rem;
       }
 
-      @media screen and (min-width: 620px) {
+      @media screen and (width >= 620px) {
         width: auto;
       }
     }
@@ -97,6 +97,7 @@
       tr:hover,
       tr:focus-within {
         @include vf-transition($property: background, $duration: fast);
+
         background-color: $colors--light-theme--background-hover;
       }
     }
@@ -109,7 +110,7 @@
     }
 
     // Hide selection columns when not selectable
-    th.p-generic-table__select,
+    &:is(.p-generic-table__is-selectable.p-generic-table__is-grouped) > * th.p-generic-table__select,
     &:not(.p-generic-table__is-selectable) > * .p-generic-table__select-alignment {
       display: none;
     }

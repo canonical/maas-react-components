@@ -14,8 +14,8 @@ export type PaginationBarProps = {
   dataContext: string;
   setCurrentPage: (page: number) => void;
   isPending: boolean;
+  pageSizes?: number[];
 };
-export const pageSizes: number[] = [20, 30, 50, 100];
 
 const PaginationBar = ({
   currentPage,
@@ -25,6 +25,7 @@ const PaginationBar = ({
   dataContext,
   setCurrentPage,
   isPending,
+  pageSizes = [20, 30, 50, 100],
 }: PaginationBarProps): ReactElement => {
   const pageCounts = useMemo(() => pageSizes, []);
   const pageOptions = useMemo(
@@ -33,7 +34,7 @@ const PaginationBar = ({
         label: `${pageCount}/page`,
         value: pageCount,
       })),
-    [pageCounts]
+    [pageCounts],
   );
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
