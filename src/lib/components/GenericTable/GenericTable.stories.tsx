@@ -4,7 +4,6 @@ import { Button, Icon } from "@canonical/react-components";
 import { Meta, StoryObj } from "@storybook/react";
 import {
   Column,
-  ColumnDef,
   Getter,
   Header,
   Row,
@@ -15,17 +14,8 @@ import GenericTable from "./GenericTable";
 
 import GroupRowActions from "@/lib/components/GenericTable/GroupRowActions";
 
-type MachineData = {
-  id: number;
-  fqdn: string;
-  ipAddress: string;
-  status: string;
-  zone: string;
-  pool: string;
-};
-
 // Sample data for MAAS machines
-const generateMachinesData = (count: number): MachineData[] => {
+const generateMachinesData = (count: number) => {
   const statuses = ["Ready", "Deployed", "Commissioning"];
   const zones = ["default", "zone-1", "zone-2", "zone-3"];
   const pools = ["default", "pool-1", "pool-2"];
@@ -41,7 +31,7 @@ const generateMachinesData = (count: number): MachineData[] => {
 };
 
 // Column definitions for the MAAS machines table
-const machineColumns: ColumnDef<MachineData, Partial<MachineData>>[] = [
+const machineColumns = [
   {
     id: "fqdn",
     accessorKey: "fqdn",
@@ -56,7 +46,7 @@ const machineColumns: ColumnDef<MachineData, Partial<MachineData>>[] = [
     id: "status",
     accessorKey: "status",
     header: "Status",
-    cell: ({ getValue }: { getValue: Getter<MachineData["status"]> }) => (
+    cell: ({ getValue }: { getValue: Getter<string> }) => (
       <span className={`status-${getValue().toLowerCase()}`}>{getValue()}</span>
     ),
   },
@@ -72,8 +62,9 @@ const machineColumns: ColumnDef<MachineData, Partial<MachineData>>[] = [
   },
   {
     id: "actions",
+    accessorKey: "id",
     header: "Actions",
-    cell: ({ row }) => {
+    cell: ({ row }: { row: Row<{ id: string | number }> }) => {
       if (row.getIsGrouped()) return <GroupRowActions row={row} />;
       return (
         <div className="actions-cell">
@@ -91,7 +82,7 @@ const machineColumns: ColumnDef<MachineData, Partial<MachineData>>[] = [
 
 const mockMachineData = generateMachinesData(10);
 
-const meta: Meta<typeof GenericTable<MachineData>> = {
+const meta: Meta<typeof GenericTable> = {
   title: "Components/GenericTable",
   component: GenericTable,
   parameters: {
@@ -193,8 +184,8 @@ export const Grouped: Story = {
           row,
           getValue,
         }: {
-          row: Row<MachineData>;
-          getValue: Getter<MachineData["status"]>;
+          row: Row<{ id: string | number }>;
+          getValue: Getter<string>;
         }) => {
           return (
             <div>
@@ -212,8 +203,8 @@ export const Grouped: Story = {
     ],
     groupBy: ["status"],
     filterCells: (
-      row: Row<MachineData>,
-      column: Column<MachineData>,
+      row: Row<{ id: string | number }>,
+      column: Column<{ id: string | number }>,
     ): boolean => {
       if (row.getIsGrouped()) {
         return ["status", "actions"].includes(column.id);
@@ -221,8 +212,9 @@ export const Grouped: Story = {
         return !["status"].includes(column.id);
       }
     },
-    filterHeaders: (header: Header<MachineData, unknown>): boolean =>
-      header.column.id !== "status",
+    filterHeaders: (
+      header: Header<{ id: string | number }, unknown>,
+    ): boolean => header.column.id !== "status",
   },
 };
 
@@ -276,8 +268,8 @@ export const GroupedSelectable: Story = {
           row,
           getValue,
         }: {
-          row: Row<MachineData>;
-          getValue: Getter<MachineData["status"]>;
+          row: Row<{ id: string | number }>;
+          getValue: Getter<string>;
         }) => {
           return (
             <div>
@@ -295,8 +287,8 @@ export const GroupedSelectable: Story = {
     ],
     groupBy: ["status"],
     filterCells: (
-      row: Row<MachineData>,
-      column: Column<MachineData>,
+      row: Row<{ id: string | number }>,
+      column: Column<{ id: string | number }>,
     ): boolean => {
       if (row.getIsGrouped()) {
         return ["status", "actions"].includes(column.id);
@@ -304,8 +296,9 @@ export const GroupedSelectable: Story = {
         return !["status"].includes(column.id);
       }
     },
-    filterHeaders: (header: Header<MachineData, unknown>): boolean =>
-      header.column.id !== "status",
+    filterHeaders: (
+      header: Header<{ id: string | number }, unknown>,
+    ): boolean => header.column.id !== "status",
   },
 };
 
