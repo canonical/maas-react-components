@@ -91,11 +91,19 @@ const machineColumns: ColumnDef<MachineData, Partial<MachineData>>[] = [
 
 const mockMachineData = generateMachinesData(10);
 
-const meta: Meta<typeof GenericTable> = {
+const meta: Meta<typeof GenericTable<MachineData>> = {
   title: "Components/GenericTable",
   component: GenericTable,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component:
+          "GenericTable is a flexible table component built with TanStack Table that supports " +
+          "selection, grouping, pagination, and more. It's designed to handle various data " +
+          "display needs while maintaining a consistent design language.",
+      },
+    },
   },
   tags: ["autodocs"],
   args: {
@@ -122,7 +130,6 @@ export default meta;
 
 type Story = StoryObj<typeof GenericTable>;
 
-// Basic table example
 export const Default: Story = {};
 
 export const Loading: Story = {
