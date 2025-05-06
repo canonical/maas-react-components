@@ -7,6 +7,8 @@ import classNames from "classnames";
 
 import SortingIndicator from "@/lib/components/GenericTable/SortingIndicator";
 
+import "./ColumnHeader.scss";
+
 type TableHeaderProps<T> = {
   header: Header<T, unknown>;
 };
@@ -17,7 +19,7 @@ const ColumnHeader = <T,>({ header }: TableHeaderProps<T>): ReactElement => {
       {header.column.getCanSort() ? (
         <Button
           appearance="link"
-          className="p-button--table-header"
+          className="table-header-label p-button--table-header"
           onClick={header.column.getToggleSortingHandler()}
           type="button"
         >
