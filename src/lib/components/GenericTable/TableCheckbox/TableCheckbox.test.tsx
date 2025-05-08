@@ -6,8 +6,18 @@ import type { Mock } from "vitest";
 
 import TableCheckbox from "./TableCheckbox";
 
-import { Image } from "@/lib/components/GenericTable/GenericTable.test";
-
+type Image = {
+  id: number;
+  release: string;
+  architecture: string;
+  name: string;
+  size: string;
+  lastSynced: string | null;
+  canDeployToMemory: boolean;
+  status: string;
+  lastDeployed: string;
+  machines: number;
+};
 const getMockRow = (rowProps: Partial<Row<Image>> = {}) => {
   return Object.assign(
     {

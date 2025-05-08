@@ -104,15 +104,155 @@ const meta: Meta<typeof GenericTable> = {
     variant: "regular",
   },
   argTypes: {
-    variant: {
-      control: { type: "radio" },
-      options: ["full-height", "regular"],
+    // Main configuration
+    columns: {
+      description: "Column definitions that specify how to display and interact with table data",
+      control: false,
+      table: {
+        type: { summary: "ColumnDef<T, Partial<T>>[]" },
+        category: "Required",
+      },
+    },
+    data: {
+      description: "Array of data objects to be displayed in the table",
+      control: false,
+      table: {
+        type: { summary: "T[]" },
+        category: "Required",
+      },
     },
     isLoading: {
+      description: "Controls the loading state of the table. When true, displays placeholder content",
       control: { type: "boolean" },
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+        category: "State",
+      },
     },
+    variant: {
+      description: "Determines the table layout style. 'full-height' takes up all available vertical space, 'regular' uses content-based height",
+      control: { type: "radio" },
+      options: ["full-height", "regular"],
+      table: {
+        type: { summary: "string" },
+        defaultValue: { summary: "full-height" },
+        category: "Appearance",
+      },
+    },
+
+    // Selection related
     canSelect: {
+      description: "Enables row selection with checkboxes in the first column. When true, rowSelection and setRowSelection props must be provided",
       control: { type: "boolean" },
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+        category: "Selection",
+      },
+    },
+    rowSelection: {
+      description: "State object that tracks which rows are currently selected. Required when canSelect is true",
+      control: false,
+      table: {
+        type: { summary: "RowSelectionState" },
+        category: "Selection",
+        required: { condition: { name: "canSelect", value: true } },
+      },
+    },
+    setRowSelection: {
+      description: "State setter function for updating row selection. Required when canSelect is true",
+      control: false,
+      table: {
+        type: { summary: "Dispatch<SetStateAction<RowSelectionState>>" },
+        category: "Selection",
+        required: { condition: { name: "canSelect", value: true } },
+      },
+    },
+
+    // Grouping related
+    groupBy: {
+      description: "Array of column IDs to group rows by",
+      control: false,
+      table: {
+        type: { summary: "string[]" },
+        category: "Grouping",
+      },
+    },
+    pinGroup: {
+      description: "Configuration for pinning groups to top or bottom of the table",
+      control: false,
+      table: {
+        type: { summary: "{ value: string; isTop: boolean }[]" },
+        category: "Grouping",
+      },
+    },
+
+    // Sorting
+    sortBy: {
+      description: "Initial sort configuration for table columns",
+      control: false,
+      table: {
+        type: { summary: "ColumnSort[]" },
+        category: "Sorting",
+      },
+    },
+
+    // Filtering
+    filterCells: {
+      description: "Function to determine which cells should be displayed",
+      control: false,
+      table: {
+        type: { summary: "Function" },
+        category: "Filtering",
+      },
+    },
+    filterHeaders: {
+      description: "Function to determine which headers should be displayed",
+      control: false,
+      table: {
+        type: { summary: "Function" },
+        category: "Filtering",
+      },
+    },
+
+    // Pagination
+    pagination: {
+      description: "Configuration for table pagination including current page, page size, and navigation handlers",
+      control: false,
+      table: {
+        type: { summary: "PaginationBarProps" },
+        category: "Pagination",
+      },
+    },
+
+    // Styling and references
+    className: {
+      description: "Additional CSS class for the table wrapper",
+      control: { type: "text" },
+      table: {
+        type: { summary: "string" },
+        category: "Styling",
+      },
+    },
+    containerRef: {
+      description: "Reference to container element for size calculations",
+      control: false,
+      table: {
+        type: { summary: "RefObject<HTMLElement | null>" },
+        defaultValue: { summary: "<main>" },
+        category: "References",
+      },
+    },
+
+    // Empty state
+    noData: {
+      description: "Custom content to display when the table has no data",
+      control: false,
+      table: {
+        type: { summary: "ReactNode" },
+        category: "Empty State",
+      },
     },
   },
 };

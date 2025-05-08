@@ -9,7 +9,7 @@ import GenericTable from "./GenericTable";
 
 import type { PaginationBarProps } from "@/lib/components/GenericTable/PaginationBar";
 
-export type Image = {
+type Image = {
   id: number;
   release: string;
   architecture: string;
