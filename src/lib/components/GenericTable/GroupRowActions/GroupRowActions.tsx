@@ -7,7 +7,7 @@ type GroupRowActionsProps<T> = {
   row: Row<T>;
 };
 
-const GroupRowActions = <T,>({
+export const GroupRowActions = <T,>({
   row,
 }: GroupRowActionsProps<T>): ReactElement => {
   return (
@@ -28,5 +28,3 @@ const GroupRowActions = <T,>({
     </Button>
   );
 };
-
-export default GroupRowActions;

@@ -104,7 +104,7 @@ type GenericTableProps<T extends { id: number | string }> = {
  *   }}
  * />
  */
-const GenericTable = <T extends { id: number | string }>({
+export const GenericTable = <T extends { id: number | string }>({
   className,
   canSelect = false,
   columns: initialColumns,
@@ -413,5 +413,3 @@ const GenericTable = <T extends { id: number | string }>({
     </div>
   );
 };
-
-export default GenericTable;

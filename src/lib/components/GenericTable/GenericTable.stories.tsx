@@ -10,9 +10,8 @@ import {
   RowSelectionState,
 } from "@tanstack/react-table";
 
-import GenericTable from "./GenericTable";
-
-import GroupRowActions from "@/lib/components/GenericTable/GroupRowActions";
+import { GenericTable } from "@/lib/components/GenericTable/GenericTable";
+import { GroupRowActions } from "@/lib/components/GenericTable/GroupRowActions";
 
 // Sample data for MAAS machines
 const generateMachinesData = (count: number) => {
@@ -106,7 +105,8 @@ const meta: Meta<typeof GenericTable> = {
   argTypes: {
     // Main configuration
     columns: {
-      description: "Column definitions that specify how to display and interact with table data",
+      description:
+        "Column definitions that specify how to display and interact with table data",
       control: false,
       table: {
         type: { summary: "ColumnDef<T, Partial<T>>[]" },
@@ -122,7 +122,8 @@ const meta: Meta<typeof GenericTable> = {
       },
     },
     isLoading: {
-      description: "Controls the loading state of the table. When true, displays placeholder content",
+      description:
+        "Controls the loading state of the table. When true, displays placeholder content",
       control: { type: "boolean" },
       table: {
         type: { summary: "boolean" },
@@ -131,7 +132,8 @@ const meta: Meta<typeof GenericTable> = {
       },
     },
     variant: {
-      description: "Determines the table layout style. 'full-height' takes up all available vertical space, 'regular' uses content-based height",
+      description:
+        "Determines the table layout style. 'full-height' takes up all available vertical space, 'regular' uses content-based height",
       control: { type: "radio" },
       options: ["full-height", "regular"],
       table: {
@@ -143,7 +145,8 @@ const meta: Meta<typeof GenericTable> = {
 
     // Selection related
     canSelect: {
-      description: "Enables row selection with checkboxes in the first column. When true, rowSelection and setRowSelection props must be provided",
+      description:
+        "Enables row selection with checkboxes in the first column. When true, rowSelection and setRowSelection props must be provided",
       control: { type: "boolean" },
       table: {
         type: { summary: "boolean" },
@@ -152,7 +155,8 @@ const meta: Meta<typeof GenericTable> = {
       },
     },
     rowSelection: {
-      description: "State object that tracks which rows are currently selected. Required when canSelect is true",
+      description:
+        "State object that tracks which rows are currently selected. Required when canSelect is true",
       control: false,
       table: {
         type: { summary: "RowSelectionState" },
@@ -161,7 +165,8 @@ const meta: Meta<typeof GenericTable> = {
       },
     },
     setRowSelection: {
-      description: "State setter function for updating row selection. Required when canSelect is true",
+      description:
+        "State setter function for updating row selection. Required when canSelect is true",
       control: false,
       table: {
         type: { summary: "Dispatch<SetStateAction<RowSelectionState>>" },
@@ -180,7 +185,8 @@ const meta: Meta<typeof GenericTable> = {
       },
     },
     pinGroup: {
-      description: "Configuration for pinning groups to top or bottom of the table",
+      description:
+        "Configuration for pinning groups to top or bottom of the table",
       control: false,
       table: {
         type: { summary: "{ value: string; isTop: boolean }[]" },
@@ -218,7 +224,8 @@ const meta: Meta<typeof GenericTable> = {
 
     // Pagination
     pagination: {
-      description: "Configuration for table pagination including current page, page size, and navigation handlers",
+      description:
+        "Configuration for table pagination including current page, page size, and navigation handlers",
       control: false,
       table: {
         type: { summary: "PaginationBarProps" },

@@ -5,7 +5,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { vi } from "vitest";
 
-import GenericTable from "./GenericTable";
+import { GenericTable } from "./GenericTable";
 
 import type { PaginationBarProps } from "@/lib/components/GenericTable/PaginationBar";
 
