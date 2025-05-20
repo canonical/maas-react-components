@@ -1,1 +1,2 @@
-export { default } from "./GenericTable";
+export * from "./GenericTable";
+export * from "./GroupRowActions/GroupRowActions";

@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { vi } from "vitest";
 
-import GroupRowActions from "./GroupRowActions";
+import { GroupRowActions } from "@/lib/components/GenericTable";
 
 const getMockRow = (isExpanded: boolean) => {
   return {

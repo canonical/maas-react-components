@@ -6,3 +6,4 @@ export * from "./MultiSelect";
 
 export * from "./DynamicTable";
 export * from "./TableCaption";
+export * from "./GenericTable";

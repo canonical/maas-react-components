@@ -1,1 +1,1 @@
-export { default } from "./GroupRowActions";
+export * from "./GroupRowActions";
