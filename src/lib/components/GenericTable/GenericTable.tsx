@@ -1,4 +1,12 @@
-import { Fragment, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  DetailedHTMLProps,
+  Fragment,
+  HTMLAttributes,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type {
   Dispatch,
   ReactNode,
@@ -55,7 +63,7 @@ type GenericTableProps<T extends { id: number | string }> = {
   rowSelection?: RowSelectionState;
   setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
   variant?: "full-height" | "regular";
-};
+} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 /**
  * GenericTable - A flexible and feature-rich table component for React applications
@@ -121,6 +129,7 @@ export const GenericTable = <T extends { id: number | string }>({
   rowSelection,
   setRowSelection,
   variant = "full-height",
+  ...props
 }: GenericTableProps<T>): ReactElement => {
   const tableRef = useRef<HTMLTableSectionElement>(null);
   const [maxHeight, setMaxHeight] = useState("auto");
@@ -355,6 +364,7 @@ export const GenericTable = <T extends { id: number | string }>({
     <div
       className={classNames("p-generic-table", className)}
       data-testid="p-generic-table"
+      {...props}
     >
       {pagination && (
         <PaginationBar
