@@ -28,6 +28,11 @@
 
       .p-pagination {
         z-index: 2;
+        padding-right: 1rem;
+
+        .p-pagination__link--next {
+          margin-right: 0;
+        }
       }
 
       @media screen and (width >= 620px) {
