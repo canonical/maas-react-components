@@ -1,4 +1,12 @@
-import { Fragment, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  DetailedHTMLProps,
+  Fragment,
+  HTMLAttributes,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type {
   Dispatch,
   ReactNode,
@@ -55,7 +63,7 @@ type GenericTableProps<T extends { id: number | string }> = {
   rowSelection?: RowSelectionState;
   setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
   variant?: "full-height" | "regular";
-};
+} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 /**
  * GenericTable - A flexible and feature-rich table component for React applications
@@ -121,43 +129,15 @@ export const GenericTable = <T extends { id: number | string }>({
   rowSelection,
   setRowSelection,
   variant = "full-height",
+  ...props
 }: GenericTableProps<T>): ReactElement => {
   const tableRef = useRef<HTMLTableSectionElement>(null);
   const [maxHeight, setMaxHeight] = useState("auto");
+  const [needsScrolling, setNeedsScrolling] = useState(false);
 
   const [grouping, setGrouping] = useState<GroupingState>(groupBy ?? []);
   const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [sorting, setSorting] = useState<SortingState>(sortBy ?? []);
-
-  // Update table height based on available space
-  useLayoutEffect(() => {
-    const updateHeight = () => {
-      const wrapper = tableRef.current;
-      if (!wrapper) return;
-
-      // Use provided containerRef if available, fallback to main
-      const container = containerRef?.current || document.querySelector("main");
-      if (!container) return;
-
-      const containerRect = container.getBoundingClientRect();
-      const wrapperRect = wrapper.getBoundingClientRect();
-
-      const availableHeight = containerRect.bottom - wrapperRect.top;
-      setMaxHeight(`${availableHeight}px`);
-    };
-
-    updateHeight();
-
-    const resizeObserver = new ResizeObserver(updateHeight);
-    const wrapper = tableRef.current;
-    if (wrapper) resizeObserver.observe(wrapper);
-
-    window.addEventListener("resize", updateHeight);
-    return () => {
-      window.removeEventListener("resize", updateHeight);
-      if (wrapper) resizeObserver.unobserve(wrapper);
-    };
-  }, [containerRef]);
 
   // Add selection columns if needed
   const columns = useMemo(() => {
@@ -264,6 +244,46 @@ export const GenericTable = <T extends { id: number | string }>({
     });
   }, [groupedData, sorting, pinGroup, grouping]);
 
+  // Update table height based on available space and determine if scrolling is needed
+  useLayoutEffect(() => {
+    const updateHeight = () => {
+      const wrapper = tableRef.current;
+      if (!wrapper) return;
+
+      // Use provided containerRef if available, fallback to main
+      const container = containerRef?.current || document.querySelector("main");
+      if (!container) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const wrapperRect = wrapper.getBoundingClientRect();
+
+      const availableHeight = containerRect.bottom - wrapperRect.top;
+
+      // Check if content height exceeds available height
+      const contentHeight = wrapper.scrollHeight;
+      const willNeedScrolling = contentHeight > availableHeight;
+
+      setNeedsScrolling(willNeedScrolling);
+      setMaxHeight(willNeedScrolling ? `${availableHeight}px` : "auto");
+    };
+
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(updateHeight);
+    const wrapper = tableRef.current;
+    if (wrapper) resizeObserver.observe(wrapper);
+
+    window.addEventListener("resize", updateHeight);
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+      if (wrapper) resizeObserver.unobserve(wrapper);
+    };
+  }, [containerRef, sortedData.length, isLoading]); // Added dependencies to recalculate when data changes
+
+  // Determine the effective variant based on content and scrolling needs
+  const effectiveVariant =
+    variant === "full-height" && needsScrolling ? "full-height" : "regular";
+
   // Configure table
   const table = useReactTable<T>({
     data: sortedData,
@@ -355,6 +375,7 @@ export const GenericTable = <T extends { id: number | string }>({
     <div
       className={classNames("p-generic-table", className)}
       data-testid="p-generic-table"
+      {...props}
     >
       {pagination && (
         <PaginationBar
@@ -374,7 +395,7 @@ export const GenericTable = <T extends { id: number | string }>({
         aria-describedby="generic-table-description"
         aria-rowcount={sortedData.length + 1} // +1 for header row
         className={classNames("p-generic-table__table", {
-          "p-generic-table__is-full-height": variant === "full-height",
+          "p-generic-table__is-full-height": effectiveVariant === "full-height",
           "p-generic-table__is-selectable": canSelect,
           "p-generic-table__is-grouped": groupBy !== undefined,
         })}
