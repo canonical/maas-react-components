@@ -5,8 +5,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { vi } from "vitest";
 
-import { GenericTable } from "./GenericTable";
-
+import { GenericTable } from "@/lib";
 import type { PaginationBarProps } from "@/lib/components/GenericTable/PaginationBar";
 
 type Image = {
@@ -98,7 +97,7 @@ describe("GenericTable", () => {
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByText("Release title")).toBeInTheDocument();
@@ -130,11 +129,11 @@ describe("GenericTable", () => {
         pagination={pagination}
         rowSelection={{}}
         setRowSelection={vi.fn()}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole("button", { name: "Next page" })
+      screen.getByRole("button", { name: "Next page" }),
     ).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: "Next page" }));
@@ -153,7 +152,7 @@ describe("GenericTable", () => {
         noData={<span>No data</span>}
         rowSelection={{}}
         setRowSelection={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByText("No data")).toBeInTheDocument();
@@ -169,7 +168,7 @@ describe("GenericTable", () => {
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByText("Release title"));
@@ -191,7 +190,7 @@ describe("GenericTable", () => {
         isLoading={true}
         rowSelection={{}}
         setRowSelection={vi.fn()}
-      />
+      />,
     );
 
     // Table should have aria-busy attribute when loading
@@ -214,7 +213,7 @@ describe("GenericTable", () => {
         isLoading={false}
         rowSelection={{}}
         setRowSelection={mockSetRowSelection}
-      />
+      />,
     );
 
     // Should render checkboxes
@@ -237,7 +236,7 @@ describe("GenericTable", () => {
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
-      />
+      />,
     );
 
     const tableWrapper =
@@ -257,7 +256,7 @@ describe("GenericTable", () => {
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
-      />
+      />,
     );
 
     // Check if grouped rows are rendered correctly
@@ -278,7 +277,7 @@ describe("GenericTable", () => {
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
-      />
+      />,
     );
 
     // Find expand/collapse buttons and click one
@@ -287,7 +286,7 @@ describe("GenericTable", () => {
       .filter(
         (button) =>
           button.getAttribute("aria-label")?.includes("expand") ||
-          button.getAttribute("aria-label")?.includes("collapse")
+          button.getAttribute("aria-label")?.includes("collapse"),
       );
 
     if (expandButtons.length) {
@@ -311,7 +310,7 @@ describe("GenericTable", () => {
         rowSelection={{}}
         setRowSelection={vi.fn()}
         sortBy={[{ id: "release", desc: true }]}
-      />
+      />,
     );
 
     // With desc: true, 18.04 should appear before 16.04
@@ -331,15 +330,41 @@ describe("GenericTable", () => {
         rowSelection={{}}
         setRowSelection={vi.fn()}
         variant="regular"
-      />
+      />,
     );
 
     const table = screen.getByRole("grid");
     expect(table).not.toHaveClass("p-generic-table__is-full-height");
 
-    // Render with full-height variant
-    render(
+    // Create container with mocked dimensions
+    const containerRef = {
+      current: {
+        getBoundingClientRect: () => ({ bottom: 100, top: 0 }),
+      } as HTMLElement,
+    };
+
+    // Mock dimensions that will trigger full-height behavior
+    Element.prototype.getBoundingClientRect = vi
+      .fn()
+      .mockImplementation(function () {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        if (this.tagName === "TBODY") {
+          return { top: 50, bottom: 300 };
+        }
+        return { top: 0, bottom: 0 };
+      });
+
+    Object.defineProperty(HTMLElement.prototype, "scrollHeight", {
+      get() {
+        return this.tagName === "TBODY" ? 250 : 0;
+      },
+      configurable: true,
+    });
+
+    const { rerender } = render(
       <GenericTable
+        containerRef={containerRef}
         columns={columns}
         data={data}
         filterCells={mockFilterCells}
@@ -348,7 +373,22 @@ describe("GenericTable", () => {
         rowSelection={{}}
         setRowSelection={vi.fn()}
         variant="full-height"
-      />
+      />,
+    );
+
+    // Force a re-render to trigger useLayoutEffect
+    rerender(
+      <GenericTable
+        containerRef={containerRef}
+        columns={columns}
+        data={data}
+        filterCells={mockFilterCells}
+        filterHeaders={mockFilterHeaders}
+        isLoading={false}
+        rowSelection={{}}
+        setRowSelection={vi.fn()}
+        variant="full-height"
+      />,
     );
 
     const fullHeightTable = screen.getAllByRole("grid")[1];
@@ -384,7 +424,7 @@ describe("GenericTable", () => {
         pinGroup={[{ value: "arm64", isTop: true }]}
         rowSelection={{}}
         setRowSelection={vi.fn()}
-      />
+      />,
     );
 
     // The arm64 groups should be pinned to the top
@@ -424,17 +464,17 @@ describe("GenericTable", () => {
     // Check that event listeners were added
     expect(window.addEventListener).toHaveBeenCalledWith(
       "resize",
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
   it("applies filter functions for cells and headers", () => {
     const customFilterCells = vi.fn(
-      (_row, column) => column.id !== "size" // Filter out the size column cells
+      (_row, column) => column.id !== "size", // Filter out the size column cells
     );
 
     const customFilterHeaders = vi.fn(
-      (header) => header.id !== "size" // Filter out the size column header
+      (header) => header.id !== "size", // Filter out the size column header
     );
 
     render(
@@ -446,7 +486,7 @@ describe("GenericTable", () => {
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
-      />
+      />,
     );
 
     // Size header should not be rendered
