@@ -3,6 +3,8 @@ import { useState, useRef, useEffect } from "react";
 import { SearchBox } from "@canonical/react-components";
 import classNames from "classnames";
 
+import "./QueryInput.scss";
+
 type Suggestion = {
   value: string;
   type: string;
@@ -109,14 +111,14 @@ export const QueryInput = ({ suggestions, onSelect, placeholder }: Props) => {
   };
 
   return (
-    <div className="p-search-query-panel" ref={panelRef}>
+    <div className="p-query-input" ref={panelRef}>
       <SearchBox
         placeholder={placeholder}
         value={search}
         externallyControlled
         autoComplete="off"
-        id="search-query-panel-input"
-        name="search-query-panel-input"
+        id="query-input"
+        name="query-input"
         ref={inputRef}
         onBlur={handleBlur}
         onFocus={handleFocus}
@@ -124,12 +126,12 @@ export const QueryInput = ({ suggestions, onSelect, placeholder }: Props) => {
         onKeyDown={handleKeyDown}
       />
       {visible && filtered.length > 0 && (
-        <ul className="p-search-query-panel__list" ref={listRef}>
+        <ul className="p-query-input__list" ref={listRef}>
           {filtered.map((item, index) => (
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events
             <li
               key={`${item.value}-${index}`}
-              className={classNames("p-search-query-panel__item", {
+              className={classNames("p-query-input__item", {
                 highlight: index === highlightedIndex,
               })}
               onClick={() => selectSuggestion(index)}
@@ -138,12 +140,13 @@ export const QueryInput = ({ suggestions, onSelect, placeholder }: Props) => {
               aria-selected={index === highlightedIndex}
               tabIndex={-1}
             >
-              <span className="p-search-query-panel__item-label">
-                {item.value}
+              <span className="p-query-input__item-label">
+                <span>{item.value}</span>
+                {item.type === "filter" && (
+                  <span className="u-text--muted">:()</span>
+                )}
               </span>
-              <span className="p-search-query-panel__item-type">
-                {item.type}
-              </span>
+              <span className="u-text--muted u-align-text--right">{item.type}</span>
             </li>
           ))}
         </ul>
