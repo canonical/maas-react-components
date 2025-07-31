@@ -5,6 +5,9 @@ import {
   KeyboardEvent,
   useMemo,
   useCallback,
+  ReactElement,
+  DetailedHTMLProps,
+  HTMLAttributes,
 } from "react";
 
 import { SearchBox } from "@canonical/react-components";
@@ -12,7 +15,6 @@ import classNames from "classnames";
 
 import "./QueryInput.scss";
 
-// Constants
 const SUGGESTION_LIMITS = {
   DEFAULT: 4,
   EXPANDED: 15,
@@ -26,14 +28,14 @@ const SPECIAL_CHARS = {
   COMMA: ",",
 } as const;
 
-// Types
 export type Suggestion = {
   value: string;
   type: string;
   disabled?: boolean;
 };
 
-type Props = {
+type QueryInputProps = {
+  className?: string;
   search: string;
   setSearch: (value: string) => void;
   context: string;
@@ -41,7 +43,7 @@ type Props = {
   setToken: (nextToken: string) => void;
   suggestions: Suggestion[];
   placeholder?: string;
-};
+} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 type ParseResult = {
   context: string;
@@ -57,7 +59,6 @@ type SuggestionState = {
   cursorPosition: number;
 };
 
-// Utility functions
 const parseQueryInput = (
   input: string,
   cursorPosition: number = input.length,
@@ -70,7 +71,6 @@ const parseQueryInput = (
 const extractContext = (input: string, cursorPosition: number): string => {
   let depth = 0;
 
-  // Start from cursor position and work backwards
   for (let i = cursorPosition - 1; i >= 0; i--) {
     const char = input[i];
 
@@ -100,12 +100,10 @@ const extractToken = (
   let start = cursorPosition;
   let end = cursorPosition;
 
-  // Find the end of the current token (move right until we hit a delimiter)
   while (end < input.length && /[^\s=(),]/.test(input[end])) {
     end++;
   }
 
-  // Find the start of the current token (move left until we hit a delimiter)
   while (start > 0 && /[^\s=(),]/.test(input[start - 1])) {
     start--;
   }
@@ -126,7 +124,36 @@ const shouldHideSuggestions = (
   );
 };
 
+/**
+ * QueryInput - A feature-rich search query constructor for React applications
+ *
+ * A keyboard-centric search query constructor field with externally controlled
+ * assistive suggestion and insertion features
+ *
+ * @param {Object} props - Component props
+ * @param {string} [props.className] - Additional CSS class for the table wrapper
+ * @param {search} [props.search] - Externally controlled search query string
+ * @param {setSearch} [props.setSearch] - Search query string setter
+ * @param {context} [props.context] - Externally controlled suggestion context
+ * @param {setContext} [props.setContext] - Suggestion context setter
+ * @param {setToken} [props.setToken] - Partial token string for autocomplete
+ * @param {suggestions} [props.suggestions] - Context-aware suggestions
+ * @param {placeholder} [props.placeholder] - Search field placeholder text
+ *
+ * @returns {ReactElement} - The rendered query input component
+ *
+ * @example
+ * <QueryInput
+ *   search={search}
+ *   setSearch={setSearch}
+ *   context={context}
+ *   setContext={setContext}
+ *   setToken={setToken}
+ *   suggestions={suggestions}
+ * />
+ */
 export const QueryInput = ({
+  className,
   search,
   setSearch,
   context,
@@ -134,8 +161,8 @@ export const QueryInput = ({
   setToken,
   suggestions,
   placeholder,
-}: Props) => {
-  // State management
+  ...props
+}: QueryInputProps): ReactElement => {
   const [suggestionState, setSuggestionState] = useState<SuggestionState>({
     isVisible: false,
     highlightedIndex: -1,
@@ -143,12 +170,10 @@ export const QueryInput = ({
     cursorPosition: 0,
   });
 
-  // Refs
   const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Computed values
   const visibleSuggestions = useMemo(() => {
     const maxToShow = suggestionState.showingMore
       ? SUGGESTION_LIMITS.EXPANDED
@@ -162,7 +187,6 @@ export const QueryInput = ({
       : capped;
   }, [suggestions, suggestionState.showingMore]);
 
-  // Event handlers
   const updateSuggestionState = useCallback(
     (
       updates:
@@ -241,10 +265,10 @@ export const QueryInput = ({
       const newCursorPosition =
         parseResult.tokenStart +
         (selected.type === "filter"
-          ? selected.value.length + 2 // +2 for ":("
+          ? selected.value.length + 2
           : context.length === 0
-            ? selected.type.length + selected.value.length + 3 // +3 for ":="
-            : selected.value.length + 1); // +1 for "="
+            ? selected.type.length + selected.value.length + 3
+            : selected.value.length + 1);
 
       const { context: newContext, token: newToken } = parseQueryInput(
         newValue,
@@ -255,7 +279,6 @@ export const QueryInput = ({
       setToken(newToken);
       setSearch(newValue);
 
-      // Set cursor position after state update
       setTimeout(() => {
         if (inputRef.current) {
           inputRef.current.setSelectionRange(
@@ -308,7 +331,6 @@ export const QueryInput = ({
     (e: KeyboardEvent<HTMLInputElement>) => {
       const { key } = e;
 
-      // Handle navigation keys that affect suggestions
       if (suggestionState.isVisible) {
         const suggestionCount = visibleSuggestions.length;
 
@@ -350,7 +372,6 @@ export const QueryInput = ({
         }
       }
 
-      // For arrow keys and other navigation keys, update cursor position after the event
       if (
         key === "ArrowLeft" ||
         key === "ArrowRight" ||
@@ -371,7 +392,6 @@ export const QueryInput = ({
 
   const handleKeyUp = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
-      // Update cursor position after any key that might move the cursor
       const { key } = e;
       if (
         key === "ArrowLeft" ||
@@ -394,7 +414,6 @@ export const QueryInput = ({
 
   const handleChange = useCallback(
     (value: string) => {
-      // Get current cursor position
       const cursorPosition = inputRef.current?.selectionStart || value.length;
       const { context: newContext, token: newToken } = parseQueryInput(
         value,
@@ -416,7 +435,6 @@ export const QueryInput = ({
   );
 
   const handleClick = useCallback(() => {
-    // Update cursor position when user clicks in the input
     setTimeout(updateCursorPosition, 0);
   }, [updateCursorPosition]);
 
@@ -434,14 +452,18 @@ export const QueryInput = ({
     [updateSuggestionState],
   );
 
-  // Effects
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [handleClickOutside]);
 
   return (
-    <div className="p-query-input" ref={panelRef}>
+    <div
+      className={classNames("p-query-input", className)}
+      data-testid="p-query-input"
+      ref={panelRef}
+      {...props}
+    >
       <SearchBox
         placeholder={placeholder}
         value={search}

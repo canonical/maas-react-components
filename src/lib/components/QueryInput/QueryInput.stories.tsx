@@ -211,7 +211,6 @@ export const Default: Story = {
         setSearch={setSearch}
         context={context}
         setContext={setContext}
-        token={token}
         setToken={setToken}
         suggestions={suggestions}
       />
