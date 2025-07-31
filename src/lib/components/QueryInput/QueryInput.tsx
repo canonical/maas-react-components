@@ -21,6 +21,7 @@ export const QueryInput = ({ suggestions, onSelect, placeholder }: Props) => {
   const [search, setSearch] = useState("");
   const [visible, setVisible] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [showingMore, setShowingMore] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,6 +31,14 @@ export const QueryInput = ({ suggestions, onSelect, placeholder }: Props) => {
         s.value.toLowerCase().includes(search.toLowerCase()),
       )
     : suggestions;
+
+  const maxToShow = showingMore ? 15 : 4;
+  const capped = filtered.slice(0, maxToShow);
+  const shouldShowMore = !showingMore && filtered.length > maxToShow;
+
+  const visibleSuggestions = shouldShowMore
+    ? [...capped, { value: "Show more...", type: "more" }]
+    : capped;
 
   useEffect(() => {
     const closeOnClickOutside = (e: MouseEvent) => {
@@ -42,35 +51,20 @@ export const QueryInput = ({ suggestions, onSelect, placeholder }: Props) => {
     return () => document.removeEventListener("mousedown", closeOnClickOutside);
   }, []);
 
-  // Scroll highlighted item into view
-  useEffect(() => {
-    if (highlightedIndex < 0 || !listRef.current) return;
-    const items = listRef.current.querySelectorAll("li");
-    const item = items[highlightedIndex] as HTMLElement | undefined;
-    if (item) {
-      item.scrollIntoView({ block: "nearest" });
-    }
-  }, [highlightedIndex]);
-
   const selectSuggestion = (index: number) => {
-    const selected = filtered[index];
-    if (selected) {
-      onSelect(selected.value);
-      setSearch(selected.value);
-      setVisible(false);
-      setHighlightedIndex(-1);
+    const selected = visibleSuggestions[index];
+    if (!selected) return;
+
+    if (selected.type === "more") {
+      setShowingMore(true);
+      return;
     }
-  };
 
-  const handleFocus = () => {
-    setVisible(true);
+    onSelect(selected.value);
+    setSearch(selected.value);
+    setVisible(false);
     setHighlightedIndex(-1);
-  };
-
-  const handleChange = (value: string) => {
-    setSearch(value);
-    setVisible(true);
-    setHighlightedIndex(-1);
+    setShowingMore(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -102,11 +96,23 @@ export const QueryInput = ({ suggestions, onSelect, placeholder }: Props) => {
     }
   };
 
+  const handleFocus = () => {
+    setVisible(true);
+    setHighlightedIndex(-1);
+  };
+
+  const handleChange = (value: string) => {
+    setSearch(value);
+    setVisible(true);
+    setHighlightedIndex(-1);
+    setShowingMore(false);
+  };
+
   const handleBlur = () => {
-    // Delay to allow click on suggestions
     setTimeout(() => {
       setVisible(false);
       setHighlightedIndex(-1);
+      setShowingMore(false);
     }, 150);
   };
 
@@ -127,7 +133,7 @@ export const QueryInput = ({ suggestions, onSelect, placeholder }: Props) => {
       />
       {visible && filtered.length > 0 && (
         <ul className="p-query-input__list" ref={listRef}>
-          {filtered.map((item, index) => (
+          {visibleSuggestions.map((item, index) => (
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events
             <li
               key={`${item.value}-${index}`}
@@ -141,12 +147,22 @@ export const QueryInput = ({ suggestions, onSelect, placeholder }: Props) => {
               tabIndex={-1}
             >
               <span className="p-query-input__item-label">
-                <span>{item.value}</span>
+                <span
+                  className={classNames({
+                    "u-text--muted": item.type === "more",
+                  })}
+                >
+                  {item.value}
+                </span>
                 {item.type === "filter" && (
                   <span className="u-text--muted">:()</span>
                 )}
               </span>
-              <span className="u-text--muted u-align-text--right">{item.type}</span>
+              {item.type !== "more" && (
+                <span className="u-text--muted u-align-text--right">
+                  {item.type}
+                </span>
+              )}
             </li>
           ))}
         </ul>

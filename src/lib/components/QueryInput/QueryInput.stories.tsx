@@ -16,6 +16,14 @@ const meta: Meta<typeof QueryInput> = {
   args: {
     suggestions: [
       {
+        value: "status",
+        type: "filter",
+      },
+      {
+        value: "deployment_target",
+        type: "filter",
+      },
+      {
         value: "owner",
         type: "filter",
       },
@@ -24,7 +32,7 @@ const meta: Meta<typeof QueryInput> = {
         type: "filter",
       },
       {
-        value: "suggestion",
+        value: "architecture",
         type: "filter",
       },
       {
@@ -32,7 +40,31 @@ const meta: Meta<typeof QueryInput> = {
         type: "filter",
       },
       {
+        value: "workload",
+        type: "filter",
+      },
+      {
+        value: "kvm",
+        type: "filter",
+      },
+      {
+        value: "subnet",
+        type: "filter",
+      },
+      {
+        value: "fabric",
+        type: "filter",
+      },
+      {
         value: "zone",
+        type: "filter",
+      },
+      {
+        value: "vlan",
+        type: "filter",
+      },
+      {
+        value: "space",
         type: "filter",
       },
     ],
