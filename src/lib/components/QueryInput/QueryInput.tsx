@@ -8,6 +8,8 @@ import {
   ReactElement,
   DetailedHTMLProps,
   HTMLAttributes,
+  Dispatch,
+  SetStateAction,
 } from "react";
 
 import { SearchBox } from "@canonical/react-components";
@@ -36,11 +38,12 @@ export type Suggestion = {
 
 type QueryInputProps = {
   className?: string;
+  disabled?: boolean;
   search: string;
-  setSearch: (value: string) => void;
+  setSearch: Dispatch<SetStateAction<string>>;
   context: string;
-  setContext: (nextContext: string) => void;
-  setToken: (nextToken: string) => void;
+  setContext: Dispatch<SetStateAction<string>>;
+  setToken: Dispatch<SetStateAction<string>>;
   suggestions: Suggestion[];
   placeholder?: string;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
@@ -132,6 +135,7 @@ const shouldHideSuggestions = (
  *
  * @param {Object} props - Component props
  * @param {string} [props.className] - Additional CSS class for the table wrapper
+ * @param {disabled} [props.disabled] - Field disabling boolean
  * @param {search} [props.search] - Externally controlled search query string
  * @param {setSearch} [props.setSearch] - Search query string setter
  * @param {context} [props.context] - Externally controlled suggestion context
@@ -154,6 +158,7 @@ const shouldHideSuggestions = (
  */
 export const QueryInput = ({
   className,
+  disabled,
   search,
   setSearch,
   context,
@@ -465,6 +470,7 @@ export const QueryInput = ({
       {...props}
     >
       <SearchBox
+        disabled={disabled}
         placeholder={placeholder}
         value={search}
         externallyControlled
@@ -478,6 +484,7 @@ export const QueryInput = ({
         onKeyUp={handleKeyUp}
         onClear={handleClear}
         onClick={handleClick}
+        aria-disabled={disabled}
         aria-expanded={suggestionState.isVisible}
         aria-haspopup="listbox"
         aria-owns="query-suggestions"
