@@ -23,6 +23,7 @@ const SPECIAL_CHARS = {
   CLOSE_PAREN: ")",
   EQUALS: "=",
   COLON: ":",
+  COMMA: ",",
 } as const;
 
 // Types
@@ -37,7 +38,6 @@ type Props = {
   setSearch: (value: string) => void;
   context: string;
   setContext: (nextContext: string) => void;
-  token: string;
   setToken: (nextToken: string) => void;
   suggestions: Suggestion[];
   placeholder?: string;
@@ -46,26 +46,32 @@ type Props = {
 type ParseResult = {
   context: string;
   token: string;
+  tokenStart: number;
+  tokenEnd: number;
 };
 
 type SuggestionState = {
   isVisible: boolean;
   highlightedIndex: number;
   showingMore: boolean;
+  cursorPosition: number;
 };
 
 // Utility functions
-const parseQueryInput = (input: string): ParseResult => {
-  const context = extractContext(input);
-  const token = extractToken(input);
-  console.log("token", token);
-  return { context, token };
+const parseQueryInput = (
+  input: string,
+  cursorPosition: number = input.length,
+): ParseResult => {
+  const context = extractContext(input, cursorPosition);
+  const { token, tokenStart, tokenEnd } = extractToken(input, cursorPosition);
+  return { context, token, tokenStart, tokenEnd };
 };
 
-const extractContext = (input: string): string => {
+const extractContext = (input: string, cursorPosition: number): string => {
   let depth = 0;
 
-  for (let i = input.length - 1; i >= 0; i--) {
+  // Start from cursor position and work backwards
+  for (let i = cursorPosition - 1; i >= 0; i--) {
     const char = input[i];
 
     if (char === SPECIAL_CHARS.CLOSE_PAREN) {
@@ -83,29 +89,40 @@ const extractContext = (input: string): string => {
   return "";
 };
 
-// TODO: token should be from the actual cursor, and whitespace should break token
-const extractToken = (input: string): string => {
-  const workingString = input.trimEnd();
-  let cursor = workingString.length - 1;
+const extractToken = (
+  input: string,
+  cursorPosition: number,
+): {
+  token: string;
+  tokenStart: number;
+  tokenEnd: number;
+} => {
+  let start = cursorPosition;
+  let end = cursorPosition;
 
-  // Skip whitespace and equals signs
-  while (cursor >= 0 && /[\s=]/.test(workingString[cursor])) {
-    cursor--;
+  // Find the end of the current token (move right until we hit a delimiter)
+  while (end < input.length && /[^\s=(),]/.test(input[end])) {
+    end++;
   }
 
-  const end = cursor + 1;
-
-  // Find the start of the token
-  while (cursor >= 0 && /[^\s=(),]/.test(workingString[cursor])) {
-    cursor--;
+  // Find the start of the current token (move left until we hit a delimiter)
+  while (start > 0 && /[^\s=(),]/.test(input[start - 1])) {
+    start--;
   }
 
-  return workingString.slice(cursor + 1, end);
+  const token = input.slice(start, end);
+  return { token, tokenStart: start, tokenEnd: end };
 };
 
-const shouldHideSuggestions = (input: string): boolean => {
+const shouldHideSuggestions = (
+  input: string,
+  cursorPosition: number,
+): boolean => {
+  const charAtCursor = input.charAt(cursorPosition - 1);
   return (
-    input.length > 0 && input[input.length - 1] === SPECIAL_CHARS.CLOSE_PAREN
+    cursorPosition > 0 &&
+    (charAtCursor === SPECIAL_CHARS.CLOSE_PAREN ||
+      charAtCursor === SPECIAL_CHARS.COMMA)
   );
 };
 
@@ -114,7 +131,6 @@ export const QueryInput = ({
   setSearch,
   context,
   setContext,
-  token,
   setToken,
   suggestions,
   placeholder,
@@ -124,6 +140,7 @@ export const QueryInput = ({
     isVisible: false,
     highlightedIndex: -1,
     showingMore: false,
+    cursorPosition: 0,
   });
 
   // Refs
@@ -147,8 +164,16 @@ export const QueryInput = ({
 
   // Event handlers
   const updateSuggestionState = useCallback(
-    (updates: Partial<SuggestionState>) => {
-      setSuggestionState((prev) => ({ ...prev, ...updates }));
+    (
+      updates:
+        | Partial<SuggestionState>
+        | ((prev: SuggestionState) => Partial<SuggestionState>),
+    ) => {
+      if (typeof updates === "function") {
+        setSuggestionState((prev) => ({ ...prev, ...updates(prev) }));
+      } else {
+        setSuggestionState((prev) => ({ ...prev, ...updates }));
+      }
     },
     [],
   );
@@ -166,39 +191,36 @@ export const QueryInput = ({
   );
 
   const buildNewSearchValue = useCallback(
-    (selected: Suggestion): string => {
+    (selected: Suggestion, parseResult: ParseResult): string => {
+      const { tokenStart, tokenEnd } = parseResult;
+
       if (selected.type === "filter") {
-        const lastIndex = search.lastIndexOf(token);
-        return lastIndex !== -1
-          ? search.slice(0, lastIndex) +
-              selected.value +
-              SPECIAL_CHARS.COLON +
-              SPECIAL_CHARS.OPEN_PAREN
-          : selected.value + SPECIAL_CHARS.COLON + SPECIAL_CHARS.OPEN_PAREN;
+        const replacement =
+          selected.value + SPECIAL_CHARS.COLON + SPECIAL_CHARS.OPEN_PAREN;
+        return (
+          search.slice(0, tokenStart) + replacement + search.slice(tokenEnd)
+        );
       }
 
-      const lastIndex = search.lastIndexOf(token);
-
       if (context.length === 0) {
-        return (
-          search.slice(0, lastIndex) +
+        const replacement =
           selected.type +
           SPECIAL_CHARS.COLON +
           SPECIAL_CHARS.OPEN_PAREN +
           SPECIAL_CHARS.EQUALS +
-          selected.value
-        );
-      }
-
-      if (lastIndex !== -1) {
+          selected.value;
         return (
-          search.slice(0, lastIndex) + SPECIAL_CHARS.EQUALS + selected.value
+          search.slice(0, tokenStart) + replacement + search.slice(tokenEnd)
         );
       }
 
-      return selected.value;
+      const replacement =
+        search.charAt(tokenStart - 1) === SPECIAL_CHARS.EQUALS
+          ? selected.value
+          : SPECIAL_CHARS.EQUALS + selected.value;
+      return search.slice(0, tokenStart) + replacement + search.slice(tokenEnd);
     },
-    [search, token, context],
+    [search, context],
   );
 
   const selectSuggestion = useCallback(
@@ -211,23 +233,51 @@ export const QueryInput = ({
         return;
       }
 
-      const newValue = buildNewSearchValue(selected);
-      const { context: newContext, token: newToken } =
-        parseQueryInput(newValue);
+      const parseResult = parseQueryInput(
+        search,
+        suggestionState.cursorPosition,
+      );
+      const newValue = buildNewSearchValue(selected, parseResult);
+      const newCursorPosition =
+        parseResult.tokenStart +
+        (selected.type === "filter"
+          ? selected.value.length + 2 // +2 for ":("
+          : context.length === 0
+            ? selected.type.length + selected.value.length + 3 // +3 for ":="
+            : selected.value.length + 1); // +1 for "="
+
+      const { context: newContext, token: newToken } = parseQueryInput(
+        newValue,
+        newCursorPosition,
+      );
 
       setContext(newContext);
       setToken(newToken);
       setSearch(newValue);
 
+      // Set cursor position after state update
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.setSelectionRange(
+            newCursorPosition,
+            newCursorPosition,
+          );
+        }
+      }, 0);
+
       updateSuggestionState({
         highlightedIndex: 0,
         showingMore: false,
         isVisible: selected.type === "filter",
+        cursorPosition: newCursorPosition,
       });
     },
     [
       visibleSuggestions,
       buildNewSearchValue,
+      search,
+      suggestionState.cursorPosition,
+      context,
       setContext,
       setToken,
       setSearch,
@@ -235,48 +285,79 @@ export const QueryInput = ({
     ],
   );
 
+  const updateCursorPosition = useCallback(() => {
+    if (!inputRef.current) return;
+
+    const cursorPosition = inputRef.current.selectionStart || 0;
+    const { context: newContext, token: newToken } = parseQueryInput(
+      search,
+      cursorPosition,
+    );
+
+    setContext(newContext);
+    setToken(newToken);
+
+    updateSuggestionState((prev) => ({
+      ...prev,
+      isVisible: !shouldHideSuggestions(search, cursorPosition),
+      cursorPosition,
+    }));
+  }, [search, setContext, setToken, updateSuggestionState]);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
-      if (!suggestionState.isVisible) return;
-
       const { key } = e;
-      const suggestionCount = visibleSuggestions.length;
 
-      switch (key) {
-        case "ArrowDown":
-          e.preventDefault();
-          updateSuggestionState({
-            highlightedIndex:
-              (suggestionState.highlightedIndex + 1) % suggestionCount,
-          });
-          break;
+      // Handle navigation keys that affect suggestions
+      if (suggestionState.isVisible) {
+        const suggestionCount = visibleSuggestions.length;
 
-        case "ArrowUp":
-          e.preventDefault();
-          updateSuggestionState({
-            highlightedIndex:
-              suggestionState.highlightedIndex <= 0
-                ? suggestionCount - 1
-                : suggestionState.highlightedIndex - 1,
-          });
-          break;
+        switch (key) {
+          case "ArrowDown":
+            e.preventDefault();
+            updateSuggestionState({
+              highlightedIndex:
+                (suggestionState.highlightedIndex + 1) % suggestionCount,
+            });
+            return;
 
-        case "Enter":
-          e.preventDefault();
-          if (suggestionState.highlightedIndex >= 0) {
-            selectSuggestion(suggestionState.highlightedIndex);
-          } else {
-            updateSuggestionState({ isVisible: false });
-          }
-          break;
+          case "ArrowUp":
+            e.preventDefault();
+            updateSuggestionState({
+              highlightedIndex:
+                suggestionState.highlightedIndex <= 0
+                  ? suggestionCount - 1
+                  : suggestionState.highlightedIndex - 1,
+            });
+            return;
 
-        case "Escape":
-          e.preventDefault();
-          updateSuggestionState({
-            isVisible: false,
-            highlightedIndex: -1,
-          });
-          break;
+          case "Enter":
+            e.preventDefault();
+            if (suggestionState.highlightedIndex >= 0) {
+              selectSuggestion(suggestionState.highlightedIndex);
+            } else {
+              updateSuggestionState({ isVisible: false });
+            }
+            return;
+
+          case "Escape":
+            e.preventDefault();
+            updateSuggestionState({
+              isVisible: false,
+              highlightedIndex: -1,
+            });
+            return;
+        }
+      }
+
+      // For arrow keys and other navigation keys, update cursor position after the event
+      if (
+        key === "ArrowLeft" ||
+        key === "ArrowRight" ||
+        key === "Home" ||
+        key === "End"
+      ) {
+        setTimeout(updateCursorPosition, 0);
       }
     },
     [
@@ -284,7 +365,24 @@ export const QueryInput = ({
       visibleSuggestions.length,
       updateSuggestionState,
       selectSuggestion,
+      updateCursorPosition,
     ],
+  );
+
+  const handleKeyUp = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      // Update cursor position after any key that might move the cursor
+      const { key } = e;
+      if (
+        key === "ArrowLeft" ||
+        key === "ArrowRight" ||
+        key === "Home" ||
+        key === "End"
+      ) {
+        updateCursorPosition();
+      }
+    },
+    [updateCursorPosition],
   );
 
   const handleFocus = useCallback(() => {
@@ -296,7 +394,12 @@ export const QueryInput = ({
 
   const handleChange = useCallback(
     (value: string) => {
-      const { context: newContext, token: newToken } = parseQueryInput(value);
+      // Get current cursor position
+      const cursorPosition = inputRef.current?.selectionStart || value.length;
+      const { context: newContext, token: newToken } = parseQueryInput(
+        value,
+        cursorPosition,
+      );
 
       setContext(newContext);
       setToken(newToken);
@@ -304,12 +407,18 @@ export const QueryInput = ({
 
       updateSuggestionState({
         highlightedIndex: 0,
-        isVisible: !shouldHideSuggestions(value),
+        isVisible: !shouldHideSuggestions(value, cursorPosition),
         showingMore: false,
+        cursorPosition,
       });
     },
     [setContext, setToken, setSearch, updateSuggestionState],
   );
+
+  const handleClick = useCallback(() => {
+    // Update cursor position when user clicks in the input
+    setTimeout(updateCursorPosition, 0);
+  }, [updateCursorPosition]);
 
   const handleClear = useCallback(() => {
     updateSuggestionState({
@@ -344,7 +453,9 @@ export const QueryInput = ({
         onFocus={handleFocus}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
         onClear={handleClear}
+        onClick={handleClick}
         aria-expanded={suggestionState.isVisible}
         aria-haspopup="listbox"
         aria-owns="query-suggestions"
