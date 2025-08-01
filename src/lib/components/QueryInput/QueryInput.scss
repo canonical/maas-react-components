@@ -17,6 +17,13 @@
     border: $input-border-thickness solid $colors--theme--border-low-contrast;
     list-style: none;
 
+    .p-query-input__loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: $sph--large;
+    }
+
     .p-query-input__item {
       display: flex;
       justify-content: space-between;

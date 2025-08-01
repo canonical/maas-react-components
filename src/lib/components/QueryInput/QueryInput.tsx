@@ -12,7 +12,7 @@ import {
   SetStateAction,
 } from "react";
 
-import { SearchBox } from "@canonical/react-components";
+import { SearchBox, Spinner } from "@canonical/react-components";
 import classNames from "classnames";
 
 import "./QueryInput.scss";
@@ -45,6 +45,7 @@ type QueryInputProps = {
   setContext: Dispatch<SetStateAction<string>>;
   setToken: Dispatch<SetStateAction<string>>;
   suggestions: Suggestion[];
+  isLoading?: boolean;
   placeholder?: string;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
@@ -142,6 +143,7 @@ const shouldHideSuggestions = (
  * @param {setContext} [props.setContext] - Suggestion context setter
  * @param {setToken} [props.setToken] - Partial token string for autocomplete
  * @param {suggestions} [props.suggestions] - Context-aware suggestions
+ * @param {isLoading} [props.isLoading] - Loading suggestion state boolean
  * @param {placeholder} [props.placeholder] - Search field placeholder text
  *
  * @returns {ReactElement} - The rendered query input component
@@ -158,13 +160,14 @@ const shouldHideSuggestions = (
  */
 export const QueryInput = ({
   className,
-  disabled,
+  disabled = false,
   search,
   setSearch,
   context,
   setContext,
   setToken,
   suggestions,
+  isLoading = false,
   placeholder,
   ...props
 }: QueryInputProps): ReactElement => {
@@ -497,38 +500,44 @@ export const QueryInput = ({
           role="listbox"
           aria-label="Search suggestions"
         >
-          {visibleSuggestions.map((item, index) => (
-            <li
-              key={`${item.value}-${index}`}
-              className={classNames("p-query-input__item", {
-                highlight: index === suggestionState.highlightedIndex,
-              })}
-              onClick={() => selectSuggestion(index)}
-              onKeyDown={() => selectSuggestion(index)}
-              onMouseEnter={() => handleMouseEnter(index)}
-              role="option"
-              aria-selected={index === suggestionState.highlightedIndex}
-              tabIndex={-1}
-            >
-              <span className="p-query-input__item-label">
-                <span
-                  className={classNames({
-                    "u-text--muted": item.type === "more",
-                  })}
-                >
-                  {item.value}
+          {isLoading ? (
+            <div className="p-query-input__loading">
+              <Spinner text="Loading..." />
+            </div>
+          ) : (
+            visibleSuggestions.map((item, index) => (
+              <li
+                key={`${item.value}-${index}`}
+                className={classNames("p-query-input__item", {
+                  highlight: index === suggestionState.highlightedIndex,
+                })}
+                onClick={() => selectSuggestion(index)}
+                onKeyDown={() => selectSuggestion(index)}
+                onMouseEnter={() => handleMouseEnter(index)}
+                role="option"
+                aria-selected={index === suggestionState.highlightedIndex}
+                tabIndex={-1}
+              >
+                <span className="p-query-input__item-label">
+                  <span
+                    className={classNames({
+                      "u-text--muted": item.type === "more",
+                    })}
+                  >
+                    {item.value}
+                  </span>
+                  {item.type === "filter" && (
+                    <span className="u-text--muted">:()</span>
+                  )}
                 </span>
-                {item.type === "filter" && (
-                  <span className="u-text--muted">:()</span>
+                {item.type !== "more" && (
+                  <span className="u-text--muted u-align-text--right">
+                    {item.type}
+                  </span>
                 )}
-              </span>
-              {item.type !== "more" && (
-                <span className="u-text--muted u-align-text--right">
-                  {item.type}
-                </span>
-              )}
-            </li>
-          ))}
+              </li>
+            ))
+          )}
         </ul>
       )}
     </div>

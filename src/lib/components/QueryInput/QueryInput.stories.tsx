@@ -244,6 +244,14 @@ const meta: Meta<typeof QueryInput> = {
         required: true,
       },
     },
+    isLoading: {
+      description: "Determines the suggestion loading state",
+      control: { type: "boolean", default: false },
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+      },
+    },
     placeholder: {
       description: "Search field placeholder text",
       control: { type: "text" },
@@ -302,6 +310,26 @@ export const Disabled: Story = {
         setContext={() => {}}
         setToken={() => {}}
         suggestions={[]}
+      />
+    );
+  },
+};
+
+export const Loading: Story = {
+  render: (args) => {
+    const [search, setSearch] = useState<string>("");
+    const [context, setContext] = useState<string>("");
+    const [_, setToken] = useState<string>("");
+
+    return (
+      <QueryInput
+        isLoading
+        search={search}
+        setSearch={setSearch}
+        context={context}
+        setContext={setContext}
+        setToken={setToken}
+        suggestions={args.suggestions}
       />
     );
   },
