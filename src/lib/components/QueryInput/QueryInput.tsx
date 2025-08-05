@@ -289,6 +289,7 @@ export const QueryInput = ({
 
       setTimeout(() => {
         if (inputRef.current) {
+          inputRef.current.focus();
           inputRef.current.setSelectionRange(
             newCursorPosition,
             newCursorPosition,
@@ -343,6 +344,7 @@ export const QueryInput = ({
         const suggestionCount = visibleSuggestions.length;
 
         switch (key) {
+          case "Tab":
           case "ArrowDown":
             e.preventDefault();
             updateSuggestionState({
