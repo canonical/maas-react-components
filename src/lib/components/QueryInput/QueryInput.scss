@@ -1,0 +1,45 @@
+@use "sass:map";
+@import "vanilla-framework";
+@include vf-b-placeholders;
+
+.p-query-input {
+  position: relative;
+
+  .p-query-input__list {
+    position: absolute;
+    background-color: $colors--theme--background-alt;
+    margin: 0;
+    padding: 0;
+    top: 100%;
+    z-index: 100;
+    width: 100%;
+    outline: none;
+    border: $input-border-thickness solid $colors--theme--border-low-contrast;
+    list-style: none;
+
+    .p-query-input__loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: $sph--large;
+    }
+
+    .p-query-input__item {
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+      background-color: $colors--theme--background-alt;
+      font-weight: $font-weight-regular-text;
+      padding: $sph--x-small $sph--small;
+
+      &.highlight {
+        background-color: $colors--theme--background-hover;
+      }
+
+      .p-query-input__item-label {
+        flex-grow: 1;
+        text-align: left;
+      }
+    }
+  }
+}
