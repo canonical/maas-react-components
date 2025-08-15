@@ -48,7 +48,7 @@ import "./GenericTable.scss";
 
 type GenericTableProps<T extends { id: number | string }> = {
   className?: string;
-  canSelect?: boolean;
+  canSelect?: boolean | ((row: Row<T>) => boolean);
   columns: ColumnDef<T, Partial<T>>[];
   containerRef?: RefObject<HTMLElement | null>;
   data: T[];
@@ -76,7 +76,7 @@ type GenericTableProps<T extends { id: number | string }> = {
  *
  * @param {Object} props - Component props
  * @param {string} [props.className] - Additional CSS class for the table wrapper
- * @param {boolean} [props.canSelect=false] - Enable row selection with checkboxes
+ * @param {boolean | ((row: Row<T>) => boolean)} [props.canSelect=false] - Enable row selection with checkboxes
  * @param {ColumnDef<T, Partial<T>>[]} props.columns - Column definitions
  * @param {RefObject<HTMLElement | null>} [props.containerRef] - Reference to container for size calculations
  * @param {T[]} props.data - Table data array
