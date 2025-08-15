@@ -4,6 +4,7 @@ import { Button, Icon } from "@canonical/react-components";
 import { Meta, StoryObj } from "@storybook/react";
 import {
   Column,
+  ColumnDef,
   Getter,
   Header,
   Row,
@@ -13,8 +14,19 @@ import {
 import { GenericTable } from "@/lib/components/GenericTable/GenericTable";
 import { GroupRowActions } from "@/lib/components/GenericTable/GroupRowActions";
 
+type Machine = {
+  id: number;
+  fqdn: string;
+  ipAddress: string;
+  status: string;
+  zone: string;
+  pool: string;
+};
+
+type MachineColumnDef = ColumnDef<Machine, Partial<Machine>>;
+
 // Sample data for MAAS machines
-const generateMachinesData = (count: number) => {
+const generateMachinesData = (count: number): Machine[] => {
   const statuses = ["Ready", "Deployed", "Commissioning"];
   const zones = ["default", "zone-1", "zone-2", "zone-3"];
   const pools = ["default", "pool-1", "pool-2"];
@@ -30,7 +42,7 @@ const generateMachinesData = (count: number) => {
 };
 
 // Column definitions for the MAAS machines table
-const machineColumns = [
+const machineColumns: MachineColumnDef[] = [
   {
     id: "fqdn",
     accessorKey: "fqdn",
@@ -63,13 +75,10 @@ const machineColumns = [
     id: "actions",
     accessorKey: "id",
     header: "Actions",
-    cell: ({ row }: { row: Row<{ id: string | number }> }) => {
+    cell: ({ row }: { row: Row<Machine> }) => {
       if (row.getIsGrouped()) return <GroupRowActions row={row} />;
       return (
         <div className="actions-cell">
-          <Button appearance="base" hasIcon>
-            <Icon name="settings" />
-          </Button>
           <Button appearance="base" hasIcon>
             <Icon name="delete" />
           </Button>
@@ -81,7 +90,7 @@ const machineColumns = [
 
 const mockMachineData = generateMachinesData(10);
 
-const meta: Meta<typeof GenericTable> = {
+const meta: Meta<typeof GenericTable<Machine>> = {
   title: "Components/GenericTable",
   component: GenericTable,
   parameters: {
@@ -146,10 +155,10 @@ const meta: Meta<typeof GenericTable> = {
     // Selection related
     canSelect: {
       description:
-        "Enables row selection with checkboxes in the first column. When true, rowSelection and setRowSelection props must be provided",
-      control: { type: "boolean" },
+        "Enables row selection with checkboxes in the first column. When true, rowSelection and setRowSelection props " +
+        "must be provided. Only certain rows can be selectable if a predicate function is provided.",
       table: {
-        type: { summary: "boolean" },
+        type: { summary: "boolean | ((row: Row<T>) => boolean)" },
         defaultValue: { summary: "false" },
         category: "Selection",
       },
@@ -266,7 +275,7 @@ const meta: Meta<typeof GenericTable> = {
 
 export default meta;
 
-type Story = StoryObj<typeof GenericTable>;
+type Story = StoryObj<typeof GenericTable<Machine>>;
 
 export const Default: Story = {};
 
@@ -321,6 +330,62 @@ export const Selectable: Story = {
   },
 };
 
+export const ConditionallySelectable: Story = {
+  name: "Selectable (Conditional)",
+  render: (args) => {
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+    return (
+      <div style={{ width: "100%" }}>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "1rem",
+          }}
+        >
+          <h5>Selected machines: {Object.keys(rowSelection).length}</h5>
+          <div className="p-button-group">
+            <Button
+              appearance="negative"
+              disabled={Object.keys(rowSelection).length === 0}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+        <GenericTable
+          {...args}
+          rowSelection={rowSelection}
+          setRowSelection={setRowSelection}
+        />
+      </div>
+    );
+  },
+  args: {
+    canSelect: (row: Row<Machine>) => row.original.pool !== "default",
+    columns: [
+      ...machineColumns.filter((column) => column.id !== "actions"),
+      {
+        id: "actions",
+        accessorKey: "id",
+        header: "Actions",
+        cell: ({ row }: { row: Row<Machine> }) => {
+          if (row.getIsGrouped()) return <GroupRowActions row={row} />;
+          return (
+            <div className="actions-cell">
+              <Button appearance="base" hasIcon style={{visibility: !row.getCanSelect() ? "hidden" : "visible"}}>
+                <Icon name="delete" />
+              </Button>
+            </div>
+          );
+        },
+      },
+    ]
+  },
+};
+
 export const Grouped: Story = {
   args: {
     columns: [
@@ -331,7 +396,7 @@ export const Grouped: Story = {
           row,
           getValue,
         }: {
-          row: Row<{ id: string | number }>;
+          row: Row<Machine>;
           getValue: Getter<string>;
         }) => {
           return (
@@ -349,19 +414,15 @@ export const Grouped: Story = {
       ...machineColumns.filter((column) => column.id !== "status"),
     ],
     groupBy: ["status"],
-    filterCells: (
-      row: Row<{ id: string | number }>,
-      column: Column<{ id: string | number }>,
-    ): boolean => {
+    filterCells: (row: Row<Machine>, column: Column<Machine>): boolean => {
       if (row.getIsGrouped()) {
         return ["status", "actions"].includes(column.id);
       } else {
         return !["status"].includes(column.id);
       }
     },
-    filterHeaders: (
-      header: Header<{ id: string | number }, unknown>,
-    ): boolean => header.column.id !== "status",
+    filterHeaders: (header: Header<Machine, unknown>): boolean =>
+      header.column.id !== "status",
   },
 };
 
@@ -415,7 +476,7 @@ export const GroupedSelectable: Story = {
           row,
           getValue,
         }: {
-          row: Row<{ id: string | number }>;
+          row: Row<Machine>;
           getValue: Getter<string>;
         }) => {
           return (
@@ -433,19 +494,15 @@ export const GroupedSelectable: Story = {
       ...machineColumns.filter((column) => column.id !== "status"),
     ],
     groupBy: ["status"],
-    filterCells: (
-      row: Row<{ id: string | number }>,
-      column: Column<{ id: string | number }>,
-    ): boolean => {
+    filterCells: (row: Row<Machine>, column: Column<Machine>): boolean => {
       if (row.getIsGrouped()) {
         return ["status", "actions"].includes(column.id);
       } else {
         return !["status"].includes(column.id);
       }
     },
-    filterHeaders: (
-      header: Header<{ id: string | number }, unknown>,
-    ): boolean => header.column.id !== "status",
+    filterHeaders: (header: Header<Machine, unknown>): boolean =>
+      header.column.id !== "status",
   },
 };
 
