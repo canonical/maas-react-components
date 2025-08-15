@@ -112,6 +112,10 @@
     .p-generic-table__select,
     .p-generic-table__select-alignment {
       width: 2rem;
+
+      .p-table-checkbox[aria-disabled="true"] {
+        visibility: hidden;
+      }
     }
 
     // Hide selection columns when not selectable
