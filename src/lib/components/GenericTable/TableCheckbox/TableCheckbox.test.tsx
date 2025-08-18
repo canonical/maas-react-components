@@ -1,8 +1,7 @@
 import type { Row } from "@tanstack/react-table";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, vi } from "vitest";
-import type { Mock } from "vitest";
 
 import TableCheckbox from "./TableCheckbox";
 
@@ -57,63 +56,102 @@ const getMockRow = (rowProps: Partial<Row<Image>> = {}) => {
 };
 
 describe("TableCheckbox.All", () => {
-  const renderSelectAllCheckbox = (tableProps?: {
-    getSelectedRowModel: Mock;
-    getCoreRowModel: Mock;
-  }) => {
+  const selectable = (selected = false) =>
+    getMockRow({
+      getCanSelect: vi.fn(() => true),
+      getIsSelected: vi.fn(() => selected),
+      subRows: [],
+    }) as unknown as Row<Image>;
+
+  const nonSelectable = () =>
+    getMockRow({
+      getCanSelect: vi.fn(() => false),
+      getIsSelected: vi.fn(() => false),
+      subRows: [],
+    }) as unknown as Row<Image>;
+
+  const renderSelectAllCheckbox = (rows: Row<Image>[]) => {
     const mockTable = {
-      getSelectedRowModel: vi.fn(() => ({ rows: [] })),
-      getCoreRowModel: vi.fn(() => ({ rows: [] })),
-      toggleAllPageRowsSelected: vi.fn(),
-      getIsAllPageRowsSelected: vi.fn(() => false),
-      ...tableProps,
+      getCoreRowModel: vi.fn(() => ({ rows })),
+      getSelectedRowModel: vi.fn(() => ({
+        rows: rows.filter((r) => r.getIsSelected()),
+      })),
     };
 
-    // @ts-expect-error we're not mocking the entire table object, just the parts we need
-    return { ...render(<TableCheckbox.All table={mockTable} />), mockTable };
+    return {
+      // @ts-expect-error partial mock is sufficient for the component
+      ...render(<TableCheckbox.All table={mockTable} />),
+      mockTable,
+      rows,
+    };
   };
 
-  it("displays 'unchecked' when no rows are selected", () => {
-    renderSelectAllCheckbox();
+  it("displays 'unchecked' when no selectable rows are selected", () => {
+    renderSelectAllCheckbox([selectable(false), selectable(false)]);
     expect(screen.getByRole("checkbox")).toHaveAttribute(
       "aria-checked",
       "false",
     );
   });
 
-  it("displays 'mixed' state when some rows are selected", () => {
-    renderSelectAllCheckbox({
-      getSelectedRowModel: vi.fn(() => ({ rows: [{}] })), // 1 row selected
-      getCoreRowModel: vi.fn(() => ({ rows: [{}, {}] })),
-    });
+  it("displays 'mixed' when some selectable rows are selected", () => {
+    renderSelectAllCheckbox([selectable(true), selectable(false)]);
     expect(screen.getByRole("checkbox")).toHaveAttribute(
       "aria-checked",
       "mixed",
     );
   });
 
-  it("displays 'checked' when all rows are selected", () => {
-    renderSelectAllCheckbox({
-      getSelectedRowModel: vi.fn(() => ({ rows: [{}] })), // Simulate all rows selected
-      getCoreRowModel: vi.fn(() => ({ rows: [{}] })),
-    });
+  it("displays 'checked' when all selectable rows are selected", () => {
+    renderSelectAllCheckbox([selectable(true), selectable(true)]);
     expect(screen.getByRole("checkbox")).toHaveAttribute(
       "aria-checked",
       "true",
     );
   });
 
-  it("toggles all rows on click", async () => {
-    const { mockTable } = renderSelectAllCheckbox();
+  it("is disabled when there are no selectable rows", () => {
+    renderSelectAllCheckbox([nonSelectable(), nonSelectable()]);
+    expect(screen.getByRole("checkbox")).toBeDisabled();
+  });
+
+  it("toggles only selectable rows on click", async () => {
+    const r1 = selectable(false);
+    const r2 = selectable(false);
+    const r3 = nonSelectable(); // should NOT be toggled
+    renderSelectAllCheckbox([r1, r2, r3]);
+
     await userEvent.click(screen.getByRole("checkbox"));
-    expect(mockTable.toggleAllPageRowsSelected).toHaveBeenCalledWith(true);
+
+    expect(r1.toggleSelected).toHaveBeenCalledWith(true);
+    expect(r2.toggleSelected).toHaveBeenCalledWith(true);
+    expect(r3.toggleSelected).not.toHaveBeenCalled();
   });
 });
 
 describe("TableCheckbox.Group", () => {
+  const selectableSub = (selected = false) =>
+    getMockRow({
+      getCanSelect: vi.fn(() => true),
+      getIsSelected: vi.fn(() => selected),
+      subRows: [], // leaf
+    }) as unknown as Row<Image>;
+
+  const nonSelectableSub = () =>
+    getMockRow({
+      getCanSelect: vi.fn(() => false),
+      getIsSelected: vi.fn(() => false),
+      subRows: [],
+    }) as unknown as Row<Image>;
+
   const renderSelectGroupCheckbox = (rowProps: Partial<Row<Image>> = {}) => {
-    const mockRow = getMockRow(rowProps);
-    return { ...render(<TableCheckbox.Group row={mockRow} />), ...mockRow };
+    const row = getMockRow({
+      getCanSelect: vi.fn(() => true),
+      subRows: [selectableSub(false), selectableSub(false)],
+      ...rowProps,
+    }) as unknown as Row<Image>;
+
+    return { ...render(<TableCheckbox.Group row={row} />), row };
   };
 
   it("is enabled when row can be selected", () => {
@@ -121,36 +159,40 @@ describe("TableCheckbox.Group", () => {
     expect(screen.getByRole("checkbox")).toBeEnabled();
   });
 
-  it("is disabled when row cannot be selected", () => {
-    renderSelectGroupCheckbox({ getCanSelect: vi.fn(() => false) });
+  it("is disabled when neither row nor sub-rows are selectable", () => {
+    renderSelectGroupCheckbox({
+      getCanSelect: vi.fn(() => false),
+      subRows: [nonSelectableSub(), nonSelectableSub()],
+    });
     expect(screen.getByRole("checkbox")).toBeDisabled();
   });
 
-  it("toggles selection state on click", async () => {
-    const { subRows, toggleSelected } = renderSelectGroupCheckbox();
-    await userEvent.click(screen.getByRole("checkbox"));
-    expect(toggleSelected).toHaveBeenCalledWith(true);
-    expect(subRows[0].toggleSelected).toHaveBeenCalledWith(true);
-    expect(subRows[1].toggleSelected).toHaveBeenCalledWith(true);
-  });
-
-  it("sets mixed state correctly", () => {
-    renderSelectGroupCheckbox({ getIsSomeSelected: () => true });
+  it("shows mixed state when some selectable sub-rows are selected", () => {
+    renderSelectGroupCheckbox({
+      subRows: [selectableSub(true), selectableSub(false)],
+    });
     expect(screen.getByRole("checkbox")).toHaveAttribute(
       "aria-checked",
       "mixed",
     );
   });
 
-  it("toggles all sub-rows when in mixed state", async () => {
-    const { subRows } = renderSelectGroupCheckbox({
-      getIsSomeSelected: () => true,
+  it("shows checked when all selectable sub-rows are selected", () => {
+    renderSelectGroupCheckbox({
+      subRows: [selectableSub(true), selectableSub(true)],
     });
+    expect(screen.getByRole("checkbox")).toBeChecked();
+  });
+
+  it("toggles only selectable sub-rows", async () => {
+    const s1 = selectableSub(false);
+    const s2 = nonSelectableSub(); // should NOT be toggled
+    renderSelectGroupCheckbox({ subRows: [s1, s2] });
 
     await userEvent.click(screen.getByRole("checkbox"));
-    subRows.forEach((subRow: Row<Image>) => {
-      expect(subRow.toggleSelected).toHaveBeenCalledWith(true);
-    });
+
+    expect(s1.toggleSelected).toHaveBeenCalledWith(true);
+    expect(s2.toggleSelected).not.toHaveBeenCalled();
   });
 });
 
@@ -162,8 +204,13 @@ describe("TableCheckbox", () => {
       getToggleSelectedHandler: vi.fn(),
       ...rowProps,
     };
-    // @ts-expect-error we're not mocking the entire row object, just the parts we need
-    return { ...render(<TableCheckbox row={mockRow} />), mockRow };
+    return {
+      ...render(
+        // @ts-expect-error we're not mocking the entire row object, just the parts we need
+        <TableCheckbox row={mockRow} disabledTooltip={"Option disabled."} />,
+      ),
+      mockRow,
+    };
   };
 
   it("is enabled when row can be selected", () => {
@@ -174,6 +221,15 @@ describe("TableCheckbox", () => {
   it("is disabled when row cannot be selected", () => {
     renderIndividualCheckbox({ getCanSelect: vi.fn(() => false) });
     expect(screen.getByRole("checkbox")).toBeDisabled();
+  });
+
+  it("displays tooltip when disabled", async () => {
+    renderIndividualCheckbox({ getCanSelect: vi.fn(() => false) });
+    expect(screen.getByRole("checkbox")).toBeDisabled();
+    await userEvent.hover(screen.getByRole("checkbox"));
+    await waitFor(() => {
+      expect(screen.getByText("Option disabled.")).toBeInTheDocument();
+    });
   });
 
   it("calls the toggle handler on click", async () => {

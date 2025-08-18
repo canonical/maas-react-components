@@ -48,7 +48,8 @@ import "./GenericTable.scss";
 
 type GenericTableProps<T extends { id: number | string }> = {
   className?: string;
-  canSelect?: boolean;
+  canSelect?: boolean | ((row: Row<T>) => boolean);
+  disabledSelectionTooltip?: string | ((row: Row<T>) => string);
   columns: ColumnDef<T, Partial<T>>[];
   containerRef?: RefObject<HTMLElement | null>;
   data: T[];
@@ -76,7 +77,8 @@ type GenericTableProps<T extends { id: number | string }> = {
  *
  * @param {Object} props - Component props
  * @param {string} [props.className] - Additional CSS class for the table wrapper
- * @param {boolean} [props.canSelect=false] - Enable row selection with checkboxes
+ * @param {boolean | ((row: Row<T>) => boolean)} [props.canSelect=false] - Enable row selection with checkboxes
+ * @param {string | ((row: Row<T>) => string)} [props.disabledSelectionTooltip] - Tooltip message or constructor on disabled checkboxes
  * @param {ColumnDef<T, Partial<T>>[]} props.columns - Column definitions
  * @param {RefObject<HTMLElement | null>} [props.containerRef] - Reference to container for size calculations
  * @param {T[]} props.data - Table data array
@@ -115,6 +117,7 @@ type GenericTableProps<T extends { id: number | string }> = {
 export const GenericTable = <T extends { id: number | string }>({
   className,
   canSelect = false,
+  disabledSelectionTooltip,
   columns: initialColumns,
   containerRef,
   data: initialData,
@@ -157,7 +160,12 @@ export const GenericTable = <T extends { id: number | string }>({
           return <TableCheckbox.All table={table} />;
         },
         cell: ({ row }: CellContext<T, Partial<T>>) =>
-          !row.getIsGrouped() ? <TableCheckbox row={row} /> : null,
+          !row.getIsGrouped() ? (
+            <TableCheckbox
+              row={row}
+              disabledTooltip={disabledSelectionTooltip ?? ""}
+            />
+          ) : null,
       },
       ...initialColumns,
     ];

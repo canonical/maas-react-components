@@ -4,6 +4,7 @@ import type {
   ReactElement,
 } from "react";
 
+import { Tooltip } from "@canonical/react-components";
 import type { Row, Table } from "@tanstack/react-table";
 
 type TableCheckboxProps<T> = Partial<
@@ -18,13 +19,14 @@ const TableAllCheckbox = <T,>({ table, ...props }: TableCheckboxProps<T>) => {
     return null;
   }
 
+  const selectableRows = table
+    .getCoreRowModel()
+    .rows.filter((row) => row.getCanSelect());
+
   let checked: boolean | "false" | "mixed" | "true" | undefined;
   if (table.getSelectedRowModel().rows.length === 0) {
     checked = "false";
-  } else if (
-    table.getSelectedRowModel().rows.length <
-    table.getCoreRowModel().rows.length
-  ) {
+  } else if (table.getSelectedRowModel().rows.length < selectableRows.length) {
     checked = "mixed";
   } else {
     checked = "true";
@@ -36,15 +38,20 @@ const TableAllCheckbox = <T,>({ table, ...props }: TableCheckboxProps<T>) => {
         aria-checked={checked}
         aria-label="select all"
         className="p-checkbox__input"
+        disabled={selectableRows.length === 0}
         type="checkbox"
         {...{
           checked: checked === "true",
           onChange: () => {
-            if (table.getIsAllPageRowsSelected()) {
-              table?.toggleAllPageRowsSelected(false);
-            } else {
-              table?.toggleAllPageRowsSelected(true);
-            }
+            const selectableRows = table
+              .getCoreRowModel()
+              .rows.filter((row) => row.getCanSelect());
+
+            const allSelected = selectableRows.every((row) =>
+              row.getIsSelected(),
+            );
+
+            selectableRows.forEach((row) => row.toggleSelected(!allSelected));
           },
         }}
         {...props}
@@ -58,30 +65,33 @@ const TableGroupCheckbox = <T,>({ row, ...props }: TableCheckboxProps<T>) => {
   if (!row) {
     return null;
   }
-  const isSomeSubRowsSelected =
-    !row.getIsAllSubRowsSelected() && row.getIsSomeSelected();
+  const selectableSubRows = row.subRows.filter((subRow) =>
+    subRow.getCanSelect(),
+  );
+  const selectedCount = selectableSubRows.filter((subRow) =>
+    subRow.getIsSelected(),
+  ).length;
+  const isAllSelectableSelected =
+    selectableSubRows.length > 0 && selectedCount === selectableSubRows.length;
+  const isSomeSelectableSelected =
+    selectedCount > 0 && !isAllSelectableSelected;
+
   return (
-    <label className="p-checkbox--inline p-table-checkbox--group">
+    <label
+      aria-disabled={!row.getCanSelect()}
+      className="p-checkbox--inline p-table-checkbox--group"
+    >
       <input
-        aria-checked={isSomeSubRowsSelected ? "mixed" : undefined}
+        aria-checked={isSomeSelectableSelected ? "mixed" : undefined}
         className="p-checkbox__input"
         type="checkbox"
-        {...{
-          checked: isSomeSubRowsSelected || row.getIsAllSubRowsSelected(),
-          disabled: !row.getCanSelect(),
-          onChange: () => {
-            if (row?.getIsAllSubRowsSelected()) {
-              row?.toggleSelected(false);
-              row.subRows.forEach((subRow) => {
-                subRow.toggleSelected(false);
-              });
-            } else {
-              row?.toggleSelected(true);
-              row.subRows.forEach((subRow) => {
-                subRow.toggleSelected(true);
-              });
-            }
-          },
+        checked={isAllSelectableSelected}
+        disabled={!row.getCanSelect() && selectableSubRows.length === 0}
+        onChange={() => {
+          const newSelected = !isAllSelectableSelected;
+          selectableSubRows.forEach((subRow) =>
+            subRow.toggleSelected(newSelected),
+          );
         }}
         {...props}
       />
@@ -92,25 +102,42 @@ const TableGroupCheckbox = <T,>({ row, ...props }: TableCheckboxProps<T>) => {
 
 const TableCheckbox = <T,>({
   row,
+  disabledTooltip,
   ...props
-}: TableCheckboxProps<T>): ReactElement | null => {
+}: TableCheckboxProps<T> & {
+  disabledTooltip: string | ((row: Row<T>) => string);
+}): ReactElement | null => {
   if (!row) {
     return null;
   }
+
+  const disabledTooltipMessage =
+    typeof disabledTooltip === "string"
+      ? disabledTooltip
+      : disabledTooltip(row);
+
   return (
-    <label className="p-checkbox--inline p-table-checkbox">
-      <input
-        className="p-checkbox__input"
-        type="checkbox"
-        {...{
-          checked: row.getIsSelected(),
-          disabled: !row.getCanSelect(),
-          onChange: row.getToggleSelectedHandler(),
-        }}
-        {...props}
-      />
-      <span className="p-checkbox__label" />
-    </label>
+    <Tooltip
+      message={!row.getCanSelect() && disabledTooltipMessage}
+      position="btm-right"
+    >
+      <label
+        aria-disabled={!row.getCanSelect()}
+        className="p-checkbox--inline p-table-checkbox"
+      >
+        <input
+          className="p-checkbox__input"
+          type="checkbox"
+          {...{
+            checked: row.getIsSelected(),
+            disabled: !row.getCanSelect(),
+            onChange: row.getToggleSelectedHandler(),
+          }}
+          {...props}
+        />
+        <span className="p-checkbox__label" />
+      </label>
+    </Tooltip>
   );
 };
 
