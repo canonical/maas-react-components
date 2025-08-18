@@ -163,6 +163,13 @@ const meta: Meta<typeof GenericTable<Machine>> = {
         category: "Selection",
       },
     },
+    disabledSelectionTooltip: {
+      description: "Text message or string returning constructor to display a message when a row cannot be selected.",
+      table: {
+        type: { summary: "string | ((row: Row<T>) => string)" },
+        category: "Selection",
+      }
+    },
     rowSelection: {
       description:
         "State object that tracks which rows are currently selected. Required when canSelect is true",
