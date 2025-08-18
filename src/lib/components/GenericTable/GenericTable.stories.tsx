@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-import { Button, Icon } from "@canonical/react-components";
+import { Button, Icon, Tooltip } from "@canonical/react-components";
 import { Meta, StoryObj } from "@storybook/react";
 import {
   Column,
@@ -365,6 +365,8 @@ export const ConditionallySelectable: Story = {
   },
   args: {
     canSelect: (row: Row<Machine>) => row.original.pool !== "default",
+    disabledSelectionTooltip: (row) =>
+      `Cannot select ${row.original.fqdn} because it is in the default pool.`,
     columns: [
       ...machineColumns.filter((column) => column.id !== "actions"),
       {
@@ -375,14 +377,20 @@ export const ConditionallySelectable: Story = {
           if (row.getIsGrouped()) return <GroupRowActions row={row} />;
           return (
             <div className="actions-cell">
-              <Button appearance="base" hasIcon style={{visibility: !row.getCanSelect() ? "hidden" : "visible"}}>
-                <Icon name="delete" />
-              </Button>
+              <Tooltip message={!row.getCanSelect() && "Cannot delete machines in the default pool."} position="btm-left">
+                <Button
+                  disabled={!row.getCanSelect()}
+                  appearance="base"
+                  hasIcon
+                >
+                  <Icon name="delete" />
+                </Button>
+              </Tooltip>
             </div>
           );
         },
       },
-    ]
+    ],
   },
 };
 

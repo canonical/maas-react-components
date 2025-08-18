@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { vi } from "vitest";
 
@@ -84,16 +84,11 @@ describe("GenericTable", () => {
     },
   ];
 
-  const mockFilterCells = vi.fn(() => true);
-  const mockFilterHeaders = vi.fn(() => true);
-
   it("renders table with headers and rows", () => {
     render(
       <GenericTable
         columns={columns}
         data={data}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
@@ -122,8 +117,6 @@ describe("GenericTable", () => {
       <GenericTable
         columns={columns}
         data={[]}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         isLoading={false}
         noData={<span>No data</span>}
         pagination={pagination}
@@ -146,8 +139,6 @@ describe("GenericTable", () => {
       <GenericTable
         columns={columns}
         data={[]}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         isLoading={false}
         noData={<span>No data</span>}
         rowSelection={{}}
@@ -163,8 +154,6 @@ describe("GenericTable", () => {
       <GenericTable
         columns={columns}
         data={data}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
@@ -178,26 +167,20 @@ describe("GenericTable", () => {
     expect(rows[2]).toHaveTextContent("18.04 LTS");
   });
 
-  // New tests to cover more features
-
   it("renders loading state correctly", () => {
     render(
       <GenericTable
         columns={columns}
         data={data}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         isLoading={true}
         rowSelection={{}}
         setRowSelection={vi.fn()}
       />,
     );
 
-    // Table should have aria-busy attribute when loading
     const table = screen.getByRole("grid");
     expect(table).toHaveAttribute("aria-busy", "true");
 
-    // Should render placeholders
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 
@@ -208,21 +191,45 @@ describe("GenericTable", () => {
         canSelect={true}
         columns={columns}
         data={data}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         isLoading={false}
         rowSelection={{}}
         setRowSelection={mockSetRowSelection}
       />,
     );
 
-    // Should render checkboxes
     const checkboxes = screen.getAllByRole("checkbox");
     expect(checkboxes.length).toBeGreaterThan(0);
 
-    // Click on a checkbox should trigger selection change
-    await userEvent.click(checkboxes[1]); // Click first row checkbox
+    await userEvent.click(checkboxes[1]);
     expect(mockSetRowSelection).toHaveBeenCalled();
+  });
+
+  it("supports conditional row selection enabling when canSelect is a predicate", async () => {
+    const mockSetRowSelection = vi.fn();
+    render(
+      <GenericTable
+        canSelect={(row) => row.original.architecture !== "arm64"}
+        disabledSelectionTooltip={"Cannot select arm64 architecture images."}
+        columns={columns}
+        data={data}
+        isLoading={false}
+        rowSelection={{}}
+        setRowSelection={mockSetRowSelection}
+      />,
+    );
+
+    const checkboxes = screen.getAllByRole("checkbox");
+    expect(checkboxes.length).toBeGreaterThan(0);
+
+    expect(checkboxes[1]).not.toBeDisabled();
+    expect(checkboxes[2]).toBeDisabled();
+
+    await userEvent.hover(checkboxes[2]);
+    await waitFor(() => {
+      expect(
+        screen.getByText("Cannot select arm64 architecture images."),
+      ).toBeInTheDocument();
+    });
   });
 
   it("uses custom class names when provided", () => {
@@ -231,8 +238,6 @@ describe("GenericTable", () => {
         className="custom-table-class"
         columns={columns}
         data={data}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
@@ -250,8 +255,6 @@ describe("GenericTable", () => {
       <GenericTable
         columns={columns}
         data={data}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         groupBy={["release"]}
         isLoading={false}
         rowSelection={{}}
@@ -259,7 +262,6 @@ describe("GenericTable", () => {
       />,
     );
 
-    // Check if grouped rows are rendered correctly
     const groupRows = screen
       .getAllByRole("row")
       .filter((row) => row.classList.contains("p-generic-table__group-row"));
@@ -271,8 +273,6 @@ describe("GenericTable", () => {
       <GenericTable
         columns={columns}
         data={data}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         groupBy={["release"]}
         isLoading={false}
         rowSelection={{}}
@@ -280,7 +280,6 @@ describe("GenericTable", () => {
       />,
     );
 
-    // Find expand/collapse buttons and click one
     const expandButtons = screen
       .getAllByRole("button")
       .filter(
@@ -294,7 +293,6 @@ describe("GenericTable", () => {
       await userEvent.click(expandButtons[0]);
       const rowsAfterClick = screen.getAllByRole("row").length;
 
-      // Number of visible rows should change when expanding/collapsing
       expect(rowsAfterClick).not.toEqual(initialRows);
     }
   });
@@ -304,8 +302,6 @@ describe("GenericTable", () => {
       <GenericTable
         columns={columns}
         data={data}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
@@ -313,19 +309,16 @@ describe("GenericTable", () => {
       />,
     );
 
-    // With desc: true, 18.04 should appear before 16.04
     const rows = screen.getAllByRole("row");
     const firstDataRow = rows[1];
     expect(firstDataRow).toHaveTextContent("18.04 LTS");
   });
 
-  it("applies variant styles correctly", () => {
+  it("applies dynamic container sizing correctly", () => {
     render(
       <GenericTable
         columns={columns}
         data={data}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
@@ -336,14 +329,12 @@ describe("GenericTable", () => {
     const table = screen.getByRole("grid");
     expect(table).not.toHaveClass("p-generic-table__is-full-height");
 
-    // Create container with mocked dimensions
     const containerRef = {
       current: {
         getBoundingClientRect: () => ({ bottom: 100, top: 0 }),
       } as HTMLElement,
     };
 
-    // Mock dimensions that will trigger full-height behavior
     Element.prototype.getBoundingClientRect = vi
       .fn()
       .mockImplementation(function () {
@@ -367,8 +358,6 @@ describe("GenericTable", () => {
         containerRef={containerRef}
         columns={columns}
         data={data}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
@@ -382,8 +371,6 @@ describe("GenericTable", () => {
         containerRef={containerRef}
         columns={columns}
         data={data}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         isLoading={false}
         rowSelection={{}}
         setRowSelection={vi.fn()}
@@ -396,7 +383,6 @@ describe("GenericTable", () => {
   });
 
   it("handles pin groups correctly", () => {
-    // Create data with different architectures for testing pinning
     const extendedData = [
       ...data,
       {
@@ -417,8 +403,6 @@ describe("GenericTable", () => {
       <GenericTable
         columns={columns}
         data={extendedData}
-        filterCells={mockFilterCells}
-        filterHeaders={mockFilterHeaders}
         groupBy={["architecture"]}
         isLoading={false}
         pinGroup={[{ value: "arm64", isTop: true }]}
@@ -427,13 +411,11 @@ describe("GenericTable", () => {
       />,
     );
 
-    // The arm64 groups should be pinned to the top
     const rows = screen.getAllByRole("row");
-    expect(rows[1]).toHaveTextContent("arm64"); // First group row should be arm64
+    expect(rows[1]).toHaveTextContent("arm64");
   });
 
   it("uses containerRef for calculating table height", () => {
-    // Create a component that uses the containerRef
     const TestComponent = () => {
       const containerRef = useRef<HTMLDivElement>(null);
 
@@ -443,8 +425,6 @@ describe("GenericTable", () => {
             columns={columns}
             containerRef={containerRef}
             data={data}
-            filterCells={mockFilterCells}
-            filterHeaders={mockFilterHeaders}
             isLoading={false}
             rowSelection={{}}
             setRowSelection={vi.fn()}
@@ -455,13 +435,10 @@ describe("GenericTable", () => {
 
     render(<TestComponent />);
 
-    // Verify the table renders correctly with the containerRef
     expect(screen.getByRole("grid")).toBeInTheDocument();
 
-    // Check that ResizeObserver was created
     expect(global.ResizeObserver).toHaveBeenCalled();
 
-    // Check that event listeners were added
     expect(window.addEventListener).toHaveBeenCalledWith(
       "resize",
       expect.any(Function),
@@ -469,13 +446,8 @@ describe("GenericTable", () => {
   });
 
   it("applies filter functions for cells and headers", () => {
-    const customFilterCells = vi.fn(
-      (_row, column) => column.id !== "size", // Filter out the size column cells
-    );
-
-    const customFilterHeaders = vi.fn(
-      (header) => header.id !== "size", // Filter out the size column header
-    );
+    const customFilterCells = vi.fn((_row, column) => column.id !== "size");
+    const customFilterHeaders = vi.fn((header) => header.id !== "size");
 
     render(
       <GenericTable
@@ -489,17 +461,13 @@ describe("GenericTable", () => {
       />,
     );
 
-    // Size header should not be rendered
     expect(screen.queryByText("Size")).not.toBeInTheDocument();
 
-    // Size cell values should not be rendered
     expect(screen.queryByText("1.3 MB")).not.toBeInTheDocument();
 
-    // Other columns should still be visible
     expect(screen.getByText("Release title")).toBeInTheDocument();
     expect(screen.getByText("Architecture")).toBeInTheDocument();
 
-    // Verify filter functions were called
     expect(customFilterCells).toHaveBeenCalled();
     expect(customFilterHeaders).toHaveBeenCalled();
   });

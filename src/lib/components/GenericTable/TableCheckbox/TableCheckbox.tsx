@@ -4,6 +4,7 @@ import type {
   ReactElement,
 } from "react";
 
+import { Tooltip } from "@canonical/react-components";
 import type { Row, Table } from "@tanstack/react-table";
 
 type TableCheckboxProps<T> = Partial<
@@ -101,28 +102,42 @@ const TableGroupCheckbox = <T,>({ row, ...props }: TableCheckboxProps<T>) => {
 
 const TableCheckbox = <T,>({
   row,
+  disabledTooltip,
   ...props
-}: TableCheckboxProps<T>): ReactElement | null => {
+}: TableCheckboxProps<T> & {
+  disabledTooltip: string | ((row: Row<T>) => string);
+}): ReactElement | null => {
   if (!row) {
     return null;
   }
+
+  const disabledTooltipMessage =
+    typeof disabledTooltip === "string"
+      ? disabledTooltip
+      : disabledTooltip(row);
+
   return (
-    <label
-      aria-disabled={!row.getCanSelect()}
-      className="p-checkbox--inline p-table-checkbox"
+    <Tooltip
+      message={!row.getCanSelect() && disabledTooltipMessage}
+      position="btm-right"
     >
-      <input
-        className="p-checkbox__input"
-        type="checkbox"
-        {...{
-          checked: row.getIsSelected(),
-          disabled: !row.getCanSelect(),
-          onChange: row.getToggleSelectedHandler(),
-        }}
-        {...props}
-      />
-      <span className="p-checkbox__label" />
-    </label>
+      <label
+        aria-disabled={!row.getCanSelect()}
+        className="p-checkbox--inline p-table-checkbox"
+      >
+        <input
+          className="p-checkbox__input"
+          type="checkbox"
+          {...{
+            checked: row.getIsSelected(),
+            disabled: !row.getCanSelect(),
+            onChange: row.getToggleSelectedHandler(),
+          }}
+          {...props}
+        />
+        <span className="p-checkbox__label" />
+      </label>
+    </Tooltip>
   );
 };
 

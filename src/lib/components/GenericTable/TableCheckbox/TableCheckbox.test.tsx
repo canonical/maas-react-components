@@ -1,5 +1,5 @@
 import type { Row } from "@tanstack/react-table";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, vi } from "vitest";
 
@@ -60,7 +60,7 @@ describe("TableCheckbox.All", () => {
     getMockRow({
       getCanSelect: vi.fn(() => true),
       getIsSelected: vi.fn(() => selected),
-      subRows: [], // keep simple; not used by "All"
+      subRows: [],
     }) as unknown as Row<Image>;
 
   const nonSelectable = () =>
@@ -72,30 +72,42 @@ describe("TableCheckbox.All", () => {
 
   const renderSelectAllCheckbox = (rows: Row<Image>[]) => {
     const mockTable = {
-      getCoreRowModel: vi.fn(() => ({ rows })), // used by the updated All checkbox logic
-      // optional: if your All-checkbox logic still glances at selected rows
+      getCoreRowModel: vi.fn(() => ({ rows })),
       getSelectedRowModel: vi.fn(() => ({
         rows: rows.filter((r) => r.getIsSelected()),
       })),
     };
 
-    // @ts-expect-error partial mock is sufficient for the component
-    return { ...render(<TableCheckbox.All table={mockTable} />), mockTable, rows };
+    return {
+      // @ts-expect-error partial mock is sufficient for the component
+      ...render(<TableCheckbox.All table={mockTable} />),
+      mockTable,
+      rows,
+    };
   };
 
   it("displays 'unchecked' when no selectable rows are selected", () => {
     renderSelectAllCheckbox([selectable(false), selectable(false)]);
-    expect(screen.getByRole("checkbox")).toHaveAttribute("aria-checked", "false");
+    expect(screen.getByRole("checkbox")).toHaveAttribute(
+      "aria-checked",
+      "false",
+    );
   });
 
   it("displays 'mixed' when some selectable rows are selected", () => {
     renderSelectAllCheckbox([selectable(true), selectable(false)]);
-    expect(screen.getByRole("checkbox")).toHaveAttribute("aria-checked", "mixed");
+    expect(screen.getByRole("checkbox")).toHaveAttribute(
+      "aria-checked",
+      "mixed",
+    );
   });
 
   it("displays 'checked' when all selectable rows are selected", () => {
     renderSelectAllCheckbox([selectable(true), selectable(true)]);
-    expect(screen.getByRole("checkbox")).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("checkbox")).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
   });
 
   it("is disabled when there are no selectable rows", () => {
@@ -159,7 +171,10 @@ describe("TableCheckbox.Group", () => {
     renderSelectGroupCheckbox({
       subRows: [selectableSub(true), selectableSub(false)],
     });
-    expect(screen.getByRole("checkbox")).toHaveAttribute("aria-checked", "mixed");
+    expect(screen.getByRole("checkbox")).toHaveAttribute(
+      "aria-checked",
+      "mixed",
+    );
   });
 
   it("shows checked when all selectable sub-rows are selected", () => {
@@ -189,8 +204,13 @@ describe("TableCheckbox", () => {
       getToggleSelectedHandler: vi.fn(),
       ...rowProps,
     };
-    // @ts-expect-error we're not mocking the entire row object, just the parts we need
-    return { ...render(<TableCheckbox row={mockRow} />), mockRow };
+    return {
+      ...render(
+        // @ts-expect-error we're not mocking the entire row object, just the parts we need
+        <TableCheckbox row={mockRow} disabledTooltip={"Option disabled."} />,
+      ),
+      mockRow,
+    };
   };
 
   it("is enabled when row can be selected", () => {
@@ -201,6 +221,15 @@ describe("TableCheckbox", () => {
   it("is disabled when row cannot be selected", () => {
     renderIndividualCheckbox({ getCanSelect: vi.fn(() => false) });
     expect(screen.getByRole("checkbox")).toBeDisabled();
+  });
+
+  it("displays tooltip when disabled", async () => {
+    renderIndividualCheckbox({ getCanSelect: vi.fn(() => false) });
+    expect(screen.getByRole("checkbox")).toBeDisabled();
+    await userEvent.hover(screen.getByRole("checkbox"));
+    await waitFor(() => {
+      expect(screen.getByText("Option disabled.")).toBeInTheDocument();
+    });
   });
 
   it("calls the toggle handler on click", async () => {
