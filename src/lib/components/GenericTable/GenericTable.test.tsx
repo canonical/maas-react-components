@@ -19,6 +19,7 @@ type Image = {
   status: string;
   lastDeployed: string;
   machines: number;
+  children?: Image[];
 };
 
 describe("GenericTable", () => {
@@ -421,6 +422,38 @@ describe("GenericTable", () => {
 
       expect(rowsAfterClick).toBeGreaterThan(initialRows);
     }
+  });
+
+  it("renders nested rows", () => {
+    render(
+      <GenericTable
+        canSelect={true}
+        columns={columns}
+        data={
+          [
+            {
+              ...data[0],
+              children: [data[1]],
+            },
+          ]
+        }
+        getSubRows={(originalRow) => originalRow.children}
+        isLoading={false}
+        rowSelection={{}}
+        setRowSelection={vi.fn()}
+      />,
+    );
+
+    const nestedRows = screen
+      .getAllByRole("row")
+      .filter((row) => row.classList.contains("p-generic-table__nested-row"));
+    expect(nestedRows.length).toBeGreaterThan(0);
+
+    const checkboxes = screen.getAllByRole("checkbox");
+    expect(checkboxes.length).toEqual(3);
+    expect(checkboxes[0]).not.toBeDisabled();
+    expect(checkboxes[1]).not.toBeDisabled();
+    expect(checkboxes[2]).toBeDisabled();
   });
 
   it("renders pinned rows correctly", () => {

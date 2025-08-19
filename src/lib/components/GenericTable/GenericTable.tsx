@@ -55,6 +55,7 @@ type GenericTableProps<T extends { id: number | string }> = {
   data: T[];
   filterCells?: (row: Row<T>, column: Column<T>) => boolean;
   filterHeaders?: (header: Header<T, unknown>) => boolean;
+  getSubRows?: (originalRow: T, index: number) => T[] | undefined;
   groupBy?: string[];
   isLoading: boolean;
   noData?: ReactNode;
@@ -82,8 +83,9 @@ type GenericTableProps<T extends { id: number | string }> = {
  * @param {ColumnDef<T, Partial<T>>[]} props.columns - Column definitions
  * @param {RefObject<HTMLElement | null>} [props.containerRef] - Reference to container for size calculations
  * @param {T[]} props.data - Table data array
- * @param {Function} [props.filterCells] - Function to filter which cells should be displayed
- * @param {Function} [props.filterHeaders] - Function to filter which headers should be displayed
+ * @param {(row: Row<T>, column: Column<T>) => boolean} [props.filterCells] - Function to filter which cells should be displayed
+ * @param {(header: Header<T, unknown>) => boolean} [props.filterHeaders] - Function to filter which headers should be displayed
+ * @param {(originalRow: T, index: number) => T[] | undefined} [props.getSubRows] - Function that returns the T.prop that contains nested T data
  * @param {string[]} [props.groupBy] - Column IDs to group rows by
  * @param {boolean} props.isLoading - Loading state to display placeholder content
  * @param {ReactNode} [props.noData] - Content to display when no data is available
@@ -123,6 +125,7 @@ export const GenericTable = <T extends { id: number | string }>({
   data: initialData,
   filterCells = () => true,
   filterHeaders = () => true,
+  getSubRows,
   groupBy,
   isLoading,
   noData,
@@ -164,6 +167,7 @@ export const GenericTable = <T extends { id: number | string }>({
             <TableCheckbox
               row={row}
               disabledTooltip={disabledSelectionTooltip ?? ""}
+              isNested={getSubRows !== undefined && !!row.parentId}
             />
           ) : null,
       },
@@ -311,6 +315,7 @@ export const GenericTable = <T extends { id: number | string }>({
     manualSorting: true,
     enableSorting: true,
     enableExpanding: true,
+    getSubRows: getSubRows,
     getExpandedRowModel: getExpandedRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
@@ -344,7 +349,7 @@ export const GenericTable = <T extends { id: number | string }>({
     }
 
     return table.getRowModel().rows.map((row) => {
-      const { getIsGrouped, id, getVisibleCells } = row;
+      const { getIsGrouped, id, getVisibleCells, parentId } = row;
       const isIndividualRow = !getIsGrouped();
       const isSelected =
         rowSelection !== undefined && Object.keys(rowSelection!).includes(id);
@@ -356,6 +361,7 @@ export const GenericTable = <T extends { id: number | string }>({
           className={classNames({
             "p-generic-table__individual-row": isIndividualRow,
             "p-generic-table__group-row": !isIndividualRow,
+            "p-generic-table__nested-row": getSubRows !== undefined && !!parentId,
           })}
           key={id}
           role="row"
