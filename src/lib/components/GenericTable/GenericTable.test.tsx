@@ -427,7 +427,7 @@ describe("GenericTable", () => {
   it("renders nested rows", () => {
     render(
       <GenericTable
-        canSelect={(row) => !row.parentId}
+        canSelect={true}
         columns={columns}
         data={
           [
@@ -444,10 +444,10 @@ describe("GenericTable", () => {
       />,
     );
 
-    const groupRows = screen
+    const nestedRows = screen
       .getAllByRole("row")
-      .filter((row) => row.classList.contains("p-generic-table__group-row"));
-    expect(groupRows.length).toBeGreaterThan(0);
+      .filter((row) => row.classList.contains("p-generic-table__nested-row"));
+    expect(nestedRows.length).toBeGreaterThan(0);
 
     const checkboxes = screen.getAllByRole("checkbox");
     expect(checkboxes.length).toEqual(3);

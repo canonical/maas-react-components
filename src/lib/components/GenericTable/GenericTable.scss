@@ -120,6 +120,10 @@
       display: none;
     }
 
+    &:is(.p-generic-table__is-selectable) > * tr.p-generic-table__nested-row > td.p-generic-table__select, {
+      visibility: hidden;
+    }
+
     // Empty and loading states
     td.p-generic-table__no-data, td.p-generic-table__loading {
       padding: 2rem;

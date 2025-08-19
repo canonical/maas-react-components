@@ -167,6 +167,7 @@ export const GenericTable = <T extends { id: number | string }>({
             <TableCheckbox
               row={row}
               disabledTooltip={disabledSelectionTooltip ?? ""}
+              isNested={getSubRows !== undefined && !!row.parentId}
             />
           ) : null,
       },
@@ -359,7 +360,8 @@ export const GenericTable = <T extends { id: number | string }>({
           aria-selected={isSelected}
           className={classNames({
             "p-generic-table__individual-row": isIndividualRow,
-            "p-generic-table__group-row": !isIndividualRow || !parentId,
+            "p-generic-table__group-row": !isIndividualRow,
+            "p-generic-table__nested-row": getSubRows !== undefined && !!parentId,
           })}
           key={id}
           role="row"

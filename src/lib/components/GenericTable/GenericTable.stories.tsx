@@ -618,7 +618,7 @@ export const GroupedNested: Story = {
     );
   },
   args: {
-    canSelect: (row) => !row.parentId,
+    canSelect: true,
     columns: [
       ...machineColumns.filter((column) => column.id !== "actions"),
       {

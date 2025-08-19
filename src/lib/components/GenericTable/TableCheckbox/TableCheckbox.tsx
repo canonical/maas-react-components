@@ -103,9 +103,11 @@ const TableGroupCheckbox = <T,>({ row, ...props }: TableCheckboxProps<T>) => {
 const TableCheckbox = <T,>({
   row,
   disabledTooltip,
+  isNested = false,
   ...props
 }: TableCheckboxProps<T> & {
   disabledTooltip: string | ((row: Row<T>) => string);
+  isNested: boolean;
 }): ReactElement | null => {
   if (!row) {
     return null;
@@ -130,7 +132,7 @@ const TableCheckbox = <T,>({
           type="checkbox"
           {...{
             checked: row.getIsSelected(),
-            disabled: !row.getCanSelect(),
+            disabled: !row.getCanSelect() || isNested,
             onChange: row.getToggleSelectedHandler(),
           }}
           {...props}
