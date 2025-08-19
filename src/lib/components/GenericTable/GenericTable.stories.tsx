@@ -21,6 +21,7 @@ type Machine = {
   status: string;
   zone: string;
   pool: string;
+  children?: Machine[];
 };
 
 type MachineColumnDef = ColumnDef<Machine, Partial<Machine>>;
@@ -39,6 +40,45 @@ const generateMachinesData = (count: number): Machine[] => {
     zone: zones[i % zones.length],
     pool: pools[i % pools.length],
   }));
+};
+
+const generateNestedMachinesData = (count: number): Machine[] => {
+  const statuses = ["Ready", "Deployed", "Commissioning"];
+  const zones = ["default", "zone-1", "zone-2", "zone-3"];
+  const pools = ["default", "pool-1", "pool-2"];
+
+  const flatMachineData: Machine[] = Array.from({ length: count }, (_, i) => ({
+    id: i + 1,
+    fqdn: `machine-${i + 1}.maas`,
+    ipAddress: `192.168.1.${i + 1}`,
+    status: statuses[i % statuses.length],
+    zone: zones[i % zones.length],
+    pool: pools[i % pools.length],
+  }));
+
+  const nestedMachineData: Machine[] = [];
+  const childIds = new Set<number>();
+
+  flatMachineData.forEach((machine) => {
+    if (machine.pool === "default") {
+      const children = flatMachineData.filter(
+        (r) => r.pool !== "default" && r.zone === machine.zone
+      );
+      if (children.length > 0) {
+        machine.children = children;
+        children.forEach((c) => childIds.add(c.id));
+      }
+      nestedMachineData.push(machine);
+    }
+  });
+
+  flatMachineData.forEach((machine) => {
+    if (machine.pool !== "default" && !childIds.has(machine.id)) {
+      nestedMachineData.push(machine);
+    }
+  });
+
+  return nestedMachineData;
 };
 
 // Column definitions for the MAAS machines table
@@ -164,11 +204,12 @@ const meta: Meta<typeof GenericTable<Machine>> = {
       },
     },
     disabledSelectionTooltip: {
-      description: "Text message or string returning constructor to display a message when a row cannot be selected.",
+      description:
+        "Text message or string returning constructor to display a message when a row cannot be selected.",
       table: {
         type: { summary: "string | ((row: Row<T>) => string)" },
         category: "Selection",
-      }
+      },
     },
     rowSelection: {
       description:
@@ -192,6 +233,15 @@ const meta: Meta<typeof GenericTable<Machine>> = {
     },
 
     // Grouping related
+    getSubRows: {
+      description:
+        "Extraction function to get the children prop of self-nested data",
+      control: false,
+      table: {
+        type: { summary: "(originalRow: T, index: number) => T[] | undefined" },
+        category: "Grouping",
+      },
+    },
     groupBy: {
       description: "Array of column IDs to group rows by",
       control: false,
@@ -384,7 +434,13 @@ export const ConditionallySelectable: Story = {
           if (row.getIsGrouped()) return <GroupRowActions row={row} />;
           return (
             <div className="actions-cell">
-              <Tooltip message={!row.getCanSelect() && "Cannot delete machines in the default pool."} position="btm-left">
+              <Tooltip
+                message={
+                  !row.getCanSelect() &&
+                  "Cannot delete machines in the default pool."
+                }
+                position="btm-left"
+              >
                 <Button
                   disabled={!row.getCanSelect()}
                   appearance="base"
@@ -518,6 +574,83 @@ export const GroupedSelectable: Story = {
     },
     filterHeaders: (header: Header<Machine, unknown>): boolean =>
       header.column.id !== "status",
+  },
+};
+
+export const GroupedNested: Story = {
+  name: "Grouped (Nested)",
+  render: (args) => {
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+    return (
+      <div style={{ width: "100%" }}>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "1rem",
+          }}
+        >
+          <h5>
+            Selected machines:{" "}
+            {
+              Object.keys(rowSelection).filter(
+                (key: string) => !isNaN(Number(key)),
+              ).length
+            }
+          </h5>
+          <div className="p-button-group">
+            <Button
+              appearance="negative"
+              disabled={Object.keys(rowSelection).length === 0}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+        <GenericTable
+          {...args}
+          rowSelection={rowSelection}
+          setRowSelection={setRowSelection}
+        />
+      </div>
+    );
+  },
+  args: {
+    canSelect: (row) => !row.parentId,
+    columns: [
+      ...machineColumns.filter((column) => column.id !== "actions"),
+      {
+        id: "actions",
+        accessorKey: "id",
+        header: "Actions",
+        cell: ({ row }: { row: Row<Machine> }) => {
+          if (row.getIsGrouped()) return <GroupRowActions row={row} />;
+          return (
+            <div className="actions-cell">
+              <Tooltip
+                message={
+                  !row.getCanSelect() &&
+                  "Cannot delete machines in the default pool."
+                }
+                position="btm-left"
+              >
+                <Button
+                  disabled={!row.getCanSelect()}
+                  appearance="base"
+                  hasIcon
+                >
+                  <Icon name="delete" />
+                </Button>
+              </Tooltip>
+            </div>
+          );
+        },
+      },
+    ],
+    data: generateNestedMachinesData(10),
+    getSubRows: (originalRow) => originalRow.children,
   },
 };
 
