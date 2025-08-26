@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        task: ['build', 'lint', 'test']
+        task: ['build', 'lint', 'test:run']
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
