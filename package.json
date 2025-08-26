@@ -31,8 +31,10 @@
   "scripts": {
     "prepare": "husky install",
     "build": "tsc && vite build",
+    "build:run": "npm run build",
     "build:watch": "tsc && vite build --watch",
     "lint": "eslint src && tsc --noEmit && stylelint src/**/*.scss",
+    "lint:run": "npm run lint",
     "lint:fix": "eslint --fix src && stylelint src/**/*.scss --fix",
     "format": "prettier --write 'src/**/*.{ts,tsx,css,md,json}' --config ./.prettierrc",
     "test": "vitest",
