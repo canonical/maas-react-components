@@ -86,7 +86,16 @@ describe("GenericTable", () => {
   ];
 
   it("renders a table with provided columns and data", () => {
-    render(<GenericTable columns={columns} data={data} isLoading={false} />);
+    render(
+      <GenericTable
+        aria-label="Images"
+        columns={columns}
+        data={data}
+        isLoading={false}
+      />,
+    );
+
+    expect(screen.getByRole("grid", { name: "Images" })).toBeInTheDocument();
 
     expect(screen.getByText("Release title")).toBeInTheDocument();
     expect(screen.getByText("Architecture")).toBeInTheDocument();
@@ -429,14 +438,12 @@ describe("GenericTable", () => {
       <GenericTable
         canSelect={true}
         columns={columns}
-        data={
-          [
-            {
-              ...data[0],
-              children: [data[1]],
-            },
-          ]
-        }
+        data={[
+          {
+            ...data[0],
+            children: [data[1]],
+          },
+        ]}
         getSubRows={(originalRow) => originalRow.children}
         isLoading={false}
         rowSelection={{}}

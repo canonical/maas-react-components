@@ -1,3 +1,10 @@
+import type {
+  Dispatch,
+  ReactElement,
+  ReactNode,
+  RefObject,
+  SetStateAction,
+} from "react";
 import {
   DetailedHTMLProps,
   Fragment,
@@ -7,27 +14,20 @@ import {
   useRef,
   useState,
 } from "react";
-import type {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  RefObject,
-  ReactElement,
-} from "react";
 
 import { Spinner } from "@canonical/react-components";
 import type {
+  CellContext,
   Column,
-  Row,
   ColumnDef,
   ColumnSort,
-  GroupingState,
   ExpandedState,
-  SortingState,
+  GroupingState,
   Header,
-  RowSelectionState,
-  CellContext,
   HeaderContext,
+  Row,
+  RowSelectionState,
+  SortingState,
 } from "@tanstack/react-table";
 import {
   flexRender,
@@ -406,6 +406,7 @@ export const GenericTable = <T extends { id: number | string }>({
 
       <table
         aria-busy={isLoading}
+        aria-label={props["aria-label"]}
         aria-describedby="generic-table-description"
         aria-rowcount={sortedData.length + 1} // +1 for header row
         className={classNames("p-generic-table__table", {

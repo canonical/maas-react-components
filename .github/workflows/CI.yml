@@ -25,4 +25,4 @@ jobs:
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
       - name: Run task
-        run: npm run ${{ matrix.task }}
+        run: npm run ${{ matrix.task }}:run
