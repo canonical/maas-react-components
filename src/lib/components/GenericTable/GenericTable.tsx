@@ -1,11 +1,10 @@
-import type {
+import {
   Dispatch,
   ReactElement,
   ReactNode,
   RefObject,
   SetStateAction,
-} from "react";
-import {
+  useEffect,
   DetailedHTMLProps,
   Fragment,
   HTMLAttributes,
@@ -145,8 +144,54 @@ export const GenericTable = <T extends { id: number | string }>({
   const [needsScrolling, setNeedsScrolling] = useState(false);
 
   const [grouping, setGrouping] = useState<GroupingState>(groupBy ?? []);
-  const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [sorting, setSorting] = useState<SortingState>(sortBy ?? []);
+  const [expanded, _setExpanded] = useState<ExpandedState>(true);
+
+  // Remember collapsed groups to keep them collapsed on page change
+  const setExpanded = (
+    updater: ExpandedState | ((prev: ExpandedState) => ExpandedState),
+  ) => {
+    _setExpanded((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+
+      if (next === true) return true;
+
+      const normalized: Record<string, boolean> = { ...next };
+
+      // Reinsert any keys that disappeared between prev and next as false
+      if (prev !== true) {
+        for (const key of Object.keys(prev)) {
+          if (!(key in normalized)) {
+            normalized[key] = false;
+          }
+        }
+      }
+
+      return normalized;
+    });
+  };
+
+  // Replace default true expansion state with explicit groups
+  useEffect(() => {
+    if (!grouping.length) return;
+
+    setExpanded((prev) => {
+      const base = prev === true ? {} : { ...prev };
+
+      const next = { ...base };
+
+      for (const item of initialData) {
+        const groupId = grouping
+          .map((g) => `${g}:${item[g as keyof typeof item]}`)
+          .join(">");
+        if (!(groupId in next)) {
+          next[groupId] = true;
+        }
+      }
+
+      return next;
+    });
+  }, [initialData, grouping]);
 
   // Add chevron and selection columns if needed
   const columns = useMemo(() => {
