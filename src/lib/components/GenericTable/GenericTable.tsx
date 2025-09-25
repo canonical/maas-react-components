@@ -259,7 +259,7 @@ export const GenericTable = <T extends { id: number | string }>({
               <Tooltip message={isExpanded ? "Collapse" : "Expand"} position="btm-right">
                 <Icon
                   name={
-                    isExpanded ? ICONS.chevronDown : ICONS.chevronUp
+                    isExpanded ? ICONS.chevronUp : ICONS.chevronDown
                   }
                 />
               </Tooltip>
