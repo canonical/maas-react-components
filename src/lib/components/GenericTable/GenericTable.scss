@@ -92,7 +92,7 @@
       height: auto;
       min-height: auto;
 
-      td:last-child {
+      tr:not(.p-generic-table__group-row) > td:last-child {
         text-align: right;
       }
     }
@@ -112,6 +112,7 @@
     }
 
     // Selection column styling
+    .p-generic-table__group-chevron,
     .p-generic-table__group-select,
     .p-generic-table__select,
     .p-generic-table__select-alignment {

@@ -15,7 +15,7 @@ import {
   useState,
 } from "react";
 
-import { Spinner } from "@canonical/react-components";
+import { Icon, ICONS, Spinner } from "@canonical/react-components";
 import type {
   CellContext,
   Column,
@@ -64,6 +64,7 @@ type GenericTableProps<T extends { id: number | string }> = {
   sortBy?: ColumnSort[];
   rowSelection?: RowSelectionState;
   setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
+  showChevron?: boolean;
   variant?: "full-height" | "regular";
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
@@ -94,6 +95,7 @@ type GenericTableProps<T extends { id: number | string }> = {
  * @param {ColumnSort[]} [props.sortBy] - Initial sort configuration
  * @param {RowSelectionState} [props.rowSelection] - Selected rows state
  * @param {Dispatch<SetStateAction<RowSelectionState>>} [props.setRowSelection] - Selection state setter
+ * @param {boolean} [props.showChevron=false] - Show group row expansion state chevrons
  * @param {"full-height" | "regular"} [props.variant="full-height"] - Table layout variant
  *
  * @returns {ReactElement} - The rendered table component
@@ -134,6 +136,7 @@ export const GenericTable = <T extends { id: number | string }>({
   sortBy,
   rowSelection,
   setRowSelection,
+  showChevron = false,
   variant = "full-height",
   ...props
 }: GenericTableProps<T>): ReactElement => {
@@ -145,53 +148,89 @@ export const GenericTable = <T extends { id: number | string }>({
   const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [sorting, setSorting] = useState<SortingState>(sortBy ?? []);
 
-  // Add selection columns if needed
+  // Add chevron and selection columns if needed
   const columns = useMemo(() => {
-    if (!canSelect || isLoading) {
-      return initialColumns;
+    let processedColumns = [...initialColumns];
+
+    if (isLoading) {
+      return processedColumns;
     }
 
-    const selectionColumns = [
-      {
-        id: "p-generic-table__select",
-        accessorKey: "id",
-        enableSorting: false,
-        header: ({ table }: HeaderContext<T, Partial<T>>) => {
-          if (groupBy) {
-            return "";
-          }
-          return <TableCheckbox.All table={table} />;
-        },
-        cell: ({ row }: CellContext<T, Partial<T>>) =>
-          !row.getIsGrouped() ? (
-            <TableCheckbox
-              row={row}
-              disabledTooltip={disabledSelectionTooltip ?? ""}
-              isNested={getSubRows !== undefined && !!row.parentId}
-            />
-          ) : null,
-      },
-      ...initialColumns,
-    ];
-
-    if (groupBy) {
-      return [
+    // Add selection columns if needed
+    if (canSelect) {
+      const selectionColumns = [
         {
-          id: "p-generic-table__group-select",
+          id: "p-generic-table__select",
           accessorKey: "id",
           enableSorting: false,
-          header: ({ table }: HeaderContext<T, Partial<T>>) => (
-            <TableCheckbox.All table={table} />
-          ),
+          header: ({ table }: HeaderContext<T, Partial<T>>) => {
+            if (groupBy) {
+              return "";
+            }
+            return <TableCheckbox.All table={table} />;
+          },
           cell: ({ row }: CellContext<T, Partial<T>>) =>
-            row.getIsGrouped() ? <TableCheckbox.Group row={row} /> : null,
+            !row.getIsGrouped() ? (
+              <TableCheckbox
+                row={row}
+                disabledTooltip={disabledSelectionTooltip ?? ""}
+                isNested={getSubRows !== undefined && !!row.parentId}
+              />
+            ) : null,
         },
-        ...selectionColumns,
+        ...processedColumns,
       ];
+
+      if (groupBy) {
+        processedColumns = [
+          {
+            id: "p-generic-table__group-select",
+            accessorKey: "id",
+            enableSorting: false,
+            header: ({ table }: HeaderContext<T, Partial<T>>) => (
+              <TableCheckbox.All table={table} />
+            ),
+            cell: ({ row }: CellContext<T, Partial<T>>) =>
+              row.getIsGrouped() ? <TableCheckbox.Group row={row} /> : null,
+          },
+          ...selectionColumns,
+        ];
+      } else {
+        processedColumns = selectionColumns;
+      }
     }
 
-    return selectionColumns;
-  }, [canSelect, initialColumns, isLoading, groupBy]);
+    // Add chevron column if grouping is enabled
+    if (groupBy && showChevron) {
+      const chevronColumn = {
+        id: "p-generic-table__group-chevron",
+        accessorKey: "id",
+        enableSorting: false,
+        header: "",
+        cell: ({ row }: CellContext<T, Partial<T>>) => {
+          if (row.getIsGrouped()) {
+            return (
+              <Icon
+                name={row.getIsExpanded() ? ICONS.chevronDown : ICONS.chevronUp}
+              />
+            );
+          }
+          return null;
+        },
+      };
+
+      processedColumns = [chevronColumn, ...processedColumns];
+    }
+
+    return processedColumns;
+  }, [
+    canSelect,
+    initialColumns,
+    isLoading,
+    groupBy,
+    getSubRows,
+    disabledSelectionTooltip,
+  ]);
 
   // Memoize grouped data
   const groupedData = useMemo(() => {
@@ -375,7 +414,8 @@ export const GenericTable = <T extends { id: number | string }>({
             .filter((cell) => {
               if (
                 !isIndividualRow &&
-                cell.column.id === "p-generic-table__group-select"
+                (cell.column.id === "p-generic-table__group-select" ||
+                  cell.column.id === "p-generic-table__group-chevron")
               )
                 return true;
               return filterCells(row, cell.column);
@@ -429,7 +469,7 @@ export const GenericTable = <T extends { id: number | string }>({
                 .map((header, index) => (
                   <Fragment key={header.id}>
                     <ColumnHeader header={header} />
-                    {canSelect && groupBy && index === 2 ? (
+                    {canSelect && groupBy && index === 3 ? (
                       <th
                         className="p-generic-table__select-alignment"
                         role="columnheader"
