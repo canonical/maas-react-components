@@ -14,7 +14,7 @@ import {
   useState,
 } from "react";
 
-import { Icon, ICONS, Spinner } from "@canonical/react-components";
+import { Icon, ICONS, Spinner, Tooltip } from "@canonical/react-components";
 import type {
   CellContext,
   Column,
@@ -253,11 +253,16 @@ export const GenericTable = <T extends { id: number | string }>({
         enableSorting: false,
         header: "",
         cell: ({ row }: CellContext<T, Partial<T>>) => {
+          const isExpanded = row.getIsExpanded();
           if (row.getIsGrouped()) {
             return (
-              <Icon
-                name={row.getIsExpanded() ? ICONS.chevronDown : ICONS.chevronUp}
-              />
+              <Tooltip message={isExpanded ? "Collapse" : "Expand"} position="btm-right">
+                <Icon
+                  name={
+                    isExpanded ? ICONS.chevronDown : ICONS.chevronUp
+                  }
+                />
+              </Tooltip>
             );
           }
           return null;
