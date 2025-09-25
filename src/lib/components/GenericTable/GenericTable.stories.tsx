@@ -62,7 +62,7 @@ const generateNestedMachinesData = (count: number): Machine[] => {
   flatMachineData.forEach((machine) => {
     if (machine.pool === "default") {
       const children = flatMachineData.filter(
-        (r) => r.pool !== "default" && r.zone === machine.zone
+        (r) => r.pool !== "default" && r.zone === machine.zone,
       );
       if (children.length > 0) {
         machine.children = children;
@@ -115,16 +115,13 @@ const machineColumns: MachineColumnDef[] = [
     id: "actions",
     accessorKey: "id",
     header: "Actions",
-    cell: ({ row }: { row: Row<Machine> }) => {
-      if (row.getIsGrouped()) return <GroupRowActions row={row} />;
-      return (
-        <div className="actions-cell">
-          <Button appearance="base" hasIcon>
-            <Icon name="delete" />
-          </Button>
-        </div>
-      );
-    },
+    cell: () => (
+      <div className="actions-cell">
+        <Button appearance="base" hasIcon>
+          <Icon name="delete" />
+        </Button>
+      </div>
+    ),
   },
 ];
 
@@ -256,6 +253,16 @@ const meta: Meta<typeof GenericTable<Machine>> = {
       control: false,
       table: {
         type: { summary: "{ value: string; isTop: boolean }[]" },
+        category: "Grouping",
+      },
+    },
+    showChevron: {
+      description:
+        "Boolean to show group expansion chevrons at the start of group rows",
+      control: { type: "boolean" },
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
         category: "Grouping",
       },
     },
@@ -487,7 +494,7 @@ export const Grouped: Story = {
     groupBy: ["status"],
     filterCells: (row: Row<Machine>, column: Column<Machine>): boolean => {
       if (row.getIsGrouped()) {
-        return ["status", "actions"].includes(column.id);
+        return ["status"].includes(column.id);
       } else {
         return !["status"].includes(column.id);
       }
@@ -567,7 +574,7 @@ export const GroupedSelectable: Story = {
     groupBy: ["status"],
     filterCells: (row: Row<Machine>, column: Column<Machine>): boolean => {
       if (row.getIsGrouped()) {
-        return ["status", "actions"].includes(column.id);
+        return ["status"].includes(column.id);
       } else {
         return !["status"].includes(column.id);
       }
