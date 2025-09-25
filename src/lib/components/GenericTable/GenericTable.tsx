@@ -361,8 +361,13 @@ export const GenericTable = <T extends { id: number | string }>({
           className={classNames({
             "p-generic-table__individual-row": isIndividualRow,
             "p-generic-table__group-row": !isIndividualRow,
-            "p-generic-table__nested-row": getSubRows !== undefined && !!parentId,
+            "p-generic-table__nested-row":
+              getSubRows !== undefined && !!parentId,
           })}
+          onClick={() => {
+            if (isIndividualRow) return;
+            row.toggleExpanded();
+          }}
           key={id}
           role="row"
         >

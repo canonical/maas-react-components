@@ -105,6 +105,10 @@
 
         background-color: $colors--light-theme--background-hover;
       }
+
+      tr.p-generic-table__group-row {
+        cursor: pointer;
+      }
     }
 
     // Selection column styling
