@@ -469,7 +469,10 @@ export const GenericTable = <T extends { id: number | string }>({
                 .map((header, index) => (
                   <Fragment key={header.id}>
                     <ColumnHeader header={header} />
-                    {canSelect && groupBy && index === 3 ? (
+                    {canSelect &&
+                    groupBy &&
+                    ((!showChevron && index === 2) ||
+                      (showChevron && index === 3)) ? (
                       <th
                         className="p-generic-table__select-alignment"
                         role="columnheader"
