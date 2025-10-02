@@ -256,12 +256,11 @@ export const GenericTable = <T extends { id: number | string }>({
           const isExpanded = row.getIsExpanded();
           if (row.getIsGrouped()) {
             return (
-              <Tooltip message={isExpanded ? "Collapse" : "Expand"} position="btm-right">
-                <Icon
-                  name={
-                    isExpanded ? ICONS.chevronUp : ICONS.chevronDown
-                  }
-                />
+              <Tooltip
+                message={isExpanded ? "Collapse" : "Expand"}
+                position="btm-right"
+              >
+                <Icon name={isExpanded ? ICONS.chevronUp : ICONS.chevronDown} />
               </Tooltip>
             );
           }
@@ -365,7 +364,11 @@ export const GenericTable = <T extends { id: number | string }>({
       const willNeedScrolling = contentHeight > availableHeight;
 
       setNeedsScrolling(willNeedScrolling);
-      setMaxHeight(willNeedScrolling ? `${availableHeight}px` : "auto");
+      setMaxHeight(
+        variant === "full-height" && willNeedScrolling
+          ? `${availableHeight}px`
+          : "auto",
+      );
     };
 
     updateHeight();

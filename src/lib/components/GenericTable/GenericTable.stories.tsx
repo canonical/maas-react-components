@@ -12,7 +12,6 @@ import {
 } from "@tanstack/react-table";
 
 import { GenericTable } from "@/lib/components/GenericTable/GenericTable";
-import { GroupRowActions } from "@/lib/components/GenericTable/GroupRowActions";
 
 type Machine = {
   id: number;
@@ -438,7 +437,6 @@ export const ConditionallySelectable: Story = {
         accessorKey: "id",
         header: "Actions",
         cell: ({ row }: { row: Row<Machine> }) => {
-          if (row.getIsGrouped()) return <GroupRowActions row={row} />;
           return (
             <div className="actions-cell">
               <Tooltip
@@ -501,6 +499,7 @@ export const Grouped: Story = {
     },
     filterHeaders: (header: Header<Machine, unknown>): boolean =>
       header.column.id !== "status",
+    showChevron: true,
   },
 };
 
@@ -581,6 +580,7 @@ export const GroupedSelectable: Story = {
     },
     filterHeaders: (header: Header<Machine, unknown>): boolean =>
       header.column.id !== "status",
+    showChevron: true,
   },
 };
 
@@ -633,7 +633,6 @@ export const GroupedNested: Story = {
         accessorKey: "id",
         header: "Actions",
         cell: ({ row }: { row: Row<Machine> }) => {
-          if (row.getIsGrouped()) return <GroupRowActions row={row} />;
           return (
             <div className="actions-cell">
               <Tooltip
