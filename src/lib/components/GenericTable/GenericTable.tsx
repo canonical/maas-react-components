@@ -1,13 +1,13 @@
 import {
+  DetailedHTMLProps,
   Dispatch,
+  Fragment,
+  HTMLAttributes,
   ReactElement,
   ReactNode,
   RefObject,
   SetStateAction,
   useEffect,
-  DetailedHTMLProps,
-  Fragment,
-  HTMLAttributes,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -119,7 +119,9 @@ type GenericTableProps<T extends { id: number | string }> = {
  *   }}
  * />
  */
-export const GenericTable = <T extends { id: number | string }>({
+export const GenericTable = <
+  T extends { id: number | string } & Record<string, unknown>,
+>({
   className,
   canSelect = false,
   disabledSelectionTooltip,
@@ -217,19 +219,30 @@ export const GenericTable = <T extends { id: number | string }>({
             }
             return <TableCheckbox.All table={table} />;
           },
-          cell: ({ row }: CellContext<T, Partial<T>>) =>
-            !row.getIsGrouped() ? (
+          cell: ({ row }: CellContext<T, Partial<T>>) => {
+            const firstCellContent = row.getAllCells()[1].getValue();
+            const ariaLabel =
+              typeof firstCellContent === "string"
+                ? `select ${firstCellContent}`
+                : "select row";
+            return !row.getIsGrouped() ? (
               <TableCheckbox
-                row={row}
+                aria-label={ariaLabel}
                 disabledTooltip={disabledSelectionTooltip ?? ""}
                 isNested={getSubRows !== undefined && !!row.parentId}
+                row={row}
               />
-            ) : null,
+            ) : null;
+          },
         },
         ...processedColumns,
       ];
 
       if (groupBy) {
+        const getAriaLabel = (row: Row<T>) =>
+          groupBy[0] in row.original
+            ? `select ${row.original[groupBy[0]]}`
+            : "select group";
         processedColumns = [
           {
             id: "p-generic-table__group-select",
@@ -239,7 +252,9 @@ export const GenericTable = <T extends { id: number | string }>({
               <TableCheckbox.All table={table} />
             ),
             cell: ({ row }: CellContext<T, Partial<T>>) =>
-              row.getIsGrouped() ? <TableCheckbox.Group row={row} /> : null,
+              row.getIsGrouped() ? (
+                <TableCheckbox.Group aria-label={getAriaLabel(row)} row={row} />
+              ) : null,
           },
           ...selectionColumns,
         ];
