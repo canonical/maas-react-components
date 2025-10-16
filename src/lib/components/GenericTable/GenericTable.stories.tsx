@@ -395,7 +395,6 @@ export const Selectable: Story = {
         <GenericTable
           {...args}
           rowSelection={rowSelection}
-          rowSelectionLabelKey="fqdn"
           setRowSelection={setRowSelection}
         />
       </div>
@@ -434,7 +433,6 @@ export const ConditionallySelectable: Story = {
         <GenericTable
           {...args}
           rowSelection={rowSelection}
-          rowSelectionLabelKey="fqdn"
           setRowSelection={setRowSelection}
         />
       </div>
@@ -552,7 +550,6 @@ export const GroupedSelectable: Story = {
         <GenericTable
           {...args}
           rowSelection={rowSelection}
-          rowSelectionLabelKey="fqdn"
           setRowSelection={setRowSelection}
         />
       </div>
@@ -634,7 +631,6 @@ export const GroupedNested: Story = {
         <GenericTable
           {...args}
           rowSelection={rowSelection}
-          rowSelectionLabelKey="fqdn"
           setRowSelection={setRowSelection}
         />
       </div>

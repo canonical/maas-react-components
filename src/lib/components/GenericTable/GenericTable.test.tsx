@@ -415,7 +415,7 @@ describe("GenericTable", () => {
     expect(checkboxes[0]).toBeDisabled();
   });
 
-  it("applies aria-labels to row checkboxes using rowSelectionLabelKey", () => {
+  it("applies aria-labels to row checkboxes using the text content of the first column", () => {
     render(
       <GenericTable
         canSelect={true}
@@ -423,7 +423,6 @@ describe("GenericTable", () => {
         data={data}
         isLoading={false}
         rowSelection={{}}
-        rowSelectionLabelKey="release"
         setRowSelection={vi.fn()}
       />,
     );
