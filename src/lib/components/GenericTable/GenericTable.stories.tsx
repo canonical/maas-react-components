@@ -5,10 +5,12 @@ import { Meta, StoryObj } from "@storybook/react";
 import {
   Column,
   ColumnDef,
+  ColumnSort,
   Getter,
   Header,
   Row,
   RowSelectionState,
+  SortingState,
 } from "@tanstack/react-table";
 
 import { GenericTable } from "@/lib/components/GenericTable/GenericTable";
@@ -114,6 +116,7 @@ const machineColumns: MachineColumnDef[] = [
     id: "actions",
     accessorKey: "id",
     header: "Actions",
+    enableSorting: false,
     cell: () => (
       <div className="actions-cell">
         <Button appearance="base" hasIcon>
@@ -267,11 +270,20 @@ const meta: Meta<typeof GenericTable<Machine>> = {
     },
 
     // Sorting
-    sortBy: {
+    sorting: {
       description: "Initial sort configuration for table columns",
       control: false,
       table: {
         type: { summary: "ColumnSort[]" },
+        category: "Sorting",
+      },
+    },
+
+    setSorting: {
+      description: "State setter function for updating sorting",
+      control: false,
+      table: {
+        type: { summary: "Dispatch<SetStateAction<SortingState>>" },
         category: "Sorting",
       },
     },
@@ -738,5 +750,38 @@ export const Scrollable: Story = {
   args: {
     data: generateMachinesData(50),
     variant: "full-height",
+  },
+};
+
+export const SortableExternal: Story = {
+  name: "Sortable (External)",
+  render: (args) => {
+    const [sorting, setSorting] = useState<SortingState>([
+      { id: "fqdn", desc: true },
+    ]);
+
+    return (
+      <div style={{ width: "100%" }}>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "1rem",
+          }}
+        >
+          <h5>
+            Sorting by:{" "}
+            {sorting.map(
+              (s: ColumnSort) => {
+                const column = machineColumns.find((c) => c.id === s.id);
+                return `${column?.header as string} (${s.desc ? "desc" : "asc"})`;
+              }
+            )}
+          </h5>
+        </div>
+        <GenericTable {...args} sorting={sorting} setSorting={setSorting} />
+      </div>
+    );
   },
 };

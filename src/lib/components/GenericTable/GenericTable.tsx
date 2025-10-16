@@ -60,7 +60,8 @@ type GenericTableProps<T extends { id: number | string }> = {
   noData?: ReactNode;
   pagination?: PaginationBarProps;
   pinGroup?: { value: string; isTop: boolean }[];
-  sortBy?: ColumnSort[];
+  sorting?: ColumnSort[];
+  setSorting?: Dispatch<SetStateAction<SortingState>>;
   rowSelection?: RowSelectionState;
   setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
   showChevron?: boolean;
@@ -91,7 +92,8 @@ type GenericTableProps<T extends { id: number | string }> = {
  * @param {ReactNode} [props.noData] - Content to display when no data is available
  * @param {PaginationBarProps} [props.pagination] - Pagination configuration
  * @param {{ value: string; isTop: boolean }[]} [props.pinGroup] - Group pinning configuration
- * @param {ColumnSort[]} [props.sortBy] - Initial sort configuration
+ * @param {ColumnSort[]} [props.sorting] - Initial sort configuration
+ * @param {Dispatch<SetStateAction<SortingState>>} [props.setSorting] - Sorting state setter
  * @param {RowSelectionState} [props.rowSelection] - Selected rows state
  * @param {Dispatch<SetStateAction<RowSelectionState>>} [props.setRowSelection] - Selection state setter
  * @param {boolean} [props.showChevron=false] - Show group row expansion state chevrons
@@ -132,7 +134,8 @@ export const GenericTable = <T extends { id: number | string }>({
   noData,
   pagination,
   pinGroup,
-  sortBy,
+  sorting = [],
+  setSorting,
   rowSelection,
   setRowSelection,
   showChevron = false,
@@ -144,7 +147,7 @@ export const GenericTable = <T extends { id: number | string }>({
   const [needsScrolling, setNeedsScrolling] = useState(false);
 
   const [grouping, setGrouping] = useState<GroupingState>(groupBy ?? []);
-  const [sorting, setSorting] = useState<SortingState>(sortBy ?? []);
+  const [_sorting, _setSorting] = useState<SortingState>(sorting ?? []);
   const [expanded, _setExpanded] = useState<ExpandedState>(true);
 
   // Remember collapsed groups to keep them collapsed on page change
@@ -323,7 +326,7 @@ export const GenericTable = <T extends { id: number | string }>({
       }
 
       // Sort by column sorting
-      for (const { id, desc } of sorting) {
+      for (const { id, desc } of _sorting) {
         const aValue = a[id as keyof typeof a] ?? null;
         const bValue = b[id as keyof typeof b] ?? null;
 
@@ -342,7 +345,7 @@ export const GenericTable = <T extends { id: number | string }>({
 
       return 0;
     });
-  }, [groupedData, sorting, pinGroup, grouping]);
+  }, [groupedData, _sorting, pinGroup, grouping]);
 
   // Update table height based on available space and determine if scrolling is needed
   useLayoutEffect(() => {
@@ -395,13 +398,18 @@ export const GenericTable = <T extends { id: number | string }>({
     state: {
       grouping,
       expanded,
-      sorting,
+      sorting: _sorting,
       rowSelection,
     },
     manualPagination: true,
     autoResetExpanded: false,
     onExpandedChange: setExpanded,
-    onSortingChange: setSorting,
+    onSortingChange: (updaterOrValue) => {
+      _setSorting(updaterOrValue);
+      if (setSorting) {
+        setSorting(updaterOrValue);
+      }
+    },
     onGroupingChange: setGrouping,
     onRowSelectionChange: setRowSelection,
     manualSorting: true,

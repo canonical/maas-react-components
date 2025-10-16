@@ -209,7 +209,7 @@ describe("GenericTable", () => {
         columns={columns}
         data={data}
         isLoading={false}
-        sortBy={[{ id: "release", desc: true }]}
+        sorting={[{ id: "release", desc: true }]}
       />,
     );
 
@@ -224,7 +224,7 @@ describe("GenericTable", () => {
         columns={columns}
         data={data}
         isLoading={false}
-        sortBy={[{ id: "release", desc: true }]}
+        sorting={[{ id: "release", desc: true }]}
       />,
     );
 
@@ -233,6 +233,31 @@ describe("GenericTable", () => {
     expect(rows[2]).toHaveTextContent("16.04 LTS");
 
     await userEvent.click(screen.getByText("Release title"));
+
+    const sortedRows = screen.getAllByRole("row");
+    expect(sortedRows[1]).toHaveTextContent("16.04 LTS");
+    expect(sortedRows[2]).toHaveTextContent("18.04 LTS");
+  });
+
+  it("externally reflects sorting", async () => {
+    const mockSetSorting = vi.fn();
+    render(
+      <GenericTable
+        columns={columns}
+        data={data}
+        isLoading={false}
+        sorting={[{ id: "release", desc: true }]}
+        setSorting={mockSetSorting}
+      />,
+    );
+
+    const rows = screen.getAllByRole("row");
+    expect(rows[1]).toHaveTextContent("18.04 LTS");
+    expect(rows[2]).toHaveTextContent("16.04 LTS");
+
+    await userEvent.click(screen.getByText("Release title"));
+
+    expect(mockSetSorting).toHaveBeenCalled();
 
     const sortedRows = screen.getAllByRole("row");
     expect(sortedRows[1]).toHaveTextContent("16.04 LTS");
