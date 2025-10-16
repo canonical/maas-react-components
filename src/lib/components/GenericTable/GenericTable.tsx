@@ -1,13 +1,13 @@
 import {
+  DetailedHTMLProps,
   Dispatch,
+  Fragment,
+  HTMLAttributes,
   ReactElement,
   ReactNode,
   RefObject,
   SetStateAction,
   useEffect,
-  DetailedHTMLProps,
-  Fragment,
-  HTMLAttributes,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -62,6 +62,7 @@ type GenericTableProps<T extends { id: number | string }> = {
   pinGroup?: { value: string; isTop: boolean }[];
   sorting?: ColumnSort[];
   setSorting?: Dispatch<SetStateAction<SortingState>>;
+  rowSelectionLabelKey?: keyof T;
   rowSelection?: RowSelectionState;
   setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
   showChevron?: boolean;
@@ -95,6 +96,7 @@ type GenericTableProps<T extends { id: number | string }> = {
  * @param {ColumnSort[]} [props.sorting] - Initial sort configuration
  * @param {Dispatch<SetStateAction<SortingState>>} [props.setSorting] - Sorting state setter
  * @param {RowSelectionState} [props.rowSelection] - Selected rows state
+ * @param {keyof T} [props.rowSelectionLabelKey] - Key of T to use as aria-labels for row checkboxes
  * @param {Dispatch<SetStateAction<RowSelectionState>>} [props.setRowSelection] - Selection state setter
  * @param {boolean} [props.showChevron=false] - Show group row expansion state chevrons
  * @param {"full-height" | "regular"} [props.variant="full-height"] - Table layout variant
@@ -119,7 +121,9 @@ type GenericTableProps<T extends { id: number | string }> = {
  *   }}
  * />
  */
-export const GenericTable = <T extends { id: number | string }>({
+export const GenericTable = <
+  T extends { id: number | string } & Record<string, unknown>,
+>({
   className,
   canSelect = false,
   disabledSelectionTooltip,
@@ -137,6 +141,7 @@ export const GenericTable = <T extends { id: number | string }>({
   sorting = [],
   setSorting,
   rowSelection,
+  rowSelectionLabelKey,
   setRowSelection,
   showChevron = false,
   variant = "full-height",
@@ -217,19 +222,29 @@ export const GenericTable = <T extends { id: number | string }>({
             }
             return <TableCheckbox.All table={table} />;
           },
-          cell: ({ row }: CellContext<T, Partial<T>>) =>
-            !row.getIsGrouped() ? (
+          cell: ({ row }: CellContext<T, Partial<T>>) => {
+            const ariaLabel =
+              rowSelectionLabelKey && rowSelectionLabelKey in row.original
+                ? `select ${row.original[rowSelectionLabelKey]}`
+                : "select row";
+            return !row.getIsGrouped() ? (
               <TableCheckbox
-                row={row}
+                aria-label={ariaLabel}
                 disabledTooltip={disabledSelectionTooltip ?? ""}
                 isNested={getSubRows !== undefined && !!row.parentId}
+                row={row}
               />
-            ) : null,
+            ) : null;
+          },
         },
         ...processedColumns,
       ];
 
       if (groupBy) {
+        const getAriaLabel = (row: Row<T>) =>
+          groupBy[0] in row.original
+            ? `select ${row.original[groupBy[0]]}`
+            : "select group";
         processedColumns = [
           {
             id: "p-generic-table__group-select",
@@ -239,7 +254,9 @@ export const GenericTable = <T extends { id: number | string }>({
               <TableCheckbox.All table={table} />
             ),
             cell: ({ row }: CellContext<T, Partial<T>>) =>
-              row.getIsGrouped() ? <TableCheckbox.Group row={row} /> : null,
+              row.getIsGrouped() ? (
+                <TableCheckbox.Group aria-label={getAriaLabel(row)} row={row} />
+              ) : null,
           },
           ...selectionColumns,
         ];

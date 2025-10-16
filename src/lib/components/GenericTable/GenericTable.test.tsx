@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { vi } from "vitest";
 
@@ -413,6 +413,46 @@ describe("GenericTable", () => {
 
     const checkboxes = screen.getAllByRole("checkbox");
     expect(checkboxes[0]).toBeDisabled();
+  });
+
+  it("applies aria-labels to row checkboxes using rowSelectionLabelKey", () => {
+    render(
+      <GenericTable
+        canSelect={true}
+        columns={columns}
+        data={data}
+        isLoading={false}
+        rowSelection={{}}
+        rowSelectionLabelKey="release"
+        setRowSelection={vi.fn()}
+      />,
+    );
+
+    const firstRow = screen.getAllByRole("row")[1];
+
+    expect(within(firstRow).getByRole("checkbox")).toHaveAccessibleName(
+      "select 16.04 LTS",
+    );
+  });
+
+  it("applies aria-labels to group checkboxes from the group key", () => {
+    render(
+      <GenericTable
+        canSelect={true}
+        columns={columns}
+        data={data}
+        groupBy={["release"]}
+        isLoading={false}
+        rowSelection={{}}
+        setRowSelection={vi.fn()}
+      />,
+    );
+
+    const firstGroupRow = screen.getAllByRole("row")[1];
+
+    expect(within(firstGroupRow).getByRole("checkbox")).toHaveAccessibleName(
+      "select 16.04 LTS",
+    );
   });
 
   it("renders grouped rows when grouping is applied", () => {
