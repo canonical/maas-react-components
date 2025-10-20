@@ -1,15 +1,21 @@
 @import "vanilla-framework";
 @include vanilla;
 
-.p-button--table-header {
-  @extend %table-header-label;
+.p-column-header {
+  [class*="p-button"] {
+    @extend %table-header-label;
 
-  color: $color-dark;
-  margin: 0;
-  padding: 0;
+    color: $color-dark;
+    margin: 0;
+    padding: 0;
 
-  &:hover {
-    color: $color-link;
+    &:hover {
+      color: $color-link;
+    }
+
+    &.no-background {
+      background-color: transparent;
+    }
   }
 
   [class*="p-icon"] {
@@ -17,8 +23,4 @@
 
     margin-left: $sp-x-small;
   }
-}
-
-[class*="p-button"].no-background {
-  background-color: transparent;
 }

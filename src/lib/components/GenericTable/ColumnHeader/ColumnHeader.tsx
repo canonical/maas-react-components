@@ -14,22 +14,31 @@ type TableHeaderProps<T> = {
 };
 
 const ColumnHeader = <T,>({ header }: TableHeaderProps<T>): ReactElement => {
+  const canSort = header.column.getCanSort();
+  const isInteractiveHeader =
+    (header.column.columnDef.meta as { isInteractiveHeader?: boolean })?.isInteractiveHeader;
+
+  const renderedHeader = flexRender(header.column.columnDef.header, header.getContext());
+
   return (
-    <th className={classNames(`${header.column.id}`)} key={header.id}>
-      {header.column.getCanSort() ? (
+    <th className={classNames("p-column-header", header.column.id)} key={header.id}>
+      {canSort && !isInteractiveHeader ? (
         <Button
           appearance="link"
-          className="table-header-label p-button--table-header"
+          className="p-button--column-header"
           onClick={header.column.getToggleSortingHandler()}
           type="button"
         >
           <>
-            {flexRender(header.column.columnDef.header, header.getContext())}
+            {renderedHeader}
             <SortingIndicator header={header} />
           </>
         </Button>
       ) : (
-        flexRender(header.column.columnDef.header, header.getContext())
+        <span className="p-container--column-header">
+            {renderedHeader}
+            {canSort && !isInteractiveHeader && <SortingIndicator header={header} />}
+        </span>
       )}
     </th>
   );
