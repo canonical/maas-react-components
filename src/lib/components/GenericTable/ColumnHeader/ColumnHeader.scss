@@ -1,10 +1,10 @@
 @import "vanilla-framework";
-
 @include vanilla;
 
 .p-column-header {
   [class*="p-button"] {
     @extend %table-header-label;
+
     color: $color-dark;
     margin: 0;
     padding: 0;
