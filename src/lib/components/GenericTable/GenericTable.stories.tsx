@@ -772,12 +772,10 @@ export const SortableExternal: Story = {
         >
           <h5>
             Sorting by:{" "}
-            {sorting.map(
-              (s: ColumnSort) => {
-                const column = machineColumns.find((c) => c.id === s.id);
-                return `${column?.header as string} (${s.desc ? "desc" : "asc"})`;
-              }
-            )}
+            {sorting.map((s: ColumnSort) => {
+              const column = machineColumns.find((c) => c.id === s.id);
+              return `${column?.header as string} (${s.desc ? "desc" : "asc"})`;
+            })}
           </h5>
         </div>
         <GenericTable {...args} sorting={sorting} setSorting={setSorting} />
