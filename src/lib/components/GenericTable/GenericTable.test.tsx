@@ -275,8 +275,8 @@ describe("GenericTable", () => {
         filterCells={customFilterCells}
         filterHeaders={customFilterHeaders}
         isLoading={false}
-        rowSelection={{}}
-        setRowSelection={vi.fn()}
+        // rowSelection={{}}
+        // setRowSelection={vi.fn()}
       />,
     );
 
@@ -294,12 +294,14 @@ describe("GenericTable", () => {
   it("renders checkboxes for row selection when selection is enabled", async () => {
     render(
       <GenericTable
-        canSelect={true}
         columns={columns}
         data={data}
         isLoading={false}
-        rowSelection={{}}
-        setRowSelection={vi.fn()}
+        selection={{
+          canSelect: true,
+          rowSelection: {},
+          setRowSelection: vi.fn(),
+        }}
       />,
     );
 
@@ -311,12 +313,14 @@ describe("GenericTable", () => {
     const mockSetRowSelection = vi.fn();
     render(
       <GenericTable
-        canSelect
         columns={columns}
         data={data}
-        rowSelection={{}}
-        setRowSelection={mockSetRowSelection}
         isLoading={false}
+        selection={{
+          canSelect: true,
+          rowSelection: {},
+          setRowSelection: mockSetRowSelection,
+        }}
       />,
     );
 
@@ -332,12 +336,14 @@ describe("GenericTable", () => {
     const mockSetRowSelection = vi.fn();
     render(
       <GenericTable
-        canSelect
         columns={columns}
         data={data}
-        rowSelection={{}}
-        setRowSelection={mockSetRowSelection}
         isLoading={false}
+        selection={{
+          canSelect: true,
+          rowSelection: {},
+          setRowSelection: mockSetRowSelection,
+        }}
       />,
     );
 
@@ -347,16 +353,17 @@ describe("GenericTable", () => {
   });
 
   it("disables rows that do not match canSelect predicate", async () => {
-    const mockSetRowSelection = vi.fn();
     render(
       <GenericTable
-        canSelect={(row) => row.original.architecture !== "arm64"}
-        disabledSelectionTooltip={"Cannot select arm64 architecture images."}
         columns={columns}
         data={data}
         isLoading={false}
-        rowSelection={{}}
-        setRowSelection={mockSetRowSelection}
+        selection={{
+          canSelect: (row) => row.original.architecture !== "arm64",
+          disabledSelectionTooltip: "Cannot select arm64 architecture images.",
+          rowSelection: {},
+          setRowSelection: vi.fn(),
+        }}
       />,
     );
 
@@ -375,16 +382,17 @@ describe("GenericTable", () => {
   });
 
   it("shows tooltip text when selection is disabled via canSelect", async () => {
-    const mockSetRowSelection = vi.fn();
     render(
       <GenericTable
-        canSelect={(row) => row.original.architecture !== "arm64"}
-        disabledSelectionTooltip={"Cannot select arm64 architecture images."}
         columns={columns}
         data={data}
         isLoading={false}
-        rowSelection={{}}
-        setRowSelection={mockSetRowSelection}
+        selection={{
+          canSelect: (row) => row.original.architecture !== "arm64",
+          disabledSelectionTooltip: "Cannot select arm64 architecture images.",
+          rowSelection: {},
+          setRowSelection: vi.fn(),
+        }}
       />,
     );
     const checkboxes = screen.getAllByRole("checkbox");
@@ -399,15 +407,16 @@ describe("GenericTable", () => {
   });
 
   it("renders correctly when all rows are disabled via canSelect", () => {
-    const mockSetRowSelection = vi.fn();
     render(
       <GenericTable
-        canSelect={(_) => false}
         columns={columns}
         data={data}
         isLoading={false}
-        rowSelection={{}}
-        setRowSelection={mockSetRowSelection}
+        selection={{
+          canSelect: (_) => false,
+          rowSelection: {},
+          setRowSelection: vi.fn(),
+        }}
       />,
     );
 
@@ -418,13 +427,15 @@ describe("GenericTable", () => {
   it("applies aria-labels to row checkboxes using rowSelectionLabelKey", () => {
     render(
       <GenericTable
-        canSelect={true}
         columns={columns}
         data={data}
         isLoading={false}
-        rowSelection={{}}
-        rowSelectionLabelKey="release"
-        setRowSelection={vi.fn()}
+        selection={{
+          canSelect: true,
+          rowSelectionLabelKey: "release",
+          rowSelection: {},
+          setRowSelection: vi.fn(),
+        }}
       />,
     );
 
@@ -438,13 +449,15 @@ describe("GenericTable", () => {
   it("applies aria-labels to group checkboxes from the group key", () => {
     render(
       <GenericTable
-        canSelect={true}
         columns={columns}
         data={data}
         groupBy={["release"]}
         isLoading={false}
-        rowSelection={{}}
-        setRowSelection={vi.fn()}
+        selection={{
+          canSelect: true,
+          rowSelection: {},
+          setRowSelection: vi.fn(),
+        }}
       />,
     );
 
@@ -501,7 +514,6 @@ describe("GenericTable", () => {
   it("renders nested rows", () => {
     render(
       <GenericTable
-        canSelect={true}
         columns={columns}
         data={[
           {
@@ -511,8 +523,11 @@ describe("GenericTable", () => {
         ]}
         getSubRows={(originalRow) => originalRow.children}
         isLoading={false}
-        rowSelection={{}}
-        setRowSelection={vi.fn()}
+        selection={{
+          canSelect: true,
+          rowSelection: {},
+          setRowSelection: vi.fn(),
+        }}
       />,
     );
 
@@ -579,8 +594,6 @@ describe("GenericTable", () => {
         columns={columns}
         data={data}
         isLoading={false}
-        rowSelection={{}}
-        setRowSelection={vi.fn()}
         variant="regular"
       />,
     );
@@ -618,8 +631,6 @@ describe("GenericTable", () => {
         columns={columns}
         data={data}
         isLoading={false}
-        rowSelection={{}}
-        setRowSelection={vi.fn()}
         variant="full-height"
       />,
     );
@@ -631,8 +642,6 @@ describe("GenericTable", () => {
         columns={columns}
         data={data}
         isLoading={false}
-        rowSelection={{}}
-        setRowSelection={vi.fn()}
         variant="full-height"
       />,
     );
@@ -652,8 +661,6 @@ describe("GenericTable", () => {
             containerRef={containerRef}
             data={data}
             isLoading={false}
-            rowSelection={{}}
-            setRowSelection={vi.fn()}
           />
         </div>
       );
@@ -678,8 +685,6 @@ describe("GenericTable", () => {
         columns={columns}
         data={data}
         isLoading={false}
-        rowSelection={{}}
-        setRowSelection={vi.fn()}
       />,
     );
 

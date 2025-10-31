@@ -45,10 +45,18 @@ import TableCheckbox from "@/lib/components/GenericTable/TableCheckbox";
 
 import "./GenericTable.scss";
 
-type GenericTableProps<T extends { id: number | string }> = {
-  className?: string;
-  canSelect?: boolean | ((row: Row<T>) => boolean);
+type WithId = { id: number | string };
+
+type SelectionProps<T extends WithId> = {
+  canSelect: boolean | ((row: Row<T>) => boolean);
   disabledSelectionTooltip?: string | ((row: Row<T>) => string);
+  rowSelectionLabelKey?: keyof T;
+  rowSelection?: RowSelectionState;
+  setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
+};
+
+type GenericTableProps<T extends WithId> = {
+  className?: string;
   columns: ColumnDef<T, Partial<T>>[];
   containerRef?: RefObject<HTMLElement | null>;
   data: T[];
@@ -61,10 +69,8 @@ type GenericTableProps<T extends { id: number | string }> = {
   pagination?: PaginationBarProps;
   pinGroup?: { value: string; isTop: boolean }[];
   sorting?: ColumnSort[];
+  selection?: SelectionProps<T>;
   setSorting?: Dispatch<SetStateAction<SortingState>>;
-  rowSelectionLabelKey?: keyof T;
-  rowSelection?: RowSelectionState;
-  setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
   showChevron?: boolean;
   variant?: "full-height" | "regular";
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
@@ -125,8 +131,6 @@ export const GenericTable = <
   T extends { id: number | string } & Record<string, unknown>,
 >({
   className,
-  canSelect = false,
-  disabledSelectionTooltip,
   columns: initialColumns,
   containerRef,
   data: initialData,
@@ -139,10 +143,8 @@ export const GenericTable = <
   pagination,
   pinGroup,
   sorting = [],
+  selection,
   setSorting,
-  rowSelection,
-  rowSelectionLabelKey,
-  setRowSelection,
   showChevron = false,
   variant = "full-height",
   ...props
@@ -154,6 +156,8 @@ export const GenericTable = <
   const [grouping, setGrouping] = useState<GroupingState>(groupBy ?? []);
   const [_sorting, _setSorting] = useState<SortingState>(sorting ?? []);
   const [expanded, _setExpanded] = useState<ExpandedState>(true);
+
+  const canSelect = selection?.canSelect || false;
 
   // Remember collapsed groups to keep them collapsed on page change
   const setExpanded = (
@@ -210,7 +214,7 @@ export const GenericTable = <
     }
 
     // Add selection columns if needed
-    if (canSelect) {
+    if (selection && canSelect) {
       const selectionColumns = [
         {
           id: "p-generic-table__select",
@@ -224,13 +228,14 @@ export const GenericTable = <
           },
           cell: ({ row }: CellContext<T, Partial<T>>) => {
             const ariaLabel =
-              rowSelectionLabelKey && rowSelectionLabelKey in row.original
-                ? `select ${row.original[rowSelectionLabelKey]}`
+              selection.rowSelectionLabelKey &&
+              selection.rowSelectionLabelKey in row.original
+                ? `select ${row.original[selection.rowSelectionLabelKey]}`
                 : "select row";
             return !row.getIsGrouped() ? (
               <TableCheckbox
                 aria-label={ariaLabel}
-                disabledTooltip={disabledSelectionTooltip ?? ""}
+                disabledTooltip={selection.disabledSelectionTooltip ?? ""}
                 isNested={getSubRows !== undefined && !!row.parentId}
                 row={row}
               />
@@ -292,14 +297,7 @@ export const GenericTable = <
     }
 
     return processedColumns;
-  }, [
-    canSelect,
-    initialColumns,
-    isLoading,
-    groupBy,
-    getSubRows,
-    disabledSelectionTooltip,
-  ]);
+  }, [canSelect, initialColumns, isLoading, groupBy, getSubRows]);
 
   // Memoize grouped data
   const groupedData = useMemo(() => {
@@ -416,7 +414,7 @@ export const GenericTable = <
       grouping,
       expanded,
       sorting: _sorting,
-      rowSelection,
+      rowSelection: selection?.rowSelection,
     },
     manualPagination: true,
     autoResetExpanded: false,
@@ -428,7 +426,7 @@ export const GenericTable = <
       }
     },
     onGroupingChange: setGrouping,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: selection?.setRowSelection,
     manualSorting: true,
     enableSorting: true,
     enableExpanding: true,
@@ -469,7 +467,8 @@ export const GenericTable = <
       const { getIsGrouped, id, getVisibleCells, parentId } = row;
       const isIndividualRow = !getIsGrouped();
       const isSelected =
-        rowSelection !== undefined && Object.keys(rowSelection!).includes(id);
+        selection?.rowSelection !== undefined &&
+        Object.keys(selection.rowSelection!).includes(id);
 
       return (
         <tr
