@@ -366,7 +366,6 @@ export const Selectable: Story = {
         <GenericTable
           {...args}
           selection={{
-            canSelect: true,
             rowSelection: rowSelection,
             rowSelectionLabelKey: "fqdn",
             setRowSelection: setRowSelection,
@@ -405,7 +404,8 @@ export const ConditionallySelectable: Story = {
         <GenericTable
           {...args}
           selection={{
-            canSelect: (row: Row<Machine>) => row.original.pool !== "default",
+            filterSelectable: (row: Row<Machine>) =>
+              row.original.pool !== "default",
             disabledSelectionTooltip: (row) =>
               `Cannot select ${row.original.fqdn} because it is in the default pool.`,
             rowSelection,
@@ -525,7 +525,6 @@ export const GroupedSelectable: Story = {
         <GenericTable
           {...args}
           selection={{
-            canSelect: true,
             rowSelection,
             rowSelectionLabelKey: "fqdn",
             setRowSelection,
@@ -609,7 +608,6 @@ export const GroupedNested: Story = {
         <GenericTable
           {...args}
           selection={{
-            canSelect: true,
             rowSelection,
             rowSelectionLabelKey: "fqdn",
             setRowSelection,
