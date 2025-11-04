@@ -45,17 +45,15 @@ import TableCheckbox from "@/lib/components/GenericTable/TableCheckbox";
 
 import "./GenericTable.scss";
 
-type WithId = { id: number | string };
-
-type SelectionProps<T extends WithId> = {
-  canSelect: boolean | ((row: Row<T>) => boolean);
+type SelectionProps<T extends { id: number | string }> = {
+  filterSelectable?: (row: Row<T>) => boolean;
   disabledSelectionTooltip?: string | ((row: Row<T>) => string);
   rowSelectionLabelKey?: keyof T;
   rowSelection?: RowSelectionState;
   setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
 };
 
-type GenericTableProps<T extends WithId> = {
+type GenericTableProps<T extends { id: number | string }> = {
   className?: string;
   columns: ColumnDef<T, Partial<T>>[];
   containerRef?: RefObject<HTMLElement | null>;
@@ -86,8 +84,6 @@ type GenericTableProps<T extends WithId> = {
  *
  * @param {Object} props - Component props
  * @param {string} [props.className] - Additional CSS class for the table wrapper
- * @param {boolean | ((row: Row<T>) => boolean)} [props.canSelect=false] - Enable row selection with checkboxes
- * @param {string | ((row: Row<T>) => string)} [props.disabledSelectionTooltip] - Tooltip message or constructor on disabled checkboxes
  * @param {ColumnDef<T, Partial<T>>[]} props.columns - Column definitions
  * @param {RefObject<HTMLElement | null>} [props.containerRef] - Reference to container for size calculations
  * @param {T[]} props.data - Table data array
@@ -101,9 +97,12 @@ type GenericTableProps<T extends WithId> = {
  * @param {{ value: string; isTop: boolean }[]} [props.pinGroup] - Group pinning configuration
  * @param {ColumnSort[]} [props.sorting] - Initial sort configuration
  * @param {Dispatch<SetStateAction<SortingState>>} [props.setSorting] - Sorting state setter
- * @param {RowSelectionState} [props.rowSelection] - Selected rows state
- * @param {keyof T} [props.rowSelectionLabelKey] - Key of T to use as aria-labels for row checkboxes
- * @param {Dispatch<SetStateAction<RowSelectionState>>} [props.setRowSelection] - Selection state setter
+ * @param {SelectionProps} [props.selection] - Selection configuration
+ * @param {((row: Row<T>) => boolean)} [props.selection.filterSelectable] - Function to filter which rows should be selectable
+ * @param {string | ((row: Row<T>) => string)} [props.selection.disabledSelectionTooltip] - Tooltip message or constructor on disabled checkboxes
+ * @param {RowSelectionState} [props.selection.rowSelection] - Selected rows state
+ * @param {keyof T} [props.selection.rowSelectionLabelKey] - Key of T to use as aria-labels for row checkboxes (e.g. "select {keyof T}")
+ * @param {Dispatch<SetStateAction<RowSelectionState>>} [props.selection.setRowSelection] - Selection state setter
  * @param {boolean} [props.showChevron=false] - Show group row expansion state chevrons
  * @param {"full-height" | "regular"} [props.variant="full-height"] - Table layout variant
  *
@@ -157,7 +156,7 @@ export const GenericTable = <
   const [_sorting, _setSorting] = useState<SortingState>(sorting ?? []);
   const [expanded, _setExpanded] = useState<ExpandedState>(true);
 
-  const canSelect = selection?.canSelect || false;
+  const canSelect = !!selection;
 
   // Remember collapsed groups to keep them collapsed on page change
   const setExpanded = (
@@ -214,7 +213,7 @@ export const GenericTable = <
     }
 
     // Add selection columns if needed
-    if (selection && canSelect) {
+    if (canSelect) {
       const selectionColumns = [
         {
           id: "p-generic-table__select",
@@ -435,8 +434,8 @@ export const GenericTable = <
     getCoreRowModel: getCoreRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
     groupedColumnMode: false,
-    enableRowSelection: canSelect,
-    enableMultiRowSelection: canSelect,
+    enableRowSelection: selection?.filterSelectable ?? canSelect,
+    enableMultiRowSelection: selection?.filterSelectable ?? canSelect,
     getRowId: (originalRow) => originalRow.id.toString(),
   });
 

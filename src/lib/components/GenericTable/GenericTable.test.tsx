@@ -275,8 +275,6 @@ describe("GenericTable", () => {
         filterCells={customFilterCells}
         filterHeaders={customFilterHeaders}
         isLoading={false}
-        // rowSelection={{}}
-        // setRowSelection={vi.fn()}
       />,
     );
 
@@ -298,7 +296,6 @@ describe("GenericTable", () => {
         data={data}
         isLoading={false}
         selection={{
-          canSelect: true,
           rowSelection: {},
           setRowSelection: vi.fn(),
         }}
@@ -317,7 +314,6 @@ describe("GenericTable", () => {
         data={data}
         isLoading={false}
         selection={{
-          canSelect: true,
           rowSelection: {},
           setRowSelection: mockSetRowSelection,
         }}
@@ -340,7 +336,6 @@ describe("GenericTable", () => {
         data={data}
         isLoading={false}
         selection={{
-          canSelect: true,
           rowSelection: {},
           setRowSelection: mockSetRowSelection,
         }}
@@ -352,14 +347,14 @@ describe("GenericTable", () => {
     expect(mockSetRowSelection).toHaveBeenCalled();
   });
 
-  it("disables rows that do not match canSelect predicate", async () => {
+  it("disables rows that do not match filterSelectable predicate", async () => {
     render(
       <GenericTable
         columns={columns}
         data={data}
         isLoading={false}
         selection={{
-          canSelect: (row) => row.original.architecture !== "arm64",
+          filterSelectable: (row) => row.original.architecture !== "arm64",
           disabledSelectionTooltip: "Cannot select arm64 architecture images.",
           rowSelection: {},
           setRowSelection: vi.fn(),
@@ -381,14 +376,14 @@ describe("GenericTable", () => {
     });
   });
 
-  it("shows tooltip text when selection is disabled via canSelect", async () => {
+  it("shows tooltip text when selection is disabled via filterSelectable", async () => {
     render(
       <GenericTable
         columns={columns}
         data={data}
         isLoading={false}
         selection={{
-          canSelect: (row) => row.original.architecture !== "arm64",
+          filterSelectable: (row) => row.original.architecture !== "arm64",
           disabledSelectionTooltip: "Cannot select arm64 architecture images.",
           rowSelection: {},
           setRowSelection: vi.fn(),
@@ -406,14 +401,14 @@ describe("GenericTable", () => {
     });
   });
 
-  it("renders correctly when all rows are disabled via canSelect", () => {
+  it("renders correctly when all rows are disabled via filterSelectable", () => {
     render(
       <GenericTable
         columns={columns}
         data={data}
         isLoading={false}
         selection={{
-          canSelect: (_) => false,
+          filterSelectable: (_) => false,
           rowSelection: {},
           setRowSelection: vi.fn(),
         }}
@@ -431,7 +426,6 @@ describe("GenericTable", () => {
         data={data}
         isLoading={false}
         selection={{
-          canSelect: true,
           rowSelectionLabelKey: "release",
           rowSelection: {},
           setRowSelection: vi.fn(),
@@ -454,7 +448,6 @@ describe("GenericTable", () => {
         groupBy={["release"]}
         isLoading={false}
         selection={{
-          canSelect: true,
           rowSelection: {},
           setRowSelection: vi.fn(),
         }}
@@ -524,7 +517,6 @@ describe("GenericTable", () => {
         getSubRows={(originalRow) => originalRow.children}
         isLoading={false}
         selection={{
-          canSelect: true,
           rowSelection: {},
           setRowSelection: vi.fn(),
         }}
