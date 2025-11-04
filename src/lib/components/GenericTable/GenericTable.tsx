@@ -1,13 +1,13 @@
 import {
+  DetailedHTMLProps,
   Dispatch,
+  Fragment,
+  HTMLAttributes,
   ReactElement,
   ReactNode,
   RefObject,
   SetStateAction,
   useEffect,
-  DetailedHTMLProps,
-  Fragment,
-  HTMLAttributes,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -45,10 +45,16 @@ import TableCheckbox from "@/lib/components/GenericTable/TableCheckbox";
 
 import "./GenericTable.scss";
 
+type SelectionProps<T extends { id: number | string }> = {
+  filterSelectable?: (row: Row<T>) => boolean;
+  disabledSelectionTooltip?: string | ((row: Row<T>) => string);
+  rowSelectionLabelKey?: keyof T;
+  rowSelection?: RowSelectionState;
+  setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
+};
+
 type GenericTableProps<T extends { id: number | string }> = {
   className?: string;
-  canSelect?: boolean | ((row: Row<T>) => boolean);
-  disabledSelectionTooltip?: string | ((row: Row<T>) => string);
   columns: ColumnDef<T, Partial<T>>[];
   containerRef?: RefObject<HTMLElement | null>;
   data: T[];
@@ -61,9 +67,8 @@ type GenericTableProps<T extends { id: number | string }> = {
   pagination?: PaginationBarProps;
   pinGroup?: { value: string; isTop: boolean }[];
   sorting?: ColumnSort[];
+  selection?: SelectionProps<T>;
   setSorting?: Dispatch<SetStateAction<SortingState>>;
-  rowSelection?: RowSelectionState;
-  setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
   showChevron?: boolean;
   variant?: "full-height" | "regular";
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
@@ -79,8 +84,6 @@ type GenericTableProps<T extends { id: number | string }> = {
  *
  * @param {Object} props - Component props
  * @param {string} [props.className] - Additional CSS class for the table wrapper
- * @param {boolean | ((row: Row<T>) => boolean)} [props.canSelect=false] - Enable row selection with checkboxes
- * @param {string | ((row: Row<T>) => string)} [props.disabledSelectionTooltip] - Tooltip message or constructor on disabled checkboxes
  * @param {ColumnDef<T, Partial<T>>[]} props.columns - Column definitions
  * @param {RefObject<HTMLElement | null>} [props.containerRef] - Reference to container for size calculations
  * @param {T[]} props.data - Table data array
@@ -94,8 +97,12 @@ type GenericTableProps<T extends { id: number | string }> = {
  * @param {{ value: string; isTop: boolean }[]} [props.pinGroup] - Group pinning configuration
  * @param {ColumnSort[]} [props.sorting] - Initial sort configuration
  * @param {Dispatch<SetStateAction<SortingState>>} [props.setSorting] - Sorting state setter
- * @param {RowSelectionState} [props.rowSelection] - Selected rows state
- * @param {Dispatch<SetStateAction<RowSelectionState>>} [props.setRowSelection] - Selection state setter
+ * @param {SelectionProps} [props.selection] - Selection configuration
+ * @param {((row: Row<T>) => boolean)} [props.selection.filterSelectable] - Function to filter which rows should be selectable
+ * @param {string | ((row: Row<T>) => string)} [props.selection.disabledSelectionTooltip] - Tooltip message or constructor on disabled checkboxes
+ * @param {RowSelectionState} [props.selection.rowSelection] - Selected rows state
+ * @param {keyof T} [props.selection.rowSelectionLabelKey] - Key of T to use as aria-labels for row checkboxes (e.g. "select {keyof T}")
+ * @param {Dispatch<SetStateAction<RowSelectionState>>} [props.selection.setRowSelection] - Selection state setter
  * @param {boolean} [props.showChevron=false] - Show group row expansion state chevrons
  * @param {"full-height" | "regular"} [props.variant="full-height"] - Table layout variant
  *
@@ -119,10 +126,10 @@ type GenericTableProps<T extends { id: number | string }> = {
  *   }}
  * />
  */
-export const GenericTable = <T extends { id: number | string }>({
+export const GenericTable = <
+  T extends { id: number | string } & Record<string, unknown>,
+>({
   className,
-  canSelect = false,
-  disabledSelectionTooltip,
   columns: initialColumns,
   containerRef,
   data: initialData,
@@ -135,9 +142,8 @@ export const GenericTable = <T extends { id: number | string }>({
   pagination,
   pinGroup,
   sorting = [],
+  selection,
   setSorting,
-  rowSelection,
-  setRowSelection,
   showChevron = false,
   variant = "full-height",
   ...props
@@ -149,6 +155,8 @@ export const GenericTable = <T extends { id: number | string }>({
   const [grouping, setGrouping] = useState<GroupingState>(groupBy ?? []);
   const [_sorting, _setSorting] = useState<SortingState>(sorting ?? []);
   const [expanded, _setExpanded] = useState<ExpandedState>(true);
+
+  const canSelect = !!selection;
 
   // Remember collapsed groups to keep them collapsed on page change
   const setExpanded = (
@@ -217,19 +225,30 @@ export const GenericTable = <T extends { id: number | string }>({
             }
             return <TableCheckbox.All table={table} />;
           },
-          cell: ({ row }: CellContext<T, Partial<T>>) =>
-            !row.getIsGrouped() ? (
+          cell: ({ row }: CellContext<T, Partial<T>>) => {
+            const ariaLabel =
+              selection.rowSelectionLabelKey &&
+              selection.rowSelectionLabelKey in row.original
+                ? `select ${row.original[selection.rowSelectionLabelKey]}`
+                : "select row";
+            return !row.getIsGrouped() ? (
               <TableCheckbox
-                row={row}
-                disabledTooltip={disabledSelectionTooltip ?? ""}
+                aria-label={ariaLabel}
+                disabledTooltip={selection.disabledSelectionTooltip ?? ""}
                 isNested={getSubRows !== undefined && !!row.parentId}
+                row={row}
               />
-            ) : null,
+            ) : null;
+          },
         },
         ...processedColumns,
       ];
 
       if (groupBy) {
+        const getAriaLabel = (row: Row<T>) =>
+          groupBy[0] in row.original
+            ? `select ${row.original[groupBy[0]]}`
+            : "select group";
         processedColumns = [
           {
             id: "p-generic-table__group-select",
@@ -239,7 +258,9 @@ export const GenericTable = <T extends { id: number | string }>({
               <TableCheckbox.All table={table} />
             ),
             cell: ({ row }: CellContext<T, Partial<T>>) =>
-              row.getIsGrouped() ? <TableCheckbox.Group row={row} /> : null,
+              row.getIsGrouped() ? (
+                <TableCheckbox.Group aria-label={getAriaLabel(row)} row={row} />
+              ) : null,
           },
           ...selectionColumns,
         ];
@@ -275,14 +296,7 @@ export const GenericTable = <T extends { id: number | string }>({
     }
 
     return processedColumns;
-  }, [
-    canSelect,
-    initialColumns,
-    isLoading,
-    groupBy,
-    getSubRows,
-    disabledSelectionTooltip,
-  ]);
+  }, [canSelect, initialColumns, isLoading, groupBy, getSubRows]);
 
   // Memoize grouped data
   const groupedData = useMemo(() => {
@@ -399,7 +413,7 @@ export const GenericTable = <T extends { id: number | string }>({
       grouping,
       expanded,
       sorting: _sorting,
-      rowSelection,
+      rowSelection: selection?.rowSelection,
     },
     manualPagination: true,
     autoResetExpanded: false,
@@ -411,7 +425,7 @@ export const GenericTable = <T extends { id: number | string }>({
       }
     },
     onGroupingChange: setGrouping,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: selection?.setRowSelection,
     manualSorting: true,
     enableSorting: true,
     enableExpanding: true,
@@ -420,8 +434,8 @@ export const GenericTable = <T extends { id: number | string }>({
     getCoreRowModel: getCoreRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
     groupedColumnMode: false,
-    enableRowSelection: canSelect,
-    enableMultiRowSelection: canSelect,
+    enableRowSelection: selection?.filterSelectable ?? canSelect,
+    enableMultiRowSelection: selection?.filterSelectable ?? canSelect,
     getRowId: (originalRow) => originalRow.id.toString(),
   });
 
@@ -452,7 +466,8 @@ export const GenericTable = <T extends { id: number | string }>({
       const { getIsGrouped, id, getVisibleCells, parentId } = row;
       const isIndividualRow = !getIsGrouped();
       const isSelected =
-        rowSelection !== undefined && Object.keys(rowSelection!).includes(id);
+        selection?.rowSelection !== undefined &&
+        Object.keys(selection.rowSelection!).includes(id);
 
       return (
         <tr
