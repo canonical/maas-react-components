@@ -191,43 +191,14 @@ const meta: Meta<typeof GenericTable<Machine>> = {
       },
     },
 
-    // Selection related
-    canSelect: {
+    // Selection
+    selection: {
       description:
-        "Enables row selection with checkboxes in the first column. When true, rowSelection and setRowSelection props " +
-        "must be provided. Only certain rows can be selectable if a predicate function is provided.",
-      table: {
-        type: { summary: "boolean | ((row: Row<T>) => boolean)" },
-        defaultValue: { summary: "false" },
-        category: "Selection",
-      },
-    },
-    disabledSelectionTooltip: {
-      description:
-        "Text message or string returning constructor to display a message when a row cannot be selected.",
-      table: {
-        type: { summary: "string | ((row: Row<T>) => string)" },
-        category: "Selection",
-      },
-    },
-    rowSelection: {
-      description:
-        "State object that tracks which rows are currently selected. Required when canSelect is true",
+        "Configuration for selection - canSelect, rowSelection, setRowSelection, disabledSelecitonTooltip and rowSelectionLabelKey",
       control: false,
       table: {
-        type: { summary: "RowSelectionState" },
+        type: { summary: "SelectionProps" },
         category: "Selection",
-        required: { condition: { name: "canSelect", value: true } },
-      },
-    },
-    setRowSelection: {
-      description:
-        "State setter function for updating row selection. Required when canSelect is true",
-      control: false,
-      table: {
-        type: { summary: "Dispatch<SetStateAction<RowSelectionState>>" },
-        category: "Selection",
-        required: { condition: { name: "canSelect", value: true } },
       },
     },
 
@@ -394,14 +365,14 @@ export const Selectable: Story = {
         </div>
         <GenericTable
           {...args}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
+          selection={{
+            rowSelection: rowSelection,
+            rowSelectionLabelKey: "fqdn",
+            setRowSelection: setRowSelection,
+          }}
         />
       </div>
     );
-  },
-  args: {
-    canSelect: true,
   },
 };
 
@@ -432,16 +403,20 @@ export const ConditionallySelectable: Story = {
         </div>
         <GenericTable
           {...args}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
+          selection={{
+            filterSelectable: (row: Row<Machine>) =>
+              row.original.pool !== "default",
+            disabledSelectionTooltip: (row) =>
+              `Cannot select ${row.original.fqdn} because it is in the default pool.`,
+            rowSelection,
+            rowSelectionLabelKey: "fqdn",
+            setRowSelection,
+          }}
         />
       </div>
     );
   },
   args: {
-    canSelect: (row: Row<Machine>) => row.original.pool !== "default",
-    disabledSelectionTooltip: (row) =>
-      `Cannot select ${row.original.fqdn} because it is in the default pool.`,
     columns: [
       ...machineColumns.filter((column) => column.id !== "actions"),
       {
@@ -549,14 +524,16 @@ export const GroupedSelectable: Story = {
         </div>
         <GenericTable
           {...args}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
+          selection={{
+            rowSelection,
+            rowSelectionLabelKey: "fqdn",
+            setRowSelection,
+          }}
         />
       </div>
     );
   },
   args: {
-    canSelect: true,
     columns: [
       {
         id: "status",
@@ -630,14 +607,16 @@ export const GroupedNested: Story = {
         </div>
         <GenericTable
           {...args}
-          rowSelection={rowSelection}
-          setRowSelection={setRowSelection}
+          selection={{
+            rowSelection,
+            rowSelectionLabelKey: "fqdn",
+            setRowSelection,
+          }}
         />
       </div>
     );
   },
   args: {
-    canSelect: true,
     columns: [
       ...machineColumns.filter((column) => column.id !== "actions"),
       {
@@ -772,12 +751,10 @@ export const SortableExternal: Story = {
         >
           <h5>
             Sorting by:{" "}
-            {sorting.map(
-              (s: ColumnSort) => {
-                const column = machineColumns.find((c) => c.id === s.id);
-                return `${column?.header as string} (${s.desc ? "desc" : "asc"})`;
-              }
-            )}
+            {sorting.map((s: ColumnSort) => {
+              const column = machineColumns.find((c) => c.id === s.id);
+              return `${column?.header as string} (${s.desc ? "desc" : "asc"})`;
+            })}
           </h5>
         </div>
         <GenericTable {...args} sorting={sorting} setSorting={setSorting} />
