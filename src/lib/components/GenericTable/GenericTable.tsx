@@ -524,7 +524,6 @@ export const GenericTable = <
           pageSizes={pagination.pageSizes}
         />
       )}
-
       <table
         aria-busy={isLoading}
         aria-label={props["aria-label"]}
