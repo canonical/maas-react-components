@@ -144,13 +144,7 @@
   &:not([aria-busy="true"]) tbody:not([aria-busy="true"]) {
     tr:hover,
     tr:focus-within {
-      @include vf-transition($property: background, $duration: fast);
-
       background-color: $colors--dark-theme--background-hover;
-    }
-
-    tr.p-generic-table__group-row {
-      cursor: pointer;
     }
   }
 }
