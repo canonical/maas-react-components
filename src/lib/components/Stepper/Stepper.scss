@@ -10,11 +10,13 @@ $height: 1.5rem;
 
 .stepper {
   margin-bottom: $spv--medium;
+  counter-reset: count 0;
 
   @extend .p-stepped-list;
 
   .stepper__item {
     @extend .p-stepped-list__item;
+    counter-increment: count 1;
 
     padding-bottom: $spv--x-small;
     width: auto;
@@ -31,7 +33,7 @@ $height: 1.5rem;
     padding-left: $padding-left;
 
     &::before {
-      content: counter(li);
+      content: counter(count);
       border-radius: 50%;
       text-align: center;
       background-color: $color-light;
@@ -62,5 +64,20 @@ $height: 1.5rem;
       position: absolute;
       top: $top;
     }
+  }
+}
+
+.is-dark {
+  .stepper__title::before {
+      background-color: $color-dark;
+  } 
+  
+  .stepper__title--is-active::before {
+      background-color: $color-x-light;
+      color: $color-dark;
+  }
+
+  .stepper__title--is-complete::after {
+    @include vf-icon-task-outstanding($color-x-light);
   }
 }
