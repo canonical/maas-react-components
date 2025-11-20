@@ -19,6 +19,7 @@ section.content-section {
     border-top: $border;
     padding: $footer-padding 0 0 0;
     text-align: right;
+    background-color: var(--vf-color-background-default);
 
     // Reduce the margin of all direct descendants for consistent spacing
     > * {
