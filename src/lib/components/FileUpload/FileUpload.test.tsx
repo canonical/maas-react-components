@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { vi } from "vitest";
 
-import { FileUpload, FileUploadProps } from "@/lib";
+import { FileUpload } from "@/lib";
 
 function createDataTransfer(files: File[]) {
   return {
@@ -17,12 +17,8 @@ function createDataTransfer(files: File[]) {
 }
 
 describe("FileUpload", () => {
-  const renderFileUpload = (options?: Partial<FileUploadProps>) => {
-    return render(<FileUpload {...options} />);
-  };
-
   it("renders without crashing", () => {
-    renderFileUpload();
+    render(<FileUpload />);
 
     expect(
       screen.getByText("Drag and drop files here or click to upload"),
@@ -31,13 +27,15 @@ describe("FileUpload", () => {
 
   it("calls onFileUpload when files are dropped", async () => {
     const mockOnFileUpload = vi.fn();
-    renderFileUpload({
-      onFileUpload: mockOnFileUpload,
-      files: [],
-      rejectedFiles: [],
-      removeFile: vi.fn(),
-      removeRejectedFile: vi.fn(),
-    });
+    render(
+      <FileUpload
+        onFileUpload={mockOnFileUpload}
+        files={[]}
+        rejectedFiles={[]}
+        removeFile={vi.fn()}
+        removeRejectedFile={vi.fn()}
+      />,
+    );
     const file = new File(["hello"], "hello.png", { type: "image/png" });
     const dropEvent = await fireEvent.drop(
       screen.getByText("Drag and drop files here or click to upload"),
@@ -59,13 +57,15 @@ describe("FileUpload", () => {
   it("displays accepted files", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
-    renderFileUpload({
-      files: [file],
-      rejectedFiles: [],
-      onFileUpload: vi.fn(),
-      removeFile: vi.fn(),
-      removeRejectedFile: vi.fn(),
-    });
+    render(
+      <FileUpload
+        files={[file]}
+        rejectedFiles={[]}
+        onFileUpload={vi.fn()}
+        removeFile={vi.fn()}
+        removeRejectedFile={vi.fn()}
+      />,
+    );
 
     expect(screen.getByText(file.name)).toBeInTheDocument();
   });
@@ -74,13 +74,15 @@ describe("FileUpload", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
     const mockRemoveFile = vi.fn();
 
-    renderFileUpload({
-      files: [file],
-      removeFile: mockRemoveFile,
-      rejectedFiles: [],
-      onFileUpload: vi.fn(),
-      removeRejectedFile: vi.fn(),
-    });
+    render(
+      <FileUpload
+        files={[file]}
+        removeFile={mockRemoveFile}
+        rejectedFiles={[]}
+        onFileUpload={vi.fn()}
+        removeRejectedFile={vi.fn()}
+      />,
+    );
 
     await userEvent.click(screen.getByRole("button", { name: /Remove/i }));
 
@@ -94,13 +96,15 @@ describe("FileUpload", () => {
       errors: [{ code: "an-error-code", message: "This is an error" }],
     };
 
-    renderFileUpload({
-      rejectedFiles: [rejection],
-      files: [],
-      onFileUpload: vi.fn(),
-      removeFile: vi.fn(),
-      removeRejectedFile: vi.fn(),
-    });
+    render(
+      <FileUpload
+        rejectedFiles={[rejection]}
+        files={[]}
+        onFileUpload={vi.fn()}
+        removeFile={vi.fn()}
+        removeRejectedFile={vi.fn()}
+      />,
+    );
 
     expect(screen.getByText(file.name)).toBeInTheDocument();
     expect(screen.getByText("This is an error")).toBeInTheDocument();
@@ -114,13 +118,15 @@ describe("FileUpload", () => {
     };
     const mockRemoveRejectedFile = vi.fn();
 
-    renderFileUpload({
-      rejectedFiles: [rejection],
-      removeRejectedFile: mockRemoveRejectedFile,
-      files: [],
-      onFileUpload: vi.fn(),
-      removeFile: vi.fn(),
-    });
+    render(
+      <FileUpload
+        rejectedFiles={[rejection]}
+        removeRejectedFile={mockRemoveRejectedFile}
+        files={[]}
+        onFileUpload={vi.fn()}
+        removeFile={vi.fn()}
+      />,
+    );
 
     await userEvent.click(screen.getByRole("button", { name: /Remove/i }));
 
@@ -130,14 +136,16 @@ describe("FileUpload", () => {
   it("hides the drop zone when the maximum number of files is met", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
-    renderFileUpload({
-      files: [file],
-      maxFiles: 1,
-      rejectedFiles: [],
-      onFileUpload: vi.fn(),
-      removeFile: vi.fn(),
-      removeRejectedFile: vi.fn(),
-    });
+    render(
+      <FileUpload
+        files={[file]}
+        maxFiles={1}
+        rejectedFiles={[]}
+        onFileUpload={vi.fn()}
+        removeFile={vi.fn()}
+        removeRejectedFile={vi.fn()}
+      />,
+    );
 
     expect(
       screen.queryByText("Drag and drop files here or click to upload"),
@@ -145,26 +153,26 @@ describe("FileUpload", () => {
   });
 
   it("can display errors on the dropzone", () => {
-    renderFileUpload({ error: "This is an error" });
+    render(<FileUpload error="This is an error" />);
 
     expect(screen.getByText("This is an error")).toBeInTheDocument();
   });
 
   it("can display a label", () => {
-    renderFileUpload({ label: "Upload files" });
+    render(<FileUpload label="Upload files" />);
 
     expect(screen.getByLabelText("Upload files")).toBeInTheDocument();
   });
 
   it("can display help text", () => {
-    renderFileUpload({ help: "Some helpful text" });
+    render(<FileUpload help="Some helpful text" />);
 
     expect(screen.getByText("Some helpful text")).toBeInTheDocument();
   });
 
   it("works in uncontrolled mode with internal state management", async () => {
     // Render component without any state props - it should use internal state
-    renderFileUpload({ maxFiles: 2 });
+    render(<FileUpload maxFiles={2} />);
 
     expect(
       screen.getByText("Drag and drop files here or click to upload"),
