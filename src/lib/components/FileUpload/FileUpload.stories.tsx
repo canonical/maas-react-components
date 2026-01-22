@@ -1,10 +1,10 @@
 import { Meta } from "@storybook/react";
 
-import { FileUploadContainer } from "@/lib/components/FileUpload";
+import { FileUpload } from "@/lib/components/FileUpload";
 
-const meta: Meta<typeof FileUploadContainer> = {
+const meta: Meta<typeof FileUpload> = {
   title: "components/FileUpload",
-  component: FileUploadContainer,
+  component: FileUpload,
   tags: ["autodocs"],
   parameters: {},
 };

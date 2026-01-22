@@ -1,4 +1,4 @@
-import { ReactNode, useId } from "react";
+import { ReactElement, ReactNode, useId } from "react";
 
 import { Button, Icon, Label } from "@canonical/react-components";
 import classNames from "classnames";
@@ -14,31 +14,41 @@ export type FileUploadFile = File & { percentUploaded?: number };
 export interface FileUploadProps {
   accept?: DropzoneOptions["accept"];
   error?: ReactNode;
-  files: FileUploadFile[];
+  files?: FileUploadFile[];
   help?: string;
   label?: string;
   maxFiles?: number;
   maxSize?: number;
-  onFileUpload: NonNullable<DropzoneOptions["onDrop"]>;
-  rejectedFiles: FileRejection[];
-  removeFile: (file: FileUploadFile) => void;
-  removeRejectedFile: (fileRejection: FileRejection) => void;
+  onFileUpload?: NonNullable<DropzoneOptions["onDrop"]>;
+  rejectedFiles?: FileRejection[];
+  removeFile?: (file: FileUploadFile) => void;
+  removeRejectedFile?: (fileRejection: FileRejection) => void;
 }
 
-export const FileUpload: React.FC<FileUploadProps> = ({
+export const FileUpload = ({
   accept,
   error,
-  files,
+  files: filesProp,
   help,
   label,
   maxFiles,
   maxSize,
-  onFileUpload,
-  rejectedFiles,
-  removeFile,
-  removeRejectedFile,
-}: FileUploadProps) => {
-  const { getRootProps } = useDropzone({
+  onFileUpload: onFileUploadProp,
+  rejectedFiles: rejectedFilesProp,
+  removeFile: removeFileProp,
+  removeRejectedFile: removeRejectedFileProp,
+}: FileUploadProps): ReactElement => {
+  // Use internal state management if props are not provided (uncontrolled mode)
+  const internalState = useFileUpload();
+
+  // Use provided props or fall back to internal state
+  const files = filesProp ?? internalState.acceptedFiles;
+  const rejectedFiles = rejectedFilesProp ?? internalState.fileRejections;
+  const onFileUpload = onFileUploadProp ?? internalState.onFileUpload;
+  const removeFile = removeFileProp ?? internalState.removeFile;
+  const removeRejectedFile = removeRejectedFileProp ?? internalState.removeRejectedFile;
+
+  const { getRootProps, getInputProps } = useDropzone({
     accept,
     maxFiles,
     maxSize,
@@ -64,6 +74,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               className="file-upload"
               data-testid="file-upload"
             >
+              <input {...getInputProps()} />
               <button className="file-upload__button" type="button">
                 Drag and drop files here or click to upload
               </button>
@@ -125,38 +136,3 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   );
 };
 
-export const FileUploadContainer = ({
-  accept,
-  error,
-  help,
-  label,
-  maxFiles,
-  maxSize,
-}: Pick<
-  FileUploadProps,
-  "accept" | "error" | "help" | "label" | "maxFiles" | "maxSize"
->) => {
-  const {
-    acceptedFiles,
-    fileRejections,
-    onFileUpload,
-    removeFile,
-    removeRejectedFile,
-  } = useFileUpload();
-
-  return (
-    <FileUpload
-      accept={accept}
-      error={error}
-      files={acceptedFiles}
-      rejectedFiles={fileRejections}
-      help={help}
-      label={label}
-      maxFiles={maxFiles}
-      maxSize={maxSize}
-      onFileUpload={onFileUpload}
-      removeFile={removeFile}
-      removeRejectedFile={removeRejectedFile}
-    />
-  );
-};
