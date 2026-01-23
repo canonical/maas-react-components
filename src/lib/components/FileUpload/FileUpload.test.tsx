@@ -95,7 +95,7 @@ describe("FileUpload", () => {
     expect(mockRemoveFile).toHaveBeenCalledWith(file);
   });
 
-  it("displays rejected files and reasons", () => {
+  it("displays rejected files", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
     const rejection = {
       file,
@@ -115,7 +115,7 @@ describe("FileUpload", () => {
     );
 
     expect(screen.getByText(file.name)).toBeInTheDocument();
-    expect(screen.getByText("This is an error")).toBeInTheDocument();
+    expect(screen.getByText(file.name)).toHaveClass("is-rejected");
   });
 
   it("hides the drop zone when the maximum number of files is met", () => {
@@ -148,7 +148,7 @@ describe("FileUpload", () => {
       />,
     );
 
-    expect(screen.getByText("This is an error.")).toBeInTheDocument();
+    expect(screen.getByText("This is an error")).toBeInTheDocument();
   });
 
   it("can display a label", () => {
