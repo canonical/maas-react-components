@@ -108,14 +108,6 @@ export const FileUpload = ({
                     <Icon name="close">Remove file</Icon>
                   </Button>
                 </div>
-                {rejection.errors.map((error) => (
-                  <p
-                    className="p-form-validation__message"
-                    key={`${rejection.file.name}-${error.code}`}
-                  >
-                    {error.message}
-                  </p>
-                ))}
               </span>
             ))}
           {files &&
@@ -140,7 +132,7 @@ export const FileUpload = ({
         {error ? (
           <p className="p-form-validation__message">
             <strong>Error: </strong>
-            {error}.
+            {error}
           </p>
         ) : null}
       </div>
