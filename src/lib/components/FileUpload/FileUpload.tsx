@@ -19,10 +19,11 @@ export interface FileUploadProps {
   label?: string;
   maxFiles?: number;
   maxSize?: number;
+  minSize?: number;
   onFileUpload?: NonNullable<DropzoneOptions["onDrop"]>;
   rejectedFiles?: FileRejection[];
-  removeFile?: (file: FileUploadFile) => void;
-  removeRejectedFile?: (fileRejection: FileRejection) => void;
+  onRemoveFile?: (file: FileUploadFile) => void;
+  onRemoveRejectedFile?: (fileRejection: FileRejection) => void;
 }
 
 export const FileUpload = ({
@@ -33,10 +34,11 @@ export const FileUpload = ({
   label,
   maxFiles,
   maxSize,
+  minSize,
   onFileUpload: onFileUploadProp,
+  onRemoveFile: removeFileProp,
+  onRemoveRejectedFile: removeRejectedFileProp,
   rejectedFiles: rejectedFilesProp,
-  removeFile: removeFileProp,
-  removeRejectedFile: removeRejectedFileProp,
 }: FileUploadProps): ReactElement => {
   // Use internal state management if props are not provided (uncontrolled mode)
   const internalState = useFileUpload();
@@ -52,6 +54,7 @@ export const FileUpload = ({
     accept,
     maxFiles,
     maxSize,
+    minSize,
     onDrop: onFileUpload,
   });
 
@@ -80,12 +83,6 @@ export const FileUpload = ({
               </button>
             </div>
           </div>
-        ) : null}
-        {error ? (
-          <p className="p-form-validation__message">
-            <strong>Error: </strong>
-            {error}
-          </p>
         ) : null}
         <div className="file-upload__files-list">
           {rejectedFiles &&
@@ -131,8 +128,13 @@ export const FileUpload = ({
               </div>
             ))}
         </div>
+        {error ? (
+          <p className="p-form-validation__message">
+            <strong>Error: </strong>
+            {error}.
+          </p>
+        ) : null}
       </div>
     </div>
   );
 };
-
