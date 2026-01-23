@@ -1,6 +1,5 @@
 @use "sass:map";
 @import "vanilla-framework";
-
 @include vf-base;
 @include vf-p-buttons;
 
@@ -16,9 +15,7 @@
   width: 100%;
   padding: $spv--x-small $sph--small $sph--x-large $spv--small;
   margin-bottom: 0;
-
   background-color: $colors--theme--background-inputs;
-
   border-bottom: 1.5px solid $colors--theme--border-high-contrast;
 
   &:hover {
