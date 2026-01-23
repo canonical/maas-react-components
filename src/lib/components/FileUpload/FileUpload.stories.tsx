@@ -13,10 +13,26 @@ export default meta;
 
 export const Example = {
   args: {
+    accept: {
+      "application/octet-stream": [
+        ".tgz",
+        ".tbz",
+        ".txz",
+        ".ddtgz",
+        ".ddtbz",
+        ".ddtxz",
+        ".ddtar",
+        ".ddbz2",
+        ".ddgz",
+        ".ddxz",
+        ".ddraw",
+      ],
+    },
     error: "",
     help: "Max file size is 2MB.",
     label: "Upload files",
-    maxFiles: 7,
+    maxFiles: 2,
     maxSize: 2000000,
+    minSize: 1000,
   },
 };

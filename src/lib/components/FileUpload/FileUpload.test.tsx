@@ -18,7 +18,7 @@ function createDataTransfer(files: File[]) {
 
 describe("FileUpload", () => {
   it("renders without crashing", () => {
-    render(<FileUpload />);
+    render(<FileUpload maxFiles={1} maxSize={2000} minSize={0} />);
 
     expect(
       screen.getByText("Drag and drop files here or click to upload"),
@@ -29,11 +29,14 @@ describe("FileUpload", () => {
     const mockOnFileUpload = vi.fn();
     render(
       <FileUpload
+        maxFiles={1}
+        maxSize={2000}
+        minSize={0}
         onFileUpload={mockOnFileUpload}
         files={[]}
         rejectedFiles={[]}
-        removeFile={vi.fn()}
-        removeRejectedFile={vi.fn()}
+        onRemoveFile={vi.fn()}
+        onRemoveRejectedFile={vi.fn()}
       />,
     );
     const file = new File(["hello"], "hello.png", { type: "image/png" });
@@ -59,11 +62,14 @@ describe("FileUpload", () => {
 
     render(
       <FileUpload
+        maxFiles={1}
+        maxSize={2000}
+        minSize={0}
         files={[file]}
         rejectedFiles={[]}
         onFileUpload={vi.fn()}
-        removeFile={vi.fn()}
-        removeRejectedFile={vi.fn()}
+        onRemoveFile={vi.fn()}
+        onRemoveRejectedFile={vi.fn()}
       />,
     );
 
@@ -76,11 +82,14 @@ describe("FileUpload", () => {
 
     render(
       <FileUpload
+        maxFiles={1}
+        maxSize={2000}
+        minSize={0}
         files={[file]}
-        removeFile={mockRemoveFile}
+        onRemoveFile={mockRemoveFile}
         rejectedFiles={[]}
         onFileUpload={vi.fn()}
-        removeRejectedFile={vi.fn()}
+        onRemoveRejectedFile={vi.fn()}
       />,
     );
 
@@ -98,11 +107,14 @@ describe("FileUpload", () => {
 
     render(
       <FileUpload
+        maxFiles={1}
+        maxSize={2000}
+        minSize={0}
         rejectedFiles={[rejection]}
         files={[]}
         onFileUpload={vi.fn()}
-        removeFile={vi.fn()}
-        removeRejectedFile={vi.fn()}
+        onRemoveFile={vi.fn()}
+        onRemoveRejectedFile={vi.fn()}
       />,
     );
 
@@ -120,11 +132,14 @@ describe("FileUpload", () => {
 
     render(
       <FileUpload
+        maxFiles={1}
+        maxSize={2000}
+        minSize={0}
         rejectedFiles={[rejection]}
-        removeRejectedFile={mockRemoveRejectedFile}
+        onRemoveRejectedFile={mockRemoveRejectedFile}
         files={[]}
         onFileUpload={vi.fn()}
-        removeFile={vi.fn()}
+        onRemoveFile={vi.fn()}
       />,
     );
 
@@ -138,12 +153,14 @@ describe("FileUpload", () => {
 
     render(
       <FileUpload
-        files={[file]}
         maxFiles={1}
+        maxSize={2000}
+        minSize={0}
+        files={[file]}
         rejectedFiles={[]}
         onFileUpload={vi.fn()}
-        removeFile={vi.fn()}
-        removeRejectedFile={vi.fn()}
+        onRemoveFile={vi.fn()}
+        onRemoveRejectedFile={vi.fn()}
       />,
     );
 
@@ -153,26 +170,47 @@ describe("FileUpload", () => {
   });
 
   it("can display errors on the dropzone", () => {
-    render(<FileUpload error="This is an error" />);
+    render(
+      <FileUpload
+        maxFiles={1}
+        maxSize={2000}
+        minSize={0}
+        error="This is an error"
+      />,
+    );
 
     expect(screen.getByText("This is an error")).toBeInTheDocument();
   });
 
   it("can display a label", () => {
-    render(<FileUpload label="Upload files" />);
+    render(
+      <FileUpload
+        maxFiles={1}
+        maxSize={2000}
+        minSize={0}
+        label="Upload files"
+      />,
+    );
 
     expect(screen.getByLabelText("Upload files")).toBeInTheDocument();
   });
 
   it("can display help text", () => {
-    render(<FileUpload help="Some helpful text" />);
+    render(
+      <FileUpload
+        maxFiles={1}
+        maxSize={2000}
+        minSize={0}
+        help="Some helpful text"
+      />,
+    );
 
     expect(screen.getByText("Some helpful text")).toBeInTheDocument();
   });
 
   it("works in uncontrolled mode with internal state management", async () => {
     // Render component without any state props - it should use internal state
-    render(<FileUpload maxFiles={2} />);
+    render(<FileUpload maxFiles={1} maxSize={2000} minSize={0} />);
 
     expect(
       screen.getByText("Drag and drop files here or click to upload"),
