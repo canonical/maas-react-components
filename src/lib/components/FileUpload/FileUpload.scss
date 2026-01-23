@@ -1,3 +1,4 @@
+@use "sass:map";
 @import "vanilla-framework";
 @include vf-base;
 @include vf-p-buttons;
@@ -6,27 +7,20 @@
   padding-bottom: $spv--medium;
 }
 
-.file-upload {
-  @include vf-transition(border, fast);
-
-  border: 0.125rem solid $color-transparent;
-
-  &:hover {
-    border: 0.125rem solid $color-link;
-  }
-}
-
 .file-upload__button {
   @extend .p-button--link;
 
+  color: $colors--theme--text-default;
   text-align: left;
   width: 100%;
   padding: $spv--x-small $sph--small $sph--x-large $spv--small;
   margin-bottom: 0;
-  border: 0.0625rem dashed $color-mid-light;
+  background-color: $colors--theme--background-inputs;
+  border-bottom: 1.5px solid $colors--theme--border-high-contrast;
 
   &:hover {
-    border-color: $color-transparent;
+    text-decoration: none;
+    background-color: $colors--theme--background-hover;
   }
 }
 
@@ -35,14 +29,14 @@
   justify-content: space-between;
   align-items: center;
   padding-left: $sph--small;
-  background-color: $color-light;
+  background-color: $colors--theme--background-active;
   opacity: $inactive-text-opacity-amount;
   height: 2.25rem;
   width: 100%;
   margin-bottom: $spv--large;
 
   &.is-rejected {
-    background-color: $color-negative-background;
+    background-color: $colors--theme--background-negative-default;
   }
 }
 
@@ -52,15 +46,26 @@
 }
 
 .file-upload__file-remove-button {
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
 
 .is-error {
-  .file-upload {
-    border: 0.0625rem dashed $color-negative;
+  .file-upload__button {
+    border-color: $colors--theme--border-negative;
+    background-color: $color-negative-background;
+
+    &:hover {
+      background-color: $colors--theme--background-negative-hover;
+    }
   }
 
+  .file-upload__file-remove-button:hover {
+    background-color: $colors--theme--background-negative-hover;
+  }
+}
+
+.is-dark .is-error {
   .file-upload__button {
-    background-color: $color-negative-background;
+    background-color: map.get($colors-dark-theme--tinted-backgrounds, "negative", "default");
   }
 }
