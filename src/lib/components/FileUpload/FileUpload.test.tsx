@@ -18,7 +18,7 @@ function createDataTransfer(files: File[]) {
 
 describe("FileUpload", () => {
   it("renders without crashing", () => {
-    render(<FileUpload maxFiles={1} maxSize={2000} minSize={0} />);
+    render(<FileUpload />);
 
     expect(
       screen.getByText("Drag and drop files here or click to upload"),
@@ -36,7 +36,6 @@ describe("FileUpload", () => {
         files={[]}
         rejectedFiles={[]}
         onRemoveFile={vi.fn()}
-        onRemoveRejectedFile={vi.fn()}
       />,
     );
     const file = new File(["hello"], "hello.png", { type: "image/png" });
@@ -69,7 +68,6 @@ describe("FileUpload", () => {
         rejectedFiles={[]}
         onFileUpload={vi.fn()}
         onRemoveFile={vi.fn()}
-        onRemoveRejectedFile={vi.fn()}
       />,
     );
 
@@ -89,7 +87,6 @@ describe("FileUpload", () => {
         onRemoveFile={mockRemoveFile}
         rejectedFiles={[]}
         onFileUpload={vi.fn()}
-        onRemoveRejectedFile={vi.fn()}
       />,
     );
 
@@ -114,38 +111,11 @@ describe("FileUpload", () => {
         files={[]}
         onFileUpload={vi.fn()}
         onRemoveFile={vi.fn()}
-        onRemoveRejectedFile={vi.fn()}
       />,
     );
 
     expect(screen.getByText(file.name)).toBeInTheDocument();
     expect(screen.getByText("This is an error")).toBeInTheDocument();
-  });
-
-  it("calls removeRejectedFile when the 'remove' button is clicked", async () => {
-    const file = new File(["hello"], "hello.png", { type: "image/png" });
-    const rejection = {
-      file,
-      errors: [{ code: "an-error-code", message: "This is an error" }],
-    };
-    const mockRemoveRejectedFile = vi.fn();
-
-    render(
-      <FileUpload
-        maxFiles={1}
-        maxSize={2000}
-        minSize={0}
-        rejectedFiles={[rejection]}
-        onRemoveRejectedFile={mockRemoveRejectedFile}
-        files={[]}
-        onFileUpload={vi.fn()}
-        onRemoveFile={vi.fn()}
-      />,
-    );
-
-    await userEvent.click(screen.getByRole("button", { name: /Remove/i }));
-
-    expect(mockRemoveRejectedFile).toHaveBeenCalledWith(rejection);
   });
 
   it("hides the drop zone when the maximum number of files is met", () => {
@@ -160,7 +130,6 @@ describe("FileUpload", () => {
         rejectedFiles={[]}
         onFileUpload={vi.fn()}
         onRemoveFile={vi.fn()}
-        onRemoveRejectedFile={vi.fn()}
       />,
     );
 
@@ -179,7 +148,7 @@ describe("FileUpload", () => {
       />,
     );
 
-    expect(screen.getByText("This is an error")).toBeInTheDocument();
+    expect(screen.getByText("This is an error.")).toBeInTheDocument();
   });
 
   it("can display a label", () => {
@@ -240,5 +209,51 @@ describe("FileUpload", () => {
     await waitFor(() => {
       expect(screen.queryByText(file.name)).not.toBeInTheDocument();
     });
+  });
+
+  it("calls onRemove when removing accepted files", async () => {
+    const file = new File(["hello"], "hello.png", { type: "image/png" });
+    const mockOnRemove = vi.fn();
+
+    render(
+      <FileUpload
+        maxFiles={1}
+        maxSize={2000}
+        minSize={0}
+        files={[file]}
+        onRemoveFile={mockOnRemove}
+        rejectedFiles={[]}
+        onFileUpload={vi.fn()}
+      />,
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: /Remove/i }));
+
+    expect(mockOnRemove).toHaveBeenCalledWith(file);
+  });
+
+  it("calls onRemove when removing rejected files", async () => {
+    const file = new File(["hello"], "hello.png", { type: "image/png" });
+    const rejection = {
+      file,
+      errors: [{ code: "file-too-large", message: "File is too large" }],
+    };
+    const mockOnRemove = vi.fn();
+
+    render(
+      <FileUpload
+        maxFiles={1}
+        maxSize={2000}
+        minSize={0}
+        rejectedFiles={[rejection]}
+        onRemoveFile={mockOnRemove}
+        files={[]}
+        onFileUpload={vi.fn()}
+      />,
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: /Remove/i }));
+
+    expect(mockOnRemove).toHaveBeenCalledWith(rejection);
   });
 });

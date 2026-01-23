@@ -22,8 +22,7 @@ export interface FileUploadProps {
   minSize?: number;
   onFileUpload?: NonNullable<DropzoneOptions["onDrop"]>;
   rejectedFiles?: FileRejection[];
-  onRemoveFile?: (file: FileUploadFile) => void;
-  onRemoveRejectedFile?: (fileRejection: FileRejection) => void;
+  onRemoveFile?: (item: FileUploadFile | FileRejection) => void;
 }
 
 export const FileUpload = ({
@@ -35,9 +34,8 @@ export const FileUpload = ({
   maxFiles,
   maxSize,
   minSize,
-  onFileUpload: onFileUploadProp,
-  onRemoveFile: removeFileProp,
-  onRemoveRejectedFile: removeRejectedFileProp,
+  onFileUpload,
+  onRemoveFile,
   rejectedFiles: rejectedFilesProp,
 }: FileUploadProps): ReactElement => {
   // Use internal state management if props are not provided (uncontrolled mode)
@@ -46,16 +44,27 @@ export const FileUpload = ({
   // Use provided props or fall back to internal state
   const files = filesProp ?? internalState.acceptedFiles;
   const rejectedFiles = rejectedFilesProp ?? internalState.fileRejections;
-  const onFileUpload = onFileUploadProp ?? internalState.onFileUpload;
-  const removeFile = removeFileProp ?? internalState.removeFile;
-  const removeRejectedFile = removeRejectedFileProp ?? internalState.removeRejectedFile;
+  const onDrop = onFileUpload ?? internalState.onFileUpload;
+
+  // Unified remove handler with backward compatibility
+  const handleRemove = (item: FileUploadFile | FileRejection) => {
+    if (onRemoveFile) {
+      onRemoveFile(item);
+    } else if ("file" in item && "errors" in item) {
+      // It's a FileRejection
+      internalState.removeRejectedFile(item);
+    } else {
+      // It's a FileUploadFile
+      internalState.removeFile(item as FileUploadFile);
+    }
+  };
 
   const { getRootProps, getInputProps } = useDropzone({
     accept,
     maxFiles,
     maxSize,
     minSize,
-    onDrop: onFileUpload,
+    onDrop,
   });
 
   const labelId = useId();
@@ -69,7 +78,7 @@ export const FileUpload = ({
       {label && <Label id={labelId}>{label}</Label>}
       {help && <p className="p-form-help-text">{help}</p>}
       <div className="p-form__control">
-        {!maxFiles || files.length < maxFiles ? (
+        {!maxFiles || files.length + rejectedFiles.length < maxFiles ? (
           <div className="file-upload__wrapper">
             <div
               {...getRootProps()}
@@ -93,7 +102,7 @@ export const FileUpload = ({
                   <Button
                     appearance="base"
                     className="file-upload__file-remove-button"
-                    onClick={() => removeRejectedFile(rejection)}
+                    onClick={() => handleRemove(rejection)}
                     type="button"
                   >
                     <Icon name="close">Remove file</Icon>
@@ -119,7 +128,7 @@ export const FileUpload = ({
                   <Button
                     appearance="base"
                     className="file-upload__file-remove-button"
-                    onClick={() => removeFile(file)}
+                    onClick={() => handleRemove(file)}
                     type="button"
                   >
                     <Icon name="close">Remove file</Icon>
