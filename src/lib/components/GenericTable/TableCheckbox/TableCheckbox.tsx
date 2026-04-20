@@ -23,10 +23,14 @@ const TableAllCheckbox = <T,>({ table, ...props }: TableCheckboxProps<T>) => {
     .getCoreRowModel()
     .rows.filter((row) => row.getCanSelect());
 
+  const selectedSelectableRows = table
+    .getSelectedRowModel()
+    .rows.filter((row) => row.getCanSelect());
+
   let checked: boolean | "false" | "mixed" | "true" | undefined;
-  if (table.getSelectedRowModel().rows.length === 0) {
+  if (selectedSelectableRows.length === 0) {
     checked = "false";
-  } else if (table.getSelectedRowModel().rows.length < selectableRows.length) {
+  } else if (selectedSelectableRows.length < selectableRows.length) {
     checked = "mixed";
   } else {
     checked = "true";
