@@ -449,6 +449,59 @@ export const ConditionallySelectable: Story = {
   },
 };
 
+export const PreSelected: Story = {
+  name: "Selectable (Pre-selected)",
+  render: (args) => {
+    const existingMemberIds = new Set(
+      args.data.slice(0, 2).map((row: Machine) => row.id),
+    );
+
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>(
+      Object.fromEntries(
+        [...existingMemberIds].map((id) => [String(id), true]),
+      ),
+    );
+
+    return (
+      <div style={{ width: "100%" }}>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "1rem",
+          }}
+        >
+          <h5>Selected machines: {Object.keys(rowSelection).length}</h5>
+          <div className="p-button-group">
+            <Button
+              appearance="negative"
+              disabled={Object.keys(rowSelection).length === 0}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+        <GenericTable
+          {...args}
+          selection={{
+            rowSelection,
+            setRowSelection,
+            filterSelectable: (row: Row<Machine>) =>
+              !existingMemberIds.has(row.original.id),
+            disabledSelectionTooltip: () =>
+              "This user is already a member of the group.",
+            rowSelectionLabelKey: "fqdn",
+          }}
+        />
+      </div>
+    );
+  },
+  args: {
+    columns: machineColumns.filter((column) => column.id !== "actions"),
+  },
+};
+
 export const Grouped: Story = {
   args: {
     columns: [
