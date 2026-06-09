@@ -1,10 +1,10 @@
-import { ChangeEvent, useState } from "react";
+import { AriaAttributes, ChangeEvent, FC, useState } from "react";
 
 import "./Pagination.scss";
 import { Button, Icon, Input } from "@canonical/react-components";
 import classNames from "classnames";
 
-export interface PaginationProps extends React.AriaAttributes {
+export interface PaginationProps extends AriaAttributes {
   className?: string;
   currentPage: number | undefined;
   error?: string;
@@ -16,7 +16,7 @@ export interface PaginationProps extends React.AriaAttributes {
   totalPages: number;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({
+export const Pagination: FC<PaginationProps> = ({
   className,
   currentPage,
   error,
@@ -41,7 +41,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           onClick={onPreviousClick}
           type="button"
         >
-          <Icon name="chevron-down" />
+          <Icon name="chevron-left" />
         </Button>
         <strong>Page </strong>{" "}
         <Input
@@ -49,6 +49,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           className="p-pagination__input"
           disabled={disabled}
           error={error}
+          max={totalPages}
           min={1}
           onBlur={onInputBlur}
           onChange={onInputChange}
@@ -64,7 +65,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           onClick={onNextClick}
           type="button"
         >
-          <Icon name="chevron-up" />
+          <Icon name="chevron-right" />
         </Button>
       </span>
     </nav>
@@ -78,7 +79,7 @@ export interface PaginationContainerProps {
   totalPages: PaginationProps["totalPages"];
 }
 
-export const PaginationContainer: React.FC<PaginationContainerProps> = ({
+export const PaginationContainer: FC<PaginationContainerProps> = ({
   currentPage,
   disabled,
   paginate,
