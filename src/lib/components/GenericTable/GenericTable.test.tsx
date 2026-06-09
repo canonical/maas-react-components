@@ -95,7 +95,7 @@ describe("GenericTable", () => {
       />,
     );
 
-    expect(screen.getByRole("grid", { name: "Images" })).toBeInTheDocument();
+    expect(screen.getByRole("treegrid", { name: "Images" })).toBeInTheDocument();
 
     expect(screen.getByText("Release title")).toBeInTheDocument();
     expect(screen.getByText("Architecture")).toBeInTheDocument();
@@ -120,7 +120,7 @@ describe("GenericTable", () => {
   it("renders loading state correctly", () => {
     render(<GenericTable columns={columns} data={data} isLoading={true} />);
 
-    const table = screen.getByRole("grid");
+    const table = screen.getByRole("treegrid");
     expect(table).toHaveAttribute("aria-busy", "true");
 
     expect(screen.getByText("Loading...")).toBeInTheDocument();
@@ -590,7 +590,7 @@ describe("GenericTable", () => {
       />,
     );
 
-    const table = screen.getByRole("grid");
+    const table = screen.getByRole("treegrid");
     expect(table).not.toHaveClass("p-generic-table__is-full-height");
 
     const containerRef = {
@@ -638,7 +638,7 @@ describe("GenericTable", () => {
       />,
     );
 
-    const fullHeightTable = screen.getAllByRole("grid")[1];
+    const fullHeightTable = screen.getAllByRole("treegrid")[1];
     expect(fullHeightTable).toHaveClass("p-generic-table__is-full-height");
   });
 
@@ -660,7 +660,7 @@ describe("GenericTable", () => {
 
     render(<TestComponent />);
 
-    expect(screen.getByRole("grid")).toBeInTheDocument();
+    expect(screen.getByRole("treegrid")).toBeInTheDocument();
 
     expect(global.ResizeObserver).toHaveBeenCalled();
 
@@ -682,7 +682,7 @@ describe("GenericTable", () => {
 
     const tableWrapper =
       screen.getByTestId("p-generic-table") ||
-      screen.getByRole("grid").closest(".p-generic-table");
+      screen.getByRole("treegrid").closest(".p-generic-table");
     expect(tableWrapper).toHaveClass("custom-table-class");
   });
 });

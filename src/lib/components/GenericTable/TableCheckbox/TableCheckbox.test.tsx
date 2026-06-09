@@ -88,26 +88,17 @@ describe("TableCheckbox.All", () => {
 
   it("displays 'unchecked' when no selectable rows are selected", () => {
     renderSelectAllCheckbox([selectable(false), selectable(false)]);
-    expect(screen.getByRole("checkbox")).toHaveAttribute(
-      "aria-checked",
-      "false",
-    );
+    expect(screen.getByRole("checkbox")).not.toBeChecked();
   });
 
   it("displays 'mixed' when some selectable rows are selected", () => {
     renderSelectAllCheckbox([selectable(true), selectable(false)]);
-    expect(screen.getByRole("checkbox")).toHaveAttribute(
-      "aria-checked",
-      "mixed",
-    );
+    expect(screen.getByRole("checkbox")).toBePartiallyChecked();
   });
 
   it("displays 'checked' when all selectable rows are selected", () => {
     renderSelectAllCheckbox([selectable(true), selectable(true)]);
-    expect(screen.getByRole("checkbox")).toHaveAttribute(
-      "aria-checked",
-      "true",
-    );
+    expect(screen.getByRole("checkbox")).toBeChecked();
   });
 
   it("is disabled when there are no selectable rows", () => {
@@ -171,10 +162,7 @@ describe("TableCheckbox.Group", () => {
     renderSelectGroupCheckbox({
       subRows: [selectableSub(true), selectableSub(false)],
     });
-    expect(screen.getByRole("checkbox")).toHaveAttribute(
-      "aria-checked",
-      "mixed",
-    );
+    expect(screen.getByRole("checkbox")).toBePartiallyChecked();
   });
 
   it("shows checked when all selectable sub-rows are selected", () => {
