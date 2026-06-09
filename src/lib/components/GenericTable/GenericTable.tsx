@@ -149,6 +149,7 @@ export const GenericTable = <
   ...props
 }: GenericTableProps<T>): ReactElement => {
   const tableRef = useRef<HTMLTableSectionElement>(null);
+  const tableElRef = useRef<HTMLTableElement>(null);
   const [maxHeight, setMaxHeight] = useState("auto");
   const [needsScrolling, setNeedsScrolling] = useState(false);
 
@@ -401,6 +402,31 @@ export const GenericTable = <
     };
   }, [containerRef, sortedData.length, isLoading]); // Added dependencies to recalculate when data changes
 
+  // Safari does not include natively interactive elements (buttons, inputs,
+  // checkboxes, anchors) in the tab sequence when they are inside a
+  // display:block container such as this table's thead/tbody. Setting
+  // tabIndex=0 explicitly overrides Safari's broken heuristic without
+  // changing the DOM structure or CSS layout.
+  useEffect(() => {
+    const tableEl = tableElRef.current;
+    if (!tableEl || isLoading) return;
+
+    const selector = [
+      "button:not([disabled])",
+      "input:not([disabled])",
+      "select:not([disabled])",
+      "textarea:not([disabled])",
+      "a[href]",
+    ].join(", ");
+
+    tableEl.querySelectorAll<HTMLElement>(selector).forEach((el) => {
+      // Respect elements intentionally removed from tab order (tabIndex="-1")
+      if (el.getAttribute("tabindex") !== "-1") {
+        el.tabIndex = 0;
+      }
+    });
+  }); // No dependency array: re-run after every render so new rows are covered
+
   // Determine the effective variant based on content and scrolling needs
   const effectiveVariant =
     variant === "full-height" && needsScrolling ? "full-height" : "regular";
@@ -469,6 +495,14 @@ export const GenericTable = <
         selection?.rowSelection !== undefined &&
         Object.keys(selection.rowSelection!).includes(id);
 
+      const handleGroupKeyDown = (e: KeyboardEvent<HTMLTableRowElement>) => {
+        if (e.target !== e.currentTarget) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          row.toggleExpanded();
+        }
+      };
+
       return (
         <tr
           aria-rowindex={parseInt(id.replace(/\D/g, "") || "0", 10) + 1}
@@ -479,10 +513,13 @@ export const GenericTable = <
             "p-generic-table__nested-row":
               getSubRows !== undefined && !!parentId,
           })}
-          onClick={() => {
+          onClick={(e) => {
             if (isIndividualRow) return;
+            if (e.target !== e.currentTarget) return;
             row.toggleExpanded();
           }}
+          onKeyDown={!isIndividualRow ? handleGroupKeyDown : undefined}
+          tabIndex={!isIndividualRow ? 0 : undefined}
           key={id}
           role="row"
         >
@@ -525,6 +562,7 @@ export const GenericTable = <
         />
       )}
       <table
+        ref={tableElRef}
         aria-busy={isLoading}
         aria-label={props["aria-label"]}
         aria-describedby="generic-table-description"
