@@ -12,6 +12,7 @@ import {
   useMemo,
   useRef,
   useState,
+  KeyboardEvent,
 } from "react";
 
 import { Icon, ICONS, Spinner, Tooltip } from "@canonical/react-components";
@@ -148,6 +149,10 @@ export const GenericTable = <
   variant = "full-height",
   ...props
 }: GenericTableProps<T>): ReactElement => {
+  // Separate aria-label so it is applied only to <table>, not the outer <div>
+  const { "aria-label": tableAriaLabel, ...divProps } = props as typeof props & {
+    "aria-label"?: string;
+  };
   const tableRef = useRef<HTMLTableSectionElement>(null);
   const tableElRef = useRef<HTMLTableElement>(null);
   const [maxHeight, setMaxHeight] = useState("auto");
@@ -220,6 +225,7 @@ export const GenericTable = <
           id: "p-generic-table__select",
           accessorKey: "id",
           enableSorting: false,
+          meta: { headerAriaLabel: "Row selection" },
           header: ({ table }: HeaderContext<T, Partial<T>>) => {
             if (groupBy) {
               return "";
@@ -255,6 +261,7 @@ export const GenericTable = <
             id: "p-generic-table__group-select",
             accessorKey: "id",
             enableSorting: false,
+            meta: { headerAriaLabel: "Row selection" },
             header: ({ table }: HeaderContext<T, Partial<T>>) => (
               <TableCheckbox.All table={table} />
             ),
@@ -276,6 +283,7 @@ export const GenericTable = <
         id: "p-generic-table__group-chevron",
         accessorKey: "id",
         enableSorting: false,
+        meta: { headerAriaHidden: true },
         header: "",
         cell: ({ row }: CellContext<T, Partial<T>>) => {
           const isExpanded = row.getIsExpanded();
@@ -469,7 +477,7 @@ export const GenericTable = <
   const renderLoadingRows = () => {
     return (
       <tr>
-        <td className="p-generic-table__loading" colSpan={columns.length}>
+        <td className="p-generic-table__loading" colSpan={columns.length} role="gridcell">
           <Spinner text="Loading..." />
         </td>
       </tr>
@@ -481,14 +489,19 @@ export const GenericTable = <
     if (table.getRowModel().rows.length < 1) {
       return (
         <tr>
-          <td className="p-generic-table__no-data" colSpan={columns.length}>
+          <td className="p-generic-table__no-data" colSpan={columns.length} role="gridcell">
             {noData}
           </td>
         </tr>
       );
     }
 
+    // Sequential 1-based index; header row occupies index 1
+    let rowIndex = 1;
+
     return table.getRowModel().rows.map((row) => {
+      rowIndex++;
+      const currentRowIndex = rowIndex;
       const { getIsGrouped, id, getVisibleCells, parentId } = row;
       const isIndividualRow = !getIsGrouped();
       const isSelected =
@@ -505,7 +518,8 @@ export const GenericTable = <
 
       return (
         <tr
-          aria-rowindex={parseInt(id.replace(/\D/g, "") || "0", 10) + 1}
+          aria-expanded={!isIndividualRow ? row.getIsExpanded() : undefined}
+          aria-rowindex={currentRowIndex}
           aria-selected={isSelected}
           className={classNames({
             "p-generic-table__individual-row": isIndividualRow,
@@ -534,7 +548,7 @@ export const GenericTable = <
               return filterCells(row, cell.column);
             })
             .map((cell) => (
-              <td className={classNames(`${cell.column.id}`)} key={cell.id}>
+              <td className={classNames(`${cell.column.id}`)} key={cell.id} role="gridcell">
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}
@@ -547,7 +561,7 @@ export const GenericTable = <
     <div
       className={classNames("p-generic-table", className)}
       data-testid="p-generic-table"
-      {...props}
+      {...divProps}
     >
       {pagination && (
         <PaginationBar
@@ -564,19 +578,19 @@ export const GenericTable = <
       <table
         ref={tableElRef}
         aria-busy={isLoading}
-        aria-label={props["aria-label"]}
-        aria-describedby="generic-table-description"
-        aria-rowcount={sortedData.length + 1} // +1 for header row
+        aria-label={tableAriaLabel}
+        aria-rowcount={table.getRowModel().rows.length + 1} // +1 for header row
         className={classNames("p-generic-table__table", {
           "p-generic-table__is-full-height": effectiveVariant === "full-height",
           "p-generic-table__is-selectable": canSelect,
           "p-generic-table__is-grouped": groupBy !== undefined,
         })}
-        role="grid"
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+        role="treegrid"
       >
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} role="row">
+            <tr aria-rowindex={1} key={headerGroup.id} role="row">
               {headerGroup.headers
                 .filter(filterHeaders)
                 .map((header, index) => (
@@ -587,6 +601,7 @@ export const GenericTable = <
                     ((!showChevron && index === 2) ||
                       (showChevron && index === 3)) ? (
                       <th
+                        aria-hidden="true"
                         className="p-generic-table__select-alignment"
                         role="columnheader"
                       />
