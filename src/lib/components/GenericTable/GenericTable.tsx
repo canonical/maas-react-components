@@ -46,6 +46,25 @@ import TableCheckbox from "@/lib/components/GenericTable/TableCheckbox";
 
 import "./GenericTable.scss";
 
+declare module "@tanstack/react-table" {
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  interface ColumnMeta<TData extends RowData, TValue = unknown> {
+    /**
+     * Custom skeleton renderer for this column. When loadingVariant="skeleton",
+     * this takes precedence over the automatic CSS shimmer for the cell.
+     * Use for columns whose cell content (images, badges, complex layouts) cannot
+     * be meaningfully shimmed by CSS alone.
+     */
+    skeleton?: () => ReactNode;
+    /** Set true when the header cell contains an interactive element (e.g. a checkbox) so the sort button wrapper is skipped */
+    isInteractiveHeader?: boolean;
+    /** aria-label applied to the <th> — use for non-text headers such as select checkboxes */
+    headerAriaLabel?: string;
+    /** Set true to hide the entire header cell from assistive technology */
+    headerAriaHidden?: boolean;
+  }
+}
+
 type SelectionProps<T extends { id: number | string }> = {
   filterSelectable?: (row: Row<T>) => boolean;
   disabledSelectionTooltip?: string | ((row: Row<T>) => string);

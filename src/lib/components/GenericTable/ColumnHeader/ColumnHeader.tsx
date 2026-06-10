@@ -15,13 +15,7 @@ type TableHeaderProps<T> = {
 
 const ColumnHeader = <T,>({ header }: TableHeaderProps<T>): ReactElement => {
   const canSort = header.column.getCanSort();
-  const meta = header.column.columnDef.meta as {
-    isInteractiveHeader?: boolean;
-    /** aria-label applied to the <th> — use for non-text headers like select checkboxes */
-    headerAriaLabel?: string;
-    /** Set true to hide the entire header cell from assistive technology */
-    headerAriaHidden?: boolean;
-  } | undefined;
+  const meta = header.column.columnDef.meta;
   const isInteractiveHeader = meta?.isInteractiveHeader;
 
   const renderedHeader = flexRender(header.column.columnDef.header, header.getContext());
