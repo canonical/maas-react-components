@@ -26,6 +26,7 @@ import type {
   Header,
   HeaderContext,
   Row,
+  RowData,
   RowSelectionState,
   SortingState,
 } from "@tanstack/react-table";
@@ -83,6 +84,8 @@ type GenericTableProps<T extends { id: number | string }> = {
   getSubRows?: (originalRow: T, index: number) => T[] | undefined;
   groupBy?: string[];
   isLoading: boolean;
+  loadingVariant?: "spinner" | "skeleton";
+  skeletonRowCount?: number;
   noData?: ReactNode;
   pagination?: PaginationBarProps;
   pinGroup?: { value: string; isTop: boolean }[];
@@ -112,6 +115,8 @@ type GenericTableProps<T extends { id: number | string }> = {
  * @param {(originalRow: T, index: number) => T[] | undefined} [props.getSubRows] - Function that returns the T.prop that contains nested T data
  * @param {string[]} [props.groupBy] - Column IDs to group rows by
  * @param {boolean} props.isLoading - Loading state to display placeholder content
+ * @param {"spinner" | "skeleton"} [props.loadingVariant="spinner"] - Loading display style; "spinner" shows a single spinner row, "skeleton" renders skeletonRowCount shimmer rows using meta.skeleton per column when defined, falling back to a default shimmer bar
+ * @param {number} [props.skeletonRowCount=10] - Number of skeleton rows to render when loadingVariant="skeleton"
  * @param {ReactNode} [props.noData] - Content to display when no data is available
  * @param {PaginationBarProps} [props.pagination] - Pagination configuration
  * @param {{ value: string; isTop: boolean }[]} [props.pinGroup] - Group pinning configuration
@@ -158,6 +163,8 @@ export const GenericTable = <
   getSubRows,
   groupBy,
   isLoading,
+  loadingVariant = "spinner",
+  skeletonRowCount = 10,
   noData,
   pagination,
   pinGroup,
@@ -169,9 +176,10 @@ export const GenericTable = <
   ...props
 }: GenericTableProps<T>): ReactElement => {
   // Separate aria-label so it is applied only to <table>, not the outer <div>
-  const { "aria-label": tableAriaLabel, ...divProps } = props as typeof props & {
-    "aria-label"?: string;
-  };
+  const { "aria-label": tableAriaLabel, ...divProps } =
+    props as typeof props & {
+      "aria-label"?: string;
+    };
   const tableRef = useRef<HTMLTableSectionElement>(null);
   const tableElRef = useRef<HTMLTableElement>(null);
   const [maxHeight, setMaxHeight] = useState("auto");
@@ -233,6 +241,7 @@ export const GenericTable = <
   const columns = useMemo(() => {
     let processedColumns = [...initialColumns];
 
+    // Spinner loading doesn't render real rows — skip injecting interactive columns.
     if (isLoading) {
       return processedColumns;
     }
@@ -492,15 +501,56 @@ export const GenericTable = <
     getRowId: (originalRow) => originalRow.id.toString(),
   });
 
-  // Render loading placeholder rows
+  // Render loading rows — spinner (default) or per-column skeleton shimmer rows
   const renderLoadingRows = () => {
-    return (
-      <tr>
-        <td className="p-generic-table__loading" colSpan={columns.length} role="gridcell">
-          <Spinner text="Loading..." />
-        </td>
+    if (loadingVariant !== "skeleton") {
+      return (
+        <tr>
+          <td
+            className="p-generic-table__loading"
+            colSpan={columns.length}
+            role="gridcell"
+          >
+            <Spinner text="Loading..." />
+          </td>
+        </tr>
+      );
+    }
+
+    const visibleHeaders =
+      table.getHeaderGroups()[0]?.headers.filter(filterHeaders) ?? [];
+
+    return Array.from({ length: skeletonRowCount }).map((_, rowIndex) => (
+      <tr
+        aria-rowindex={rowIndex + 2}
+        className="p-generic-table__skeleton-row"
+        key={`skel-${rowIndex}`}
+        role="row"
+      >
+        {visibleHeaders.map((header) => {
+          const meta = header.column.columnDef.meta;
+          const isInjectedColumn = header.column.id.startsWith(
+            "p-generic-table__",
+          );
+          return (
+            <td
+              className={classNames(
+                "p-generic-table__skeleton-cell",
+                header.column.id,
+              )}
+              key={`skel-${rowIndex}-${header.id}`}
+              role="gridcell"
+            >
+              {isInjectedColumn ? null : meta?.skeleton ? (
+                meta.skeleton()
+              ) : (
+                <div className="p-generic-table__skeleton-default" />
+              )}
+            </td>
+          );
+        })}
       </tr>
-    );
+    ));
   };
 
   // Render data rows
@@ -508,7 +558,11 @@ export const GenericTable = <
     if (table.getRowModel().rows.length < 1) {
       return (
         <tr>
-          <td className="p-generic-table__no-data" colSpan={columns.length} role="gridcell">
+          <td
+            className="p-generic-table__no-data"
+            colSpan={columns.length}
+            role="gridcell"
+          >
             {noData}
           </td>
         </tr>
@@ -567,7 +621,11 @@ export const GenericTable = <
               return filterCells(row, cell.column);
             })
             .map((cell) => (
-              <td className={classNames(`${cell.column.id}`)} key={cell.id} role="gridcell">
+              <td
+                className={classNames(`${cell.column.id}`)}
+                key={cell.id}
+                role="gridcell"
+              >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}
