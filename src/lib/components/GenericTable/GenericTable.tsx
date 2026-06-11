@@ -527,11 +527,7 @@ export const GenericTable = <
             "p-generic-table__nested-row":
               getSubRows !== undefined && !!parentId,
           })}
-          onClick={(e) => {
-            if (isIndividualRow) return;
-            if (e.target !== e.currentTarget) return;
-            row.toggleExpanded();
-          }}
+          onClick={!isIndividualRow ? () => row.toggleExpanded() : undefined}
           onKeyDown={!isIndividualRow ? handleGroupKeyDown : undefined}
           tabIndex={!isIndividualRow ? 0 : undefined}
           key={id}
