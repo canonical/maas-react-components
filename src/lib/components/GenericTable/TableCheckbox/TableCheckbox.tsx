@@ -44,7 +44,12 @@ const TableAllCheckbox = <T,>({ table, ...props }: TableCheckboxProps<T>) => {
   }, [isIndeterminate]);
 
   return (
-    <label className="p-checkbox--inline p-table-checkbox--all">
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+    <label
+      className="p-checkbox--inline p-table-checkbox--all"
+      onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
+    >
       <input
         ref={checkboxRef}
         aria-label="select all"
@@ -91,7 +96,12 @@ const TableGroupCheckbox = <T,>({ row, ...props }: TableCheckboxProps<T>) => {
   }, [isSomeSelectableSelected]);
 
   return (
-    <label className="p-checkbox--inline p-table-checkbox--group">
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+    <label
+      className="p-checkbox--inline p-table-checkbox--group"
+      onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
+    >
       <input
         ref={checkboxRef}
         className="p-checkbox__input"
@@ -139,11 +149,13 @@ const TableCheckbox = <T,>({
     : false;
 
   return (
-    <Tooltip
-      message={tooltipMessage}
-      position="btm-right"
-    >
-      <label className="p-checkbox--inline p-table-checkbox">
+    <Tooltip message={tooltipMessage} position="btm-right">
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+      <label
+        className="p-checkbox--inline p-table-checkbox"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
         <input
           className="p-checkbox__input"
           type="checkbox"
