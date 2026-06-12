@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols -- Storybook story exports are consumed by
+// the Storybook runtime, not by TypeScript imports. The IDE cannot see that usage.
 import { useRef, useState } from "react";
 
 import { Button, Icon, Tooltip } from "@canonical/react-components";
@@ -88,6 +90,10 @@ const machineColumns: MachineColumnDef[] = [
     id: "fqdn",
     accessorKey: "fqdn",
     header: "FQDN",
+    meta: {
+      cellAriaLabel: (row) =>
+        `${row.original.fqdn}, IP address ${row.original.ipAddress}`,
+    },
     cell: ({
       getValue,
       row: {
@@ -131,6 +137,9 @@ const machineColumns: MachineColumnDef[] = [
     accessorKey: "id",
     header: "Actions",
     enableSorting: false,
+    meta: {
+      cellAriaLabel: (row) => `Actions for ${row.original.fqdn}`,
+    },
     cell: ({
       row: {
         original: { fqdn },
@@ -371,6 +380,8 @@ export const LoadingCustomSkeleton: Story = {
       {
         ...machineColumns[0],
         meta: {
+          cellAriaLabel: (row) =>
+            `${row.original.fqdn}, IP address ${row.original.ipAddress}`,
           skeleton: () => (
             <div
               style={{
@@ -408,6 +419,7 @@ export const LoadingCustomSkeleton: Story = {
       {
         ...machineColumns[4],
         meta: {
+          cellAriaLabel: (row) => `Actions for ${row.original.fqdn}`,
           skeleton: () => (
             <div
               style={{ width: "2rem" }}
@@ -601,6 +613,10 @@ export const Grouped: Story = {
       {
         id: "status",
         accessorKey: "status",
+        meta: {
+          cellAriaLabel: (row) =>
+            `${row.original.status}, ${row.getLeafRows().length} machines`,
+        },
         cell: ({
           row,
           getValue,
@@ -684,6 +700,10 @@ export const GroupedSelectable: Story = {
       {
         id: "status",
         accessorKey: "status",
+        meta: {
+          cellAriaLabel: (row) =>
+            `${row.original.status}, ${row.getLeafRows().length} machines`,
+        },
         cell: ({
           row,
           getValue,

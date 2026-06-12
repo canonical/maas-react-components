@@ -1,12 +1,14 @@
 import {
   DetailedHTMLProps,
   Dispatch,
+  FocusEvent,
   Fragment,
   HTMLAttributes,
   ReactElement,
   ReactNode,
   RefObject,
   SetStateAction,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -48,20 +50,18 @@ import TableCheckbox from "@/lib/components/GenericTable/TableCheckbox";
 import "./GenericTable.scss";
 
 declare module "@tanstack/react-table" {
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  interface ColumnMeta<TData extends RowData, TValue = unknown> {
-    /**
-     * Custom skeleton renderer for this column. When loadingVariant="skeleton",
-     * this takes precedence over the automatic CSS shimmer for the cell.
-     * Use for columns whose cell content (images, badges, complex layouts) cannot
-     * be meaningfully shimmed by CSS alone.
-     */
+  // TData / TValue must match the upstream signature; unused in the body by design.
+  // noinspection JSUnusedGlobalSymbols
+  interface ColumnMeta<TData extends RowData, TValue = unknown> { // eslint-disable-line unused-imports/no-unused-vars
+    /** Custom loading skeleton renderer. Overrides the default shimmer for this column. */
     skeleton?: () => ReactNode;
-    /** Set true when the header cell contains an interactive element (e.g. a checkbox) so the sort button wrapper is skipped */
+    /** Returns an aria-label for a data cell. Use for icon-only, stacked, or badge cells. */
+    cellAriaLabel?: (row: Row<TData>) => string;
+    /** Set true when the header contains an interactive element to skip the sort-button wrapper. */
     isInteractiveHeader?: boolean;
-    /** aria-label applied to the <th> — use for non-text headers such as select checkboxes */
+    /** aria-label for the <th> — use for non-text headers such as checkboxes. */
     headerAriaLabel?: string;
-    /** Set true to hide the entire header cell from assistive technology */
+    /** Set true to hide the header cell from assistive technology. */
     headerAriaHidden?: boolean;
   }
 }
@@ -121,14 +121,10 @@ type GenericTableProps<T extends { id: number | string }> = {
  * @param {ReactNode} [props.noData] - Content to display when no data is available
  * @param {PaginationBarProps} [props.pagination] - Pagination configuration
  * @param {{ value: string; isTop: boolean }[]} [props.pinGroup] - Group pinning configuration
- * @param {ColumnSort[]} [props.sorting] - Initial sort configuration
- * @param {Dispatch<SetStateAction<SortingState>>} [props.setSorting] - Sorting state setter
- * @param {SelectionProps} [props.selection] - Selection configuration
- * @param {((row: Row<T>) => boolean)} [props.selection.filterSelectable] - Function to filter which rows should be selectable
- * @param {string | ((row: Row<T>) => string)} [props.selection.disabledSelectionTooltip] - Tooltip message or constructor on disabled checkboxes
- * @param {RowSelectionState} [props.selection.rowSelection] - Selected rows state
- * @param {keyof T} [props.selection.rowSelectionLabelKey] - Key of T to use as aria-labels for row checkboxes (e.g. "select {keyof T}")
- * @param {Dispatch<SetStateAction<RowSelectionState>>} [props.selection.setRowSelection] - Selection state setter
+ * @param {ColumnSort[]} [props.sorting] - Controlled sort state; changes to this prop are synced into the table after mount
+ * @param {Dispatch<SetStateAction<SortingState>>} [props.setSorting] - Sorting state setter called on user interaction
+ * @param {SelectionProps} [props.selection] - Row selection configuration. See {@link SelectionProps} for all sub-options
+ *   (filterSelectable, disabledSelectionTooltip, rowSelection, rowSelectionLabelKey, setRowSelection).
  * @param {boolean} [props.showChevron=false] - Show group row expansion state chevrons
  * @param {"full-height" | "regular"} [props.variant="full-height"] - Table layout variant
  *
@@ -136,19 +132,21 @@ type GenericTableProps<T extends { id: number | string }> = {
  *
  * @example
  * <GenericTable
+ *   aria-label="Products"
  *   columns={columns}
  *   data={products}
  *   isLoading={isLoading}
- *   canSelect={true}
  *   groupBy={["category"]}
- *   rowSelection={selectedRows}
- *   setRowSelection={setSelectedRows}
+ *   selection={{
+ *     rowSelection: selectedRows,
+ *     setRowSelection: setSelectedRows,
+ *   }}
  *   pagination={{
  *     currentPage: page,
  *     setCurrentPage: setPage,
  *     itemsPerPage: pageSize,
  *     totalItems: totalCount,
- *     handlePageSizeChange: handlePageSizeChange
+ *     handlePageSizeChange: handlePageSizeChange,
  *   }}
  * />
  */
@@ -777,6 +775,9 @@ export const GenericTable = <
             })
             .map((cell) => (
               <td
+                aria-label={
+                  cell.column.columnDef.meta?.cellAriaLabel?.(row) ?? undefined
+                }
                 className={classNames(`${cell.column.id}`)}
                 key={cell.id}
                 role="gridcell"
