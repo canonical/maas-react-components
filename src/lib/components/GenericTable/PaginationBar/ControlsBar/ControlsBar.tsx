@@ -1,8 +1,16 @@
 import type { PropsWithChildren, ReactElement } from "react";
 
-const ControlsBar = ({ children }: PropsWithChildren<object>): ReactElement => {
+type ControlsBarProps = PropsWithChildren<{ "aria-label"?: string }>;
+
+const ControlsBar = ({
+  children,
+  "aria-label": ariaLabel = "Table controls",
+}: ControlsBarProps): ReactElement => {
   return (
-    <section className="controls-bar u-flex u-flex--justify-between u-flex--wrap">
+    <section
+      aria-label={ariaLabel}
+      className="controls-bar u-flex u-flex--justify-between u-flex--wrap"
+    >
       <div className="p-form p-form--inline">{children}</div>
     </section>
   );

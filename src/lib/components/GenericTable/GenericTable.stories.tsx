@@ -117,9 +117,9 @@ const machineColumns: MachineColumnDef[] = [
     accessorKey: "id",
     header: "Actions",
     enableSorting: false,
-    cell: () => (
+    cell: ({row: {original: {fqdn}}}) => (
       <div className="actions-cell">
-        <Button appearance="base" hasIcon>
+        <Button aria-label={`Delete ${fqdn} machine.`} appearance="base" hasIcon>
           <Icon name="delete" />
         </Button>
       </div>
@@ -434,6 +434,7 @@ export const ConditionallySelectable: Story = {
                 position="btm-left"
               >
                 <Button
+                  aria-label={`Delete ${row.original.fqdn} machine.`}
                   disabled={!row.getCanSelect()}
                   appearance="base"
                   hasIcon
@@ -687,6 +688,7 @@ export const GroupedNested: Story = {
                 position="btm-left"
               >
                 <Button
+                  aria-label={`Delete ${row.original.fqdn} machine.`}
                   disabled={!row.getCanSelect()}
                   appearance="base"
                   hasIcon

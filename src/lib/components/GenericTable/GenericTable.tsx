@@ -12,6 +12,7 @@ import {
   useMemo,
   useRef,
   useState,
+  KeyboardEvent,
 } from "react";
 
 import { Icon, ICONS, Spinner, Tooltip } from "@canonical/react-components";
@@ -148,7 +149,12 @@ export const GenericTable = <
   variant = "full-height",
   ...props
 }: GenericTableProps<T>): ReactElement => {
+  // Separate aria-label so it is applied only to <table>, not the outer <div>
+  const { "aria-label": tableAriaLabel, ...divProps } = props as typeof props & {
+    "aria-label"?: string;
+  };
   const tableRef = useRef<HTMLTableSectionElement>(null);
+  const tableElRef = useRef<HTMLTableElement>(null);
   const [maxHeight, setMaxHeight] = useState("auto");
   const [needsScrolling, setNeedsScrolling] = useState(false);
 
@@ -219,6 +225,7 @@ export const GenericTable = <
           id: "p-generic-table__select",
           accessorKey: "id",
           enableSorting: false,
+          meta: { headerAriaLabel: "Row selection" },
           header: ({ table }: HeaderContext<T, Partial<T>>) => {
             if (groupBy) {
               return "";
@@ -254,6 +261,7 @@ export const GenericTable = <
             id: "p-generic-table__group-select",
             accessorKey: "id",
             enableSorting: false,
+            meta: { headerAriaLabel: "Row selection" },
             header: ({ table }: HeaderContext<T, Partial<T>>) => (
               <TableCheckbox.All table={table} />
             ),
@@ -275,6 +283,7 @@ export const GenericTable = <
         id: "p-generic-table__group-chevron",
         accessorKey: "id",
         enableSorting: false,
+        meta: { headerAriaHidden: true },
         header: "",
         cell: ({ row }: CellContext<T, Partial<T>>) => {
           const isExpanded = row.getIsExpanded();
@@ -401,6 +410,31 @@ export const GenericTable = <
     };
   }, [containerRef, sortedData.length, isLoading]); // Added dependencies to recalculate when data changes
 
+  // Safari does not include natively interactive elements (buttons, inputs,
+  // checkboxes, anchors) in the tab sequence when they are inside a
+  // display:block container such as this table's thead/tbody. Setting
+  // tabIndex=0 explicitly overrides Safari's broken heuristic without
+  // changing the DOM structure or CSS layout.
+  useEffect(() => {
+    const tableEl = tableElRef.current;
+    if (!tableEl || isLoading) return;
+
+    const selector = [
+      "button:not([disabled])",
+      "input:not([disabled])",
+      "select:not([disabled])",
+      "textarea:not([disabled])",
+      "a[href]",
+    ].join(", ");
+
+    tableEl.querySelectorAll<HTMLElement>(selector).forEach((el) => {
+      // Respect elements intentionally removed from tab order (tabIndex="-1")
+      if (el.getAttribute("tabindex") !== "-1") {
+        el.tabIndex = 0;
+      }
+    });
+  }); // No dependency array: re-run after every render so new rows are covered
+
   // Determine the effective variant based on content and scrolling needs
   const effectiveVariant =
     variant === "full-height" && needsScrolling ? "full-height" : "regular";
@@ -443,7 +477,7 @@ export const GenericTable = <
   const renderLoadingRows = () => {
     return (
       <tr>
-        <td className="p-generic-table__loading" colSpan={columns.length}>
+        <td className="p-generic-table__loading" colSpan={columns.length} role="gridcell">
           <Spinner text="Loading..." />
         </td>
       </tr>
@@ -455,23 +489,37 @@ export const GenericTable = <
     if (table.getRowModel().rows.length < 1) {
       return (
         <tr>
-          <td className="p-generic-table__no-data" colSpan={columns.length}>
+          <td className="p-generic-table__no-data" colSpan={columns.length} role="gridcell">
             {noData}
           </td>
         </tr>
       );
     }
 
+    // Sequential 1-based index; header row occupies index 1
+    let rowIndex = 1;
+
     return table.getRowModel().rows.map((row) => {
+      rowIndex++;
+      const currentRowIndex = rowIndex;
       const { getIsGrouped, id, getVisibleCells, parentId } = row;
       const isIndividualRow = !getIsGrouped();
       const isSelected =
         selection?.rowSelection !== undefined &&
         Object.keys(selection.rowSelection!).includes(id);
 
+      const handleGroupKeyDown = (e: KeyboardEvent<HTMLTableRowElement>) => {
+        if (e.target !== e.currentTarget) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          row.toggleExpanded();
+        }
+      };
+
       return (
         <tr
-          aria-rowindex={parseInt(id.replace(/\D/g, "") || "0", 10) + 1}
+          aria-expanded={!isIndividualRow ? row.getIsExpanded() : undefined}
+          aria-rowindex={currentRowIndex}
           aria-selected={isSelected}
           className={classNames({
             "p-generic-table__individual-row": isIndividualRow,
@@ -479,10 +527,9 @@ export const GenericTable = <
             "p-generic-table__nested-row":
               getSubRows !== undefined && !!parentId,
           })}
-          onClick={() => {
-            if (isIndividualRow) return;
-            row.toggleExpanded();
-          }}
+          onClick={!isIndividualRow ? () => row.toggleExpanded() : undefined}
+          onKeyDown={!isIndividualRow ? handleGroupKeyDown : undefined}
+          tabIndex={!isIndividualRow ? 0 : undefined}
           key={id}
           role="row"
         >
@@ -497,7 +544,7 @@ export const GenericTable = <
               return filterCells(row, cell.column);
             })
             .map((cell) => (
-              <td className={classNames(`${cell.column.id}`)} key={cell.id}>
+              <td className={classNames(`${cell.column.id}`)} key={cell.id} role="gridcell">
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}
@@ -510,7 +557,7 @@ export const GenericTable = <
     <div
       className={classNames("p-generic-table", className)}
       data-testid="p-generic-table"
-      {...props}
+      {...divProps}
     >
       {pagination && (
         <PaginationBar
@@ -525,20 +572,21 @@ export const GenericTable = <
         />
       )}
       <table
+        ref={tableElRef}
         aria-busy={isLoading}
-        aria-label={props["aria-label"]}
-        aria-describedby="generic-table-description"
-        aria-rowcount={sortedData.length + 1} // +1 for header row
+        aria-label={tableAriaLabel}
+        aria-rowcount={table.getRowModel().rows.length + 1} // +1 for header row
         className={classNames("p-generic-table__table", {
           "p-generic-table__is-full-height": effectiveVariant === "full-height",
           "p-generic-table__is-selectable": canSelect,
           "p-generic-table__is-grouped": groupBy !== undefined,
         })}
-        role="grid"
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+        role="treegrid"
       >
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} role="row">
+            <tr aria-rowindex={1} key={headerGroup.id} role="row">
               {headerGroup.headers
                 .filter(filterHeaders)
                 .map((header, index) => (
@@ -549,6 +597,7 @@ export const GenericTable = <
                     ((!showChevron && index === 2) ||
                       (showChevron && index === 3)) ? (
                       <th
+                        aria-hidden="true"
                         className="p-generic-table__select-alignment"
                         role="columnheader"
                       />

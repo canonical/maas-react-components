@@ -3,6 +3,7 @@ import type {
   InputHTMLAttributes,
   ReactElement,
 } from "react";
+import { useEffect, useRef } from "react";
 
 import { Tooltip } from "@canonical/react-components";
 import type { Row, Table } from "@tanstack/react-table";
@@ -15,6 +16,8 @@ type TableCheckboxProps<T> = Partial<
 };
 
 const TableAllCheckbox = <T,>({ table, ...props }: TableCheckboxProps<T>) => {
+  const checkboxRef = useRef<HTMLInputElement>(null);
+
   if (!table) {
     return null;
   }
@@ -27,36 +30,39 @@ const TableAllCheckbox = <T,>({ table, ...props }: TableCheckboxProps<T>) => {
     .getSelectedRowModel()
     .rows.filter((row) => row.getCanSelect());
 
-  let checked: boolean | "false" | "mixed" | "true" | undefined;
-  if (selectedSelectableRows.length === 0) {
-    checked = "false";
-  } else if (selectedSelectableRows.length < selectableRows.length) {
-    checked = "mixed";
-  } else {
-    checked = "true";
-  }
+  const isAllSelected =
+    selectableRows.length > 0 &&
+    selectedSelectableRows.length === selectableRows.length;
+  const isIndeterminate = selectedSelectableRows.length > 0 && !isAllSelected;
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    if (checkboxRef.current) {
+      checkboxRef.current.indeterminate = isIndeterminate;
+    }
+  }, [isIndeterminate]);
 
   return (
-    <label className="p-checkbox--inline p-table-checkbox--all">
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+    <label
+      className="p-checkbox--inline p-table-checkbox--all"
+      onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
+    >
       <input
-        aria-checked={checked}
+        ref={checkboxRef}
         aria-label="select all"
         className="p-checkbox__input"
         disabled={selectableRows.length === 0}
         type="checkbox"
-        {...{
-          checked: checked === "true",
-          onChange: () => {
-            const selectableRows = table
-              .getCoreRowModel()
-              .rows.filter((row) => row.getCanSelect());
+        checked={isAllSelected}
+        onChange={() => {
+          const rows = table
+            .getCoreRowModel()
+            .rows.filter((row) => row.getCanSelect());
 
-            const allSelected = selectableRows.every((row) =>
-              row.getIsSelected(),
-            );
-
-            selectableRows.forEach((row) => row.toggleSelected(!allSelected));
-          },
+          const allSelected = rows.every((row) => row.getIsSelected());
+          rows.forEach((row) => row.toggleSelected(!allSelected));
         }}
         {...props}
       />
@@ -66,6 +72,8 @@ const TableAllCheckbox = <T,>({ table, ...props }: TableCheckboxProps<T>) => {
 };
 
 const TableGroupCheckbox = <T,>({ row, ...props }: TableCheckboxProps<T>) => {
+  const checkboxRef = useRef<HTMLInputElement>(null);
+
   if (!row) {
     return null;
   }
@@ -80,13 +88,21 @@ const TableGroupCheckbox = <T,>({ row, ...props }: TableCheckboxProps<T>) => {
   const isSomeSelectableSelected =
     selectedCount > 0 && !isAllSelectableSelected;
 
+  useEffect(() => {
+    if (checkboxRef.current) {
+      checkboxRef.current.indeterminate = isSomeSelectableSelected;
+    }
+  }, [isSomeSelectableSelected]);
+
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <label
-      aria-disabled={!row.getCanSelect()}
       className="p-checkbox--inline p-table-checkbox--group"
+      onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
     >
       <input
-        aria-checked={isSomeSelectableSelected ? "mixed" : undefined}
+        ref={checkboxRef}
         className="p-checkbox__input"
         type="checkbox"
         checked={isAllSelectableSelected}
@@ -117,26 +133,34 @@ const TableCheckbox = <T,>({
     return null;
   }
 
+  const canSelect = row.getCanSelect();
+
   const disabledTooltipMessage =
     typeof disabledTooltip === "string"
       ? disabledTooltip
       : disabledTooltip(row);
 
+  // Explain why the checkbox is disabled regardless of cause
+  const tooltipMessage = isNested
+    ? "Selection is managed by the parent row"
+    : !canSelect
+      ? disabledTooltipMessage
+      : false;
+
   return (
-    <Tooltip
-      message={!row.getCanSelect() && disabledTooltipMessage}
-      position="btm-right"
-    >
+    <Tooltip message={tooltipMessage} position="btm-right">
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <label
-        aria-disabled={!row.getCanSelect()}
         className="p-checkbox--inline p-table-checkbox"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
       >
         <input
           className="p-checkbox__input"
           type="checkbox"
           {...{
             checked: row.getIsSelected(),
-            disabled: !row.getCanSelect() || isNested,
+            disabled: !canSelect || isNested,
             onChange: row.getToggleSelectedHandler(),
           }}
           {...props}
