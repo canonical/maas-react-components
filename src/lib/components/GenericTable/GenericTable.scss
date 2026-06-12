@@ -97,8 +97,8 @@
       }
     }
 
-    // Row hover effects
-    &:not([aria-busy="true"]) tbody:not([aria-busy="true"]) {
+    // Row hover effects — only when table is not busy
+    &:not([aria-busy="true"]) tbody {
       tr:hover,
       tr:focus-within {
         @include vf-transition($property: background, $duration: fast);
@@ -108,6 +108,22 @@
 
       tr.p-generic-table__group-row {
         cursor: pointer;
+      }
+    }
+
+    // Suppress hover and cursor styles while the table is loading or empty
+    &[aria-busy="true"] tbody,
+    &:has(.p-generic-table__no-data) tbody {
+      tr:hover,
+      tr:focus-within {
+        background-color: transparent;
+      }
+    }
+
+    // Reset group-row cursor while loading (no group rows exist in the empty state)
+    &[aria-busy="true"] tbody {
+      tr.p-generic-table__group-row {
+        cursor: default;
       }
     }
 
@@ -173,11 +189,20 @@
 
 // Dark mode adjustments
 .is-dark .p-generic-table {
-  // Row hover effects
-  &:not([aria-busy="true"]) tbody:not([aria-busy="true"]) {
+  // Row hover effects — only when table is not busy
+  &:not([aria-busy="true"]) tbody {
     tr:hover,
     tr:focus-within {
       background-color: $colors--dark-theme--background-hover;
+    }
+  }
+
+  // Suppress hover styles while the table is loading or empty
+  &[aria-busy="true"] tbody,
+  &:has(.p-generic-table__no-data) tbody {
+    tr:hover,
+    tr:focus-within {
+      background-color: transparent;
     }
   }
 }

@@ -75,6 +75,7 @@ type SelectionProps<T extends { id: number | string }> = {
 };
 
 type GenericTableProps<T extends { id: number | string }> = {
+  "aria-label"?: string;
   className?: string;
   columns: ColumnDef<T, Partial<T>>[];
   containerRef?: RefObject<HTMLElement | null>;
@@ -154,6 +155,7 @@ type GenericTableProps<T extends { id: number | string }> = {
 export const GenericTable = <
   T extends { id: number | string } & Record<string, unknown>,
 >({
+  "aria-label": tableAriaLabel,
   className,
   columns: initialColumns,
   containerRef,
@@ -173,13 +175,8 @@ export const GenericTable = <
   setSorting,
   showChevron = false,
   variant = "full-height",
-  ...props
+  ...divProps
 }: GenericTableProps<T>): ReactElement => {
-  // Separate aria-label so it is applied only to <table>, not the outer <div>
-  const { "aria-label": tableAriaLabel, ...divProps } =
-    props as typeof props & {
-      "aria-label"?: string;
-    };
   const tableRef = useRef<HTMLTableSectionElement>(null);
   const tableElRef = useRef<HTMLTableElement>(null);
   const [maxHeight, setMaxHeight] = useState("auto");
@@ -503,12 +500,15 @@ export const GenericTable = <
 
   // Render loading rows — spinner (default) or per-column skeleton shimmer rows
   const renderLoadingRows = () => {
+    const visibleHeaders =
+      table.getHeaderGroups()[0]?.headers.filter(filterHeaders) ?? [];
+
     if (loadingVariant !== "skeleton") {
       return (
         <tr>
           <td
             className="p-generic-table__loading"
-            colSpan={columns.length}
+            colSpan={visibleHeaders.length || columns.length}
             role="gridcell"
           >
             <Spinner text="Loading..." />
@@ -516,9 +516,6 @@ export const GenericTable = <
         </tr>
       );
     }
-
-    const visibleHeaders =
-      table.getHeaderGroups()[0]?.headers.filter(filterHeaders) ?? [];
 
     return Array.from({ length: skeletonRowCount }).map((_, rowIndex) => (
       <tr
@@ -529,9 +526,8 @@ export const GenericTable = <
       >
         {visibleHeaders.map((header) => {
           const meta = header.column.columnDef.meta;
-          const isInjectedColumn = header.column.id.startsWith(
-            "p-generic-table__",
-          );
+          const isInjectedColumn =
+            header.column.id.startsWith("p-generic-table__");
           return (
             <td
               className={classNames(
@@ -656,7 +652,9 @@ export const GenericTable = <
         ref={tableElRef}
         aria-busy={isLoading}
         aria-label={tableAriaLabel}
-        aria-rowcount={table.getRowModel().rows.length + 1} // +1 for header row
+        aria-rowcount={
+          pagination?.totalItems ?? table.getRowModel().rows.length
+        }
         className={classNames("p-generic-table__table", {
           "p-generic-table__is-full-height": effectiveVariant === "full-height",
           "p-generic-table__is-selectable": canSelect,
