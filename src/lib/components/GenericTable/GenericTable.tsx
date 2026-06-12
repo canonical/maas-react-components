@@ -552,7 +552,9 @@ export const GenericTable = <
         e.key !== "ArrowUp" &&
         e.key !== "ArrowDown" &&
         e.key !== "ArrowLeft" &&
-        e.key !== "ArrowRight"
+        e.key !== "ArrowRight" &&
+        e.key !== "Home" &&
+        e.key !== "End"
       ) {
         return;
       }
@@ -635,6 +637,20 @@ export const GenericTable = <
             activeRow.focus(); // return to row
           }
           break;
+        case "Home":
+          if (isOnCell) {
+            contentCells[0]?.focus();
+          } else if (e.ctrlKey) {
+            allRows[0]?.focus();
+          }
+          break;
+        case "End":
+          if (isOnCell) {
+            contentCells[contentCells.length - 1]?.focus();
+          } else if (e.ctrlKey) {
+            allRows[allRows.length - 1]?.focus();
+          }
+          break;
       }
     },
     [],
@@ -701,7 +717,9 @@ export const GenericTable = <
             colSpan={columns.length}
             role="gridcell"
           >
-            {noData}
+            <div aria-live="polite" role="status">
+              {noData}
+            </div>
           </td>
         </tr>
       );
@@ -775,6 +793,13 @@ export const GenericTable = <
             })
             .map((cell) => (
               <td
+                aria-hidden={
+                  cell.column.id === "p-generic-table__select" &&
+                  getSubRows !== undefined &&
+                  !!parentId
+                    ? true
+                    : undefined
+                }
                 aria-label={
                   cell.column.columnDef.meta?.cellAriaLabel?.(row) ?? undefined
                 }
