@@ -6,7 +6,7 @@ import { userEvent } from "@testing-library/user-event";
 import { vi } from "vitest";
 
 import { GenericTable } from "@/lib";
-import type { PaginationBarProps } from "@/lib/components/GenericTable/PaginationBar";
+import type { PaginationBarProps } from "@/lib/components/GenericTable/components/PaginationBar";
 
 type Image = {
   id: number;

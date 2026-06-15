@@ -5,7 +5,7 @@ import type { Header } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import SortingIndicator from "@/lib/components/GenericTable/SortingIndicator";
+import SortingIndicator from "@/lib/components/GenericTable/components/SortingIndicator";
 
 import "./ColumnHeader.scss";
 
