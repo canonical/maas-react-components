@@ -236,7 +236,7 @@ export const GenericTable = <T extends GenericTableData>({
         aria-busy={isLoading}
         aria-label={tableAriaLabel}
         aria-rowcount={
-          pagination?.totalItems ?? table.getRowModel().rows.length
+          (pagination?.totalItems ?? table.getRowModel().rows.length) + 1
         }
         className={classNames("p-generic-table__table", {
           "p-generic-table__is-full-height": effectiveVariant === "full-height",
