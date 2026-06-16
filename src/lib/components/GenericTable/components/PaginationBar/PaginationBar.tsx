@@ -3,7 +3,7 @@ import { useMemo } from "react";
 
 import { Select } from "@canonical/react-components";
 
-import ControlsBar from "@/lib/components/GenericTable/PaginationBar/ControlsBar";
+import ControlsBar from "@/lib/components/GenericTable/components/PaginationBar/ControlsBar";
 import { PaginationContainer } from "@/lib/components/Pagination";
 
 export type PaginationBarProps = {

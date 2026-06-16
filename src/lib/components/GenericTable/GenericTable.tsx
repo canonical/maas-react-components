@@ -7,54 +7,41 @@ import {
   ReactNode,
   RefObject,
   SetStateAction,
-  useEffect,
-  useLayoutEffect,
   useMemo,
-  useRef,
-  useState,
-  KeyboardEvent,
 } from "react";
 
-import { Icon, ICONS, Spinner, Tooltip } from "@canonical/react-components";
-import type {
-  CellContext,
+import {
   Column,
   ColumnDef,
   ColumnSort,
-  ExpandedState,
-  GroupingState,
-  Header,
-  HeaderContext,
-  Row,
-  RowSelectionState,
-  SortingState,
-} from "@tanstack/react-table";
-import {
-  flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   getGroupedRowModel,
+  Header,
+  Row,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import ColumnHeader from "@/lib/components/GenericTable/ColumnHeader";
+import ColumnHeader from "@/lib/components/GenericTable/components/ColumnHeader";
 import PaginationBar, {
   PaginationBarProps,
-} from "@/lib/components/GenericTable/PaginationBar";
-import TableCheckbox from "@/lib/components/GenericTable/TableCheckbox";
+} from "@/lib/components/GenericTable/components/PaginationBar";
+import { useTableExpansion } from "@/lib/components/GenericTable/hooks/useTableExpansion";
+import { useTableGrouping } from "@/lib/components/GenericTable/hooks/useTableGrouping";
+import { useTableKeyboardNavigation } from "@/lib/components/GenericTable/hooks/useTableKeyboardNavigation";
+import { useTableScrollHeight } from "@/lib/components/GenericTable/hooks/useTableScrollHeight";
+import { useTableSorting } from "@/lib/components/GenericTable/hooks/useTableSorting";
+import { SelectionProps, GenericTableData } from "@/lib/components/GenericTable/types";
+import { processColumnDefs } from "@/lib/components/GenericTable/utils/processColumnDefs";
+import { renderDataRows } from "@/lib/components/GenericTable/utils/renderDataRows";
+import { renderLoadingRows } from "@/lib/components/GenericTable/utils/renderLoadingRows";
 
 import "./GenericTable.scss";
 
-type SelectionProps<T extends { id: number | string }> = {
-  filterSelectable?: (row: Row<T>) => boolean;
-  disabledSelectionTooltip?: string | ((row: Row<T>) => string);
-  rowSelectionLabelKey?: keyof T;
-  rowSelection?: RowSelectionState;
-  setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
-};
-
-type GenericTableProps<T extends { id: number | string }> = {
+type GenericTableProps<T extends GenericTableData> = {
+  "aria-label"?: string;
   className?: string;
   columns: ColumnDef<T, Partial<T>>[];
   containerRef?: RefObject<HTMLElement | null>;
@@ -64,6 +51,8 @@ type GenericTableProps<T extends { id: number | string }> = {
   getSubRows?: (originalRow: T, index: number) => T[] | undefined;
   groupBy?: string[];
   isLoading: boolean;
+  loadingVariant?: "spinner" | "skeleton";
+  skeletonRowCount?: number;
   noData?: ReactNode;
   pagination?: PaginationBarProps;
   pinGroup?: { value: string; isTop: boolean }[];
@@ -93,17 +82,15 @@ type GenericTableProps<T extends { id: number | string }> = {
  * @param {(originalRow: T, index: number) => T[] | undefined} [props.getSubRows] - Function that returns the T.prop that contains nested T data
  * @param {string[]} [props.groupBy] - Column IDs to group rows by
  * @param {boolean} props.isLoading - Loading state to display placeholder content
+ * @param {"spinner" | "skeleton"} [props.loadingVariant="spinner"] - Loading display style; "spinner" shows a single spinner row, "skeleton" renders skeletonRowCount shimmer rows using meta.skeleton per column when defined, falling back to a default shimmer bar
+ * @param {number} [props.skeletonRowCount=10] - Number of skeleton rows to render when loadingVariant="skeleton"
  * @param {ReactNode} [props.noData] - Content to display when no data is available
  * @param {PaginationBarProps} [props.pagination] - Pagination configuration
  * @param {{ value: string; isTop: boolean }[]} [props.pinGroup] - Group pinning configuration
- * @param {ColumnSort[]} [props.sorting] - Initial sort configuration
- * @param {Dispatch<SetStateAction<SortingState>>} [props.setSorting] - Sorting state setter
- * @param {SelectionProps} [props.selection] - Selection configuration
- * @param {((row: Row<T>) => boolean)} [props.selection.filterSelectable] - Function to filter which rows should be selectable
- * @param {string | ((row: Row<T>) => string)} [props.selection.disabledSelectionTooltip] - Tooltip message or constructor on disabled checkboxes
- * @param {RowSelectionState} [props.selection.rowSelection] - Selected rows state
- * @param {keyof T} [props.selection.rowSelectionLabelKey] - Key of T to use as aria-labels for row checkboxes (e.g. "select {keyof T}")
- * @param {Dispatch<SetStateAction<RowSelectionState>>} [props.selection.setRowSelection] - Selection state setter
+ * @param {ColumnSort[]} [props.sorting] - Controlled sort state; changes to this prop are synced into the table after mount
+ * @param {Dispatch<SetStateAction<SortingState>>} [props.setSorting] - Sorting state setter called on user interaction
+ * @param {SelectionProps} [props.selection] - Row selection configuration. See {@link SelectionProps} for all sub-options
+ *   (filterSelectable, disabledSelectionTooltip, rowSelection, rowSelectionLabelKey, setRowSelection).
  * @param {boolean} [props.showChevron=false] - Show group row expansion state chevrons
  * @param {"full-height" | "regular"} [props.variant="full-height"] - Table layout variant
  *
@@ -111,25 +98,26 @@ type GenericTableProps<T extends { id: number | string }> = {
  *
  * @example
  * <GenericTable
+ *   aria-label="Products"
  *   columns={columns}
  *   data={products}
  *   isLoading={isLoading}
- *   canSelect={true}
  *   groupBy={["category"]}
- *   rowSelection={selectedRows}
- *   setRowSelection={setSelectedRows}
+ *   selection={{
+ *     rowSelection: selectedRows,
+ *     setRowSelection: setSelectedRows,
+ *   }}
  *   pagination={{
  *     currentPage: page,
  *     setCurrentPage: setPage,
  *     itemsPerPage: pageSize,
  *     totalItems: totalCount,
- *     handlePageSizeChange: handlePageSizeChange
+ *     handlePageSizeChange: handlePageSizeChange,
  *   }}
  * />
  */
-export const GenericTable = <
-  T extends { id: number | string } & Record<string, unknown>,
->({
+export const GenericTable = <T extends GenericTableData>({
+  "aria-label": tableAriaLabel,
   className,
   columns: initialColumns,
   containerRef,
@@ -139,305 +127,58 @@ export const GenericTable = <
   getSubRows,
   groupBy,
   isLoading,
+  loadingVariant = "spinner",
+  skeletonRowCount = 10,
   noData,
   pagination,
   pinGroup,
-  sorting = [],
+  sorting: externalSorting = [],
   selection,
-  setSorting,
+  setSorting: setExternalSorting,
   showChevron = false,
   variant = "full-height",
-  ...props
+  ...divProps
 }: GenericTableProps<T>): ReactElement => {
-  // Separate aria-label so it is applied only to <table>, not the outer <div>
-  const { "aria-label": tableAriaLabel, ...divProps } = props as typeof props & {
-    "aria-label"?: string;
-  };
-  const tableRef = useRef<HTMLTableSectionElement>(null);
-  const tableElRef = useRef<HTMLTableElement>(null);
-  const [maxHeight, setMaxHeight] = useState("auto");
-  const [needsScrolling, setNeedsScrolling] = useState(false);
+  const { grouping, setGrouping, groupedData } = useTableGrouping({
+    groupBy,
+    initialData,
+  });
 
-  const [grouping, setGrouping] = useState<GroupingState>(groupBy ?? []);
-  const [_sorting, _setSorting] = useState<SortingState>(sorting ?? []);
-  const [expanded, _setExpanded] = useState<ExpandedState>(true);
+  const { sortedData, sorting, setSorting } = useTableSorting({
+    externalSorting,
+    setExternalSorting,
+    grouping,
+    groupedData,
+    pinGroup,
+  });
 
-  const canSelect = !!selection;
+  const { expanded, setExpanded } = useTableExpansion({
+    grouping,
+    initialData,
+  });
 
-  // Remember collapsed groups to keep them collapsed on page change
-  const setExpanded = (
-    updater: ExpandedState | ((prev: ExpandedState) => ExpandedState),
-  ) => {
-    _setExpanded((prev) => {
-      const next = typeof updater === "function" ? updater(prev) : updater;
-
-      if (next === true) return true;
-
-      const normalized: Record<string, boolean> = { ...next };
-
-      // Reinsert any keys that disappeared between prev and next as false
-      if (prev !== true) {
-        for (const key of Object.keys(prev)) {
-          if (!(key in normalized)) {
-            normalized[key] = false;
-          }
-        }
-      }
-
-      return normalized;
-    });
-  };
-
-  // Replace default true expansion state with explicit groups
-  useEffect(() => {
-    if (!grouping.length) return;
-
-    setExpanded((prev) => {
-      const base = prev === true ? {} : { ...prev };
-
-      const next = { ...base };
-
-      for (const item of initialData) {
-        const groupId = grouping
-          .map((g) => `${g}:${item[g as keyof typeof item]}`)
-          .join(">");
-        if (!(groupId in next)) {
-          next[groupId] = true;
-        }
-      }
-
-      return next;
-    });
-  }, [initialData, grouping]);
+  const { tableBodyRef, maxHeight, effectiveVariant } = useTableScrollHeight({
+    containerRef,
+    variant,
+    length: sortedData.length,
+    isLoading,
+  });
 
   // Add chevron and selection columns if needed
-  const columns = useMemo(() => {
-    let processedColumns = [...initialColumns];
-
-    if (isLoading) {
-      return processedColumns;
-    }
-
-    // Add selection columns if needed
-    if (canSelect) {
-      const selectionColumns = [
-        {
-          id: "p-generic-table__select",
-          accessorKey: "id",
-          enableSorting: false,
-          meta: { headerAriaLabel: "Row selection" },
-          header: ({ table }: HeaderContext<T, Partial<T>>) => {
-            if (groupBy) {
-              return "";
-            }
-            return <TableCheckbox.All table={table} />;
-          },
-          cell: ({ row }: CellContext<T, Partial<T>>) => {
-            const ariaLabel =
-              selection.rowSelectionLabelKey &&
-              selection.rowSelectionLabelKey in row.original
-                ? `select ${row.original[selection.rowSelectionLabelKey]}`
-                : "select row";
-            return !row.getIsGrouped() ? (
-              <TableCheckbox
-                aria-label={ariaLabel}
-                disabledTooltip={selection.disabledSelectionTooltip ?? ""}
-                isNested={getSubRows !== undefined && !!row.parentId}
-                row={row}
-              />
-            ) : null;
-          },
-        },
-        ...processedColumns,
-      ];
-
-      if (groupBy) {
-        const getAriaLabel = (row: Row<T>) =>
-          groupBy[0] in row.original
-            ? `select ${row.original[groupBy[0]]}`
-            : "select group";
-        processedColumns = [
-          {
-            id: "p-generic-table__group-select",
-            accessorKey: "id",
-            enableSorting: false,
-            meta: { headerAriaLabel: "Row selection" },
-            header: ({ table }: HeaderContext<T, Partial<T>>) => (
-              <TableCheckbox.All table={table} />
-            ),
-            cell: ({ row }: CellContext<T, Partial<T>>) =>
-              row.getIsGrouped() ? (
-                <TableCheckbox.Group aria-label={getAriaLabel(row)} row={row} />
-              ) : null,
-          },
-          ...selectionColumns,
-        ];
-      } else {
-        processedColumns = selectionColumns;
-      }
-    }
-
-    // Add chevron column if grouping is enabled
-    if (groupBy && showChevron) {
-      const chevronColumn = {
-        id: "p-generic-table__group-chevron",
-        accessorKey: "id",
-        enableSorting: false,
-        meta: { headerAriaHidden: true },
-        header: "",
-        cell: ({ row }: CellContext<T, Partial<T>>) => {
-          const isExpanded = row.getIsExpanded();
-          if (row.getIsGrouped()) {
-            return (
-              <Tooltip
-                message={isExpanded ? "Collapse" : "Expand"}
-                position="btm-right"
-              >
-                <Icon name={isExpanded ? ICONS.chevronUp : ICONS.chevronDown} />
-              </Tooltip>
-            );
-          }
-          return null;
-        },
-      };
-
-      processedColumns = [chevronColumn, ...processedColumns];
-    }
-
-    return processedColumns;
-  }, [canSelect, initialColumns, isLoading, groupBy, getSubRows]);
-
-  // Memoize grouped data
-  const groupedData = useMemo(() => {
-    if (!grouping.length) return initialData;
-
-    return [...initialData].sort((a, b) => {
-      // Sort by group values
-      for (const groupId of grouping) {
-        const aGroupValue = a[groupId as keyof typeof a] ?? null;
-        const bGroupValue = b[groupId as keyof typeof b] ?? null;
-
-        if (aGroupValue === null) return 1;
-        if (bGroupValue === null) return -1;
-
-        if (aGroupValue < bGroupValue) return -1;
-        if (aGroupValue > bGroupValue) return 1;
-      }
-      return 0;
-    });
-  }, [initialData, grouping]);
-
-  // Sort data based on pinning and sorting preferences
-  const sortedData = useMemo(() => {
-    if (!groupedData.length) return [];
-
-    return [...groupedData].sort((a, b) => {
-      // Handle pinned groups
-      if (pinGroup?.length && grouping.length) {
-        for (const { value, isTop } of pinGroup) {
-          const groupId = grouping[0];
-          const aValue = a[groupId as keyof typeof a] ?? null;
-          const bValue = b[groupId as keyof typeof b] ?? null;
-
-          if (aValue === value && bValue !== value) {
-            return isTop ? -1 : 1;
-          }
-          if (bValue === value && aValue !== value) {
-            return isTop ? 1 : -1;
-          }
-        }
-      }
-
-      // Sort by column sorting
-      for (const { id, desc } of _sorting) {
-        const aValue = a[id as keyof typeof a] ?? null;
-        const bValue = b[id as keyof typeof b] ?? null;
-
-        // Handle null values
-        if (aValue === null && bValue === null) return 0;
-        if (aValue === null) return desc ? -1 : 1;
-        if (bValue === null) return desc ? 1 : -1;
-
-        if (aValue < bValue) {
-          return desc ? 1 : -1;
-        }
-        if (aValue > bValue) {
-          return desc ? -1 : 1;
-        }
-      }
-
-      return 0;
-    });
-  }, [groupedData, _sorting, pinGroup, grouping]);
-
-  // Update table height based on available space and determine if scrolling is needed
-  useLayoutEffect(() => {
-    const updateHeight = () => {
-      const wrapper = tableRef.current;
-      if (!wrapper) return;
-
-      // Use provided containerRef if available, fallback to main
-      const container = containerRef?.current || document.querySelector("main");
-      if (!container) return;
-
-      const containerRect = container.getBoundingClientRect();
-      const wrapperRect = wrapper.getBoundingClientRect();
-
-      const availableHeight = containerRect.bottom - wrapperRect.top;
-
-      // Check if content height exceeds available height
-      const contentHeight = wrapper.scrollHeight;
-      const willNeedScrolling = contentHeight > availableHeight;
-
-      setNeedsScrolling(willNeedScrolling);
-      setMaxHeight(
-        variant === "full-height" && willNeedScrolling
-          ? `${availableHeight}px`
-          : "auto",
-      );
-    };
-
-    updateHeight();
-
-    const resizeObserver = new ResizeObserver(updateHeight);
-    const wrapper = tableRef.current;
-    if (wrapper) resizeObserver.observe(wrapper);
-
-    window.addEventListener("resize", updateHeight);
-    return () => {
-      window.removeEventListener("resize", updateHeight);
-      if (wrapper) resizeObserver.unobserve(wrapper);
-    };
-  }, [containerRef, sortedData.length, isLoading]); // Added dependencies to recalculate when data changes
-
-  // Safari does not include natively interactive elements (buttons, inputs,
-  // checkboxes, anchors) in the tab sequence when they are inside a
-  // display:block container such as this table's thead/tbody. Setting
-  // tabIndex=0 explicitly overrides Safari's broken heuristic without
-  // changing the DOM structure or CSS layout.
-  useEffect(() => {
-    const tableEl = tableElRef.current;
-    if (!tableEl || isLoading) return;
-
-    const selector = [
-      "button:not([disabled])",
-      "input:not([disabled])",
-      "select:not([disabled])",
-      "textarea:not([disabled])",
-      "a[href]",
-    ].join(", ");
-
-    tableEl.querySelectorAll<HTMLElement>(selector).forEach((el) => {
-      // Respect elements intentionally removed from tab order (tabIndex="-1")
-      if (el.getAttribute("tabindex") !== "-1") {
-        el.tabIndex = 0;
-      }
-    });
-  }); // No dependency array: re-run after every render so new rows are covered
-
-  // Determine the effective variant based on content and scrolling needs
-  const effectiveVariant =
-    variant === "full-height" && needsScrolling ? "full-height" : "regular";
+  const canSelect = !!selection;
+  const columns = useMemo(
+    () =>
+      processColumnDefs({
+        canSelect,
+        initialColumns,
+        isLoading,
+        groupBy,
+        getSubRows,
+        selection,
+        showChevron,
+      }),
+    [canSelect, initialColumns, isLoading, groupBy, getSubRows],
+  );
 
   // Configure table
   const table = useReactTable<T>({
@@ -446,18 +187,13 @@ export const GenericTable = <
     state: {
       grouping,
       expanded,
-      sorting: _sorting,
+      sorting,
       rowSelection: selection?.rowSelection,
     },
     manualPagination: true,
     autoResetExpanded: false,
     onExpandedChange: setExpanded,
-    onSortingChange: (updaterOrValue) => {
-      _setSorting(updaterOrValue);
-      if (setSorting) {
-        setSorting(updaterOrValue);
-      }
-    },
+    onSortingChange: setSorting,
     onGroupingChange: setGrouping,
     onRowSelectionChange: selection?.setRowSelection,
     manualSorting: true,
@@ -473,85 +209,9 @@ export const GenericTable = <
     getRowId: (originalRow) => originalRow.id.toString(),
   });
 
-  // Render loading placeholder rows
-  const renderLoadingRows = () => {
-    return (
-      <tr>
-        <td className="p-generic-table__loading" colSpan={columns.length} role="gridcell">
-          <Spinner text="Loading..." />
-        </td>
-      </tr>
-    );
-  };
-
-  // Render data rows
-  const renderDataRows = () => {
-    if (table.getRowModel().rows.length < 1) {
-      return (
-        <tr>
-          <td className="p-generic-table__no-data" colSpan={columns.length} role="gridcell">
-            {noData}
-          </td>
-        </tr>
-      );
-    }
-
-    // Sequential 1-based index; header row occupies index 1
-    let rowIndex = 1;
-
-    return table.getRowModel().rows.map((row) => {
-      rowIndex++;
-      const currentRowIndex = rowIndex;
-      const { getIsGrouped, id, getVisibleCells, parentId } = row;
-      const isIndividualRow = !getIsGrouped();
-      const isSelected =
-        selection?.rowSelection !== undefined &&
-        Object.keys(selection.rowSelection!).includes(id);
-
-      const handleGroupKeyDown = (e: KeyboardEvent<HTMLTableRowElement>) => {
-        if (e.target !== e.currentTarget) return;
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          row.toggleExpanded();
-        }
-      };
-
-      return (
-        <tr
-          aria-expanded={!isIndividualRow ? row.getIsExpanded() : undefined}
-          aria-rowindex={currentRowIndex}
-          aria-selected={isSelected}
-          className={classNames({
-            "p-generic-table__individual-row": isIndividualRow,
-            "p-generic-table__group-row": !isIndividualRow,
-            "p-generic-table__nested-row":
-              getSubRows !== undefined && !!parentId,
-          })}
-          onClick={!isIndividualRow ? () => row.toggleExpanded() : undefined}
-          onKeyDown={!isIndividualRow ? handleGroupKeyDown : undefined}
-          tabIndex={!isIndividualRow ? 0 : undefined}
-          key={id}
-          role="row"
-        >
-          {getVisibleCells()
-            .filter((cell) => {
-              if (
-                !isIndividualRow &&
-                (cell.column.id === "p-generic-table__group-select" ||
-                  cell.column.id === "p-generic-table__group-chevron")
-              )
-                return true;
-              return filterCells(row, cell.column);
-            })
-            .map((cell) => (
-              <td className={classNames(`${cell.column.id}`)} key={cell.id} role="gridcell">
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
-        </tr>
-      );
-    });
-  };
+  // Handle accessibility
+  const { tableRef, handleTableFocus, handleTableKeyDown } =
+    useTableKeyboardNavigation({ isLoading });
 
   return (
     <div
@@ -572,15 +232,19 @@ export const GenericTable = <
         />
       )}
       <table
-        ref={tableElRef}
+        ref={tableRef}
         aria-busy={isLoading}
         aria-label={tableAriaLabel}
-        aria-rowcount={table.getRowModel().rows.length + 1} // +1 for header row
+        aria-rowcount={
+          (pagination?.totalItems ?? table.getRowModel().rows.length) + 1
+        }
         className={classNames("p-generic-table__table", {
           "p-generic-table__is-full-height": effectiveVariant === "full-height",
           "p-generic-table__is-selectable": canSelect,
           "p-generic-table__is-grouped": groupBy !== undefined,
         })}
+        onFocus={handleTableFocus}
+        onKeyDown={handleTableKeyDown}
         // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
         role="treegrid"
       >
@@ -609,13 +273,28 @@ export const GenericTable = <
         </thead>
 
         <tbody
-          ref={tableRef}
+          ref={tableBodyRef}
           style={{
             overflowY: "auto",
             maxHeight,
           }}
         >
-          {isLoading ? renderLoadingRows() : renderDataRows()}
+          {isLoading
+            ? renderLoadingRows({
+                table,
+                columns,
+                filterHeaders,
+                loadingVariant,
+                skeletonRowCount,
+              })
+            : renderDataRows({
+                table,
+                columns,
+                filterCells,
+                getSubRows,
+                noData,
+                selection,
+              })}
         </tbody>
       </table>
     </div>

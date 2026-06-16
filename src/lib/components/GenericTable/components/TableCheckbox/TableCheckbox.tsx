@@ -33,7 +33,8 @@ const TableAllCheckbox = <T,>({ table, ...props }: TableCheckboxProps<T>) => {
   const isAllSelected =
     selectableRows.length > 0 &&
     selectedSelectableRows.length === selectableRows.length;
-  const isIndeterminate = selectedSelectableRows.length > 0 && !isAllSelected;
+  const isIndeterminate =
+    selectedSelectableRows.length > 0 && !isAllSelected;
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
@@ -144,8 +145,8 @@ const TableCheckbox = <T,>({
   const tooltipMessage = isNested
     ? "Selection is managed by the parent row"
     : !canSelect
-      ? disabledTooltipMessage
-      : false;
+    ? disabledTooltipMessage
+    : false;
 
   return (
     <Tooltip message={tooltipMessage} position="btm-right">

@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols -- Storybook story exports are consumed by
+// the Storybook runtime, not by TypeScript imports. The IDE cannot see that usage.
 import { useRef, useState } from "react";
 
 import { Button, Icon, Tooltip } from "@canonical/react-components";
@@ -88,11 +90,29 @@ const machineColumns: MachineColumnDef[] = [
     id: "fqdn",
     accessorKey: "fqdn",
     header: "FQDN",
-  },
-  {
-    id: "ipAddress",
-    accessorKey: "ipAddress",
-    header: "IP Address",
+    meta: {
+      cellAriaLabel: (row) =>
+        `${row.original.fqdn}, IP address ${row.original.ipAddress}`,
+    },
+    cell: ({
+      getValue,
+      row: {
+        original: { ipAddress },
+      },
+    }: {
+      getValue: Getter<string>;
+      row: Row<Machine>;
+    }) => (
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.1rem" }}>
+        <span>{getValue()}</span>
+        <span
+          className="u-text--muted"
+          style={{ fontFamily: "monospace", fontSize: "0.75rem", margin: 0 }}
+        >
+          {ipAddress}
+        </span>
+      </div>
+    ),
   },
   {
     id: "status",
@@ -117,9 +137,20 @@ const machineColumns: MachineColumnDef[] = [
     accessorKey: "id",
     header: "Actions",
     enableSorting: false,
-    cell: ({row: {original: {fqdn}}}) => (
+    meta: {
+      cellAriaLabel: (row) => `Actions for ${row.original.fqdn}`,
+    },
+    cell: ({
+      row: {
+        original: { fqdn },
+      },
+    }) => (
       <div className="actions-cell">
-        <Button aria-label={`Delete ${fqdn} machine.`} appearance="base" hasIcon>
+        <Button
+          aria-label={`Delete ${fqdn} machine.`}
+          appearance="base"
+          hasIcon
+        >
           <Icon name="delete" />
         </Button>
       </div>
@@ -332,6 +363,79 @@ export const Loading: Story = {
   },
 };
 
+export const LoadingDefaultSkeleton: Story = {
+  name: "Loading (Default skeleton)",
+  args: {
+    data: [],
+    isLoading: true,
+    loadingVariant: "skeleton",
+    skeletonRowCount: 5,
+  },
+};
+
+export const LoadingCustomSkeleton: Story = {
+  name: "Loading (Custom skeleton)",
+  args: {
+    columns: [
+      {
+        ...machineColumns[0],
+        meta: {
+          cellAriaLabel: (row) =>
+            `${row.original.fqdn}, IP address ${row.original.ipAddress}`,
+          skeleton: () => (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.1rem",
+              }}
+            >
+              <div className="p-generic-table__skeleton-default" />
+              <div
+                style={{
+                  width: "50%",
+                  height: "1rem",
+                  marginTop: "0.25rem",
+                }}
+                className="p-generic-table__skeleton-default"
+              />
+            </div>
+          ),
+        },
+      },
+      {
+        ...machineColumns[1],
+        meta: {
+          skeleton: () => (
+            <div
+              style={{ width: "50%" }}
+              className="p-generic-table__skeleton-default"
+            />
+          ),
+        },
+      },
+      machineColumns[2],
+      machineColumns[3],
+      {
+        ...machineColumns[4],
+        meta: {
+          cellAriaLabel: (row) => `Actions for ${row.original.fqdn}`,
+          skeleton: () => (
+            <div
+              style={{ width: "2rem" }}
+              className="p-generic-table__skeleton-default"
+            />
+          ),
+        },
+      },
+    ],
+    data: [],
+    isLoading: true,
+    loadingVariant: "skeleton",
+    skeletonRowCount: 5,
+  },
+};
+
 export const Empty: Story = {
   args: {
     data: [],
@@ -509,6 +613,10 @@ export const Grouped: Story = {
       {
         id: "status",
         accessorKey: "status",
+        meta: {
+          cellAriaLabel: (row) =>
+            `${row.original.status}, ${row.getLeafRows().length} machines`,
+        },
         cell: ({
           row,
           getValue,
@@ -592,6 +700,10 @@ export const GroupedSelectable: Story = {
       {
         id: "status",
         accessorKey: "status",
+        meta: {
+          cellAriaLabel: (row) =>
+            `${row.original.status}, ${row.getLeafRows().length} machines`,
+        },
         cell: ({
           row,
           getValue,

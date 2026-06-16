@@ -97,8 +97,8 @@
       }
     }
 
-    // Row hover effects
-    &:not([aria-busy="true"]) tbody:not([aria-busy="true"]) {
+    // Row hover effects — only when table is not busy
+    &:not([aria-busy="true"]) tbody {
       tr:hover,
       tr:focus-within {
         @include vf-transition($property: background, $duration: fast);
@@ -108,6 +108,22 @@
 
       tr.p-generic-table__group-row {
         cursor: pointer;
+      }
+    }
+
+    // Suppress hover and cursor styles while the table is loading or empty
+    &[aria-busy="true"] tbody,
+    &:has(.p-generic-table__no-data) tbody {
+      tr:hover,
+      tr:focus-within {
+        background-color: transparent;
+      }
+    }
+
+    // Reset group-row cursor while loading (no group rows exist in the empty state)
+    &[aria-busy="true"] tbody {
+      tr.p-generic-table__group-row {
+        cursor: default;
       }
     }
 
@@ -134,16 +150,59 @@
       padding: 2rem;
       text-align: center !important;
     }
+
+    // Skeleton rows
+    tr.p-generic-table__skeleton-row {
+      pointer-events: none;
+
+      &:hover,
+      &:focus-within {
+        background: transparent !important;
+      }
+    }
+
+    .p-generic-table__skeleton-default {
+      display: inline-block;
+      height: 3 * $sp-unit;
+      width: 70%;
+      background: linear-gradient(
+        90deg,
+        var(--vf-color-background-alt, #{$color-mid-light}) 25%,
+        var(--vf-color-background-default, #{$color-light}) 50%,
+        var(--vf-color-background-alt, #{$color-mid-light}) 75%
+      );
+      background-size: 200% 100%;
+      animation: p-generic-table-skeleton-shimmer 1.4s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes p-generic-table-skeleton-shimmer {
+  0% {
+    background-position: 200% center;
+  }
+
+  100% {
+    background-position: -200% center;
   }
 }
 
 // Dark mode adjustments
 .is-dark .p-generic-table {
-  // Row hover effects
-  &:not([aria-busy="true"]) tbody:not([aria-busy="true"]) {
+  // Row hover effects — only when table is not busy
+  &:not([aria-busy="true"]) tbody {
     tr:hover,
     tr:focus-within {
       background-color: $colors--dark-theme--background-hover;
+    }
+  }
+
+  // Suppress hover styles while the table is loading or empty
+  &[aria-busy="true"] tbody,
+  &:has(.p-generic-table__no-data) tbody {
+    tr:hover,
+    tr:focus-within {
+      background-color: transparent;
     }
   }
 }

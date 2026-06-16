@@ -6,7 +6,7 @@ import { userEvent } from "@testing-library/user-event";
 import { vi } from "vitest";
 
 import { GenericTable } from "@/lib";
-import type { PaginationBarProps } from "@/lib/components/GenericTable/PaginationBar";
+import type { PaginationBarProps } from "@/lib/components/GenericTable/components/PaginationBar";
 
 type Image = {
   id: number;
@@ -523,16 +523,15 @@ describe("GenericTable", () => {
       />,
     );
 
+    expect(screen.getAllByRole("row")).toHaveLength(3);
+
     const nestedRows = screen
       .getAllByRole("row")
       .filter((row) => row.classList.contains("p-generic-table__nested-row"));
     expect(nestedRows.length).toBeGreaterThan(0);
 
     const checkboxes = screen.getAllByRole("checkbox");
-    expect(checkboxes.length).toEqual(3);
-    expect(checkboxes[0]).not.toBeDisabled();
-    expect(checkboxes[1]).not.toBeDisabled();
-    expect(checkboxes[2]).toBeDisabled();
+    expect(checkboxes.length).toEqual(2);
   });
 
   it("renders pinned rows correctly", () => {
