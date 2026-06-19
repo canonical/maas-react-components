@@ -3,6 +3,7 @@ import { ColumnDef, Header, Table } from "@tanstack/react-table";
 import classNames from "classnames";
 
 import { GenericTableData } from "@/lib/components/GenericTable/types";
+import { Placeholder } from "@/lib/elements/Placeholder/Placeholder";
 
 export const renderLoadingRows = <T extends GenericTableData>({
   table,
@@ -57,7 +58,7 @@ export const renderLoadingRows = <T extends GenericTableData>({
             {isInjectedColumn ? null : meta?.skeleton ? (
               meta.skeleton()
             ) : (
-              <div className="p-generic-table__skeleton-default" />
+              <Placeholder variant="block" width="70%" height="1.5rem" />
             )}
           </td>
         );
