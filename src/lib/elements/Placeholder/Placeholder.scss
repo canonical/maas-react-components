@@ -1,27 +1,28 @@
 @import "vanilla-framework";
 
 .p-placeholder {
-  animation: shine 1.5s infinite ease-out;
+  animation: placeholder-pulse 1.5s ease-in-out infinite;
   background-color: $color-mid-x-light;
-  background-image: linear-gradient(
-    to right,
-    $color-mid-x-light calc(50% - 2rem),
-    $color-light 50%,
-    $color-mid-x-light calc(50% + 2rem)
-  );
-  background-size: 300% 100%;
-  color: transparent;
-  overflow: hidden;
+  border-radius: 0.25rem;
+  display: block;
   pointer-events: none;
-  text-indent: -100%;
 }
 
-@keyframes shine {
-  0% {
-    background-position: right;
+.p-placeholder__sizer {
+  // Sizes to its own content so the parent can use width: fit-content to match.
+  color: transparent;
+  display: inline-block;
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes placeholder-pulse {
+  0%,
+  100% {
+    opacity: 1;
   }
 
-  100% {
-    background-position: left;
+  50% {
+    opacity: 0.4;
   }
 }
