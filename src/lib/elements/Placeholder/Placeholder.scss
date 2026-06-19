@@ -2,9 +2,9 @@
 
 .p-placeholder {
   animation: placeholder-pulse 1.5s ease-in-out infinite;
-  background-color: $color-mid-x-light;
+  background-color: var(--vf-color-background-active);
   border-radius: 0.25rem;
-  display: block;
+  display: inline-block;
   pointer-events: none;
 }
 

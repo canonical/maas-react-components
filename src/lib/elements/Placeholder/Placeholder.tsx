@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactElement, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactElement, ReactNode } from "react";
 import { useEffect } from "react";
 import "./Placeholder.scss";
 
@@ -15,7 +15,7 @@ type PlaceholderProps = {
   /** @deprecated */
   children?: ReactNode;
   variant?: "block" | "text";
-};
+} & Omit<HTMLAttributes<HTMLDivElement>, "children">;
 
 /**
  * Placeholder - A pulsing skeleton block used to represent loading content
@@ -29,6 +29,7 @@ type PlaceholderProps = {
  * @param {CSSProperties["width"]} [props.width] - Width of the skeleton block; accepts any valid CSS value (e.g. "200px", "100%", "12rem"). When omitted the block stretches to fill its container
  * @param {CSSProperties["height"]} [props.height] - Height of the skeleton block; accepts any valid CSS value (e.g. "1rem", "48px", "3em"). When omitted the block collapses unless content or a sizer provides height
  * @param {"block" | "text"} [props.variant="text"] - Rendering variant. `"block"` renders a standalone skeleton div; `"text"` is the legacy variant that requires `isPending` to be set
+ * @param {HTMLAttributes<HTMLDivElement>} [props.style] - Any HTML div attributes (e.g. `style`, `data-*`, `aria-*`) are forwarded to the root element. `style` is merged with the component's internal width/height styles, with consumer values taking precedence
  * @param {boolean} [props.isPending] - @deprecated Use conditional rendering at the call-site instead. When `true` the skeleton is shown; when `false` the `children` are rendered. Will be removed in a future major version
  * @param {string} [props.text] - @deprecated Width is now controlled via the `width` prop. When provided the text is rendered in a visually-hidden sizer span that gives the block its natural content width. Will be removed in a future major version
  * @param {ReactNode} [props.children] - @deprecated Pass children outside the Placeholder and control visibility at the call-site. Will be removed in a future major version
@@ -51,6 +52,8 @@ export const Placeholder = ({
   text,
   children,
   variant = "text",
+  style,
+  ...divProps
 }: PlaceholderProps): ReactElement => {
   useEffect(() => {
     if (isPending !== undefined) {
@@ -92,7 +95,8 @@ export const Placeholder = ({
         aria-label="loading"
         className={classNames("p-placeholder", className)}
         role="progressbar"
-        style={{ animationDelay: `${delay}ms`, width: legacyWidth, height }}
+        style={{ animationDelay: `${delay}ms`, width: legacyWidth, height, ...style }}
+        {...divProps}
       >
         {/* Hidden sizer: makes the block exactly as wide as the text/children */}
         <span aria-hidden="true" className="p-placeholder__sizer">
@@ -109,7 +113,8 @@ export const Placeholder = ({
       aria-label="loading"
       className={classNames("p-placeholder", className)}
       role="progressbar"
-      style={{ width: resolvedWidth, height }}
+      style={{ width: resolvedWidth, height, ...style }}
+      {...divProps}
     />
   );
 };
