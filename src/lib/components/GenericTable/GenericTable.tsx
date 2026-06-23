@@ -82,7 +82,7 @@ type GenericTableProps<T extends GenericTableData> = {
  * @param {(originalRow: T, index: number) => T[] | undefined} [props.getSubRows] - Function that returns the T.prop that contains nested T data
  * @param {string[]} [props.groupBy] - Column IDs to group rows by
  * @param {boolean} props.isLoading - Loading state to display placeholder content
- * @param {"spinner" | "skeleton"} [props.loadingVariant="spinner"] - Loading display style; "spinner" shows a single spinner row, "skeleton" renders skeletonRowCount shimmer rows using meta.skeleton per column when defined, falling back to a default shimmer bar
+ * @param {"spinner" | "skeleton"} [props.loadingVariant="spinner"] - Loading display style; "spinner" shows a single spinner row, "skeleton" renders skeletonRowCount pulsing skeleton rows using meta.skeleton per column when defined, falling back to a default Placeholder block
  * @param {number} [props.skeletonRowCount=10] - Number of skeleton rows to render when loadingVariant="skeleton"
  * @param {ReactNode} [props.noData] - Content to display when no data is available
  * @param {PaginationBarProps} [props.pagination] - Pagination configuration

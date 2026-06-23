@@ -16,6 +16,7 @@ import {
 } from "@tanstack/react-table";
 
 import { GenericTable } from "@/lib/components/GenericTable/GenericTable";
+import { Placeholder } from "@/lib/elements/Placeholder/Placeholder";
 
 type Machine = {
   id: number;
@@ -390,14 +391,12 @@ export const LoadingCustomSkeleton: Story = {
                 gap: "0.1rem",
               }}
             >
-              <div className="p-generic-table__skeleton-default" />
-              <div
-                style={{
-                  width: "50%",
-                  height: "1rem",
-                  marginTop: "0.25rem",
-                }}
-                className="p-generic-table__skeleton-default"
+              <Placeholder variant="block" width="100%" height="1.5rem" />
+              <Placeholder
+                variant="block"
+                width="50%"
+                height="1rem"
+                style={{ marginTop: "0.25rem" }}
               />
             </div>
           ),
@@ -407,10 +406,7 @@ export const LoadingCustomSkeleton: Story = {
         ...machineColumns[1],
         meta: {
           skeleton: () => (
-            <div
-              style={{ width: "50%" }}
-              className="p-generic-table__skeleton-default"
-            />
+            <Placeholder variant="block" width="50%" height="1.5rem" />
           ),
         },
       },
@@ -421,10 +417,7 @@ export const LoadingCustomSkeleton: Story = {
         meta: {
           cellAriaLabel: (row) => `Actions for ${row.original.fqdn}`,
           skeleton: () => (
-            <div
-              style={{ width: "2rem" }}
-              className="p-generic-table__skeleton-default"
-            />
+            <Placeholder variant="block" width="2rem" height="1.5rem" />
           ),
         },
       },

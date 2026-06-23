@@ -160,30 +160,6 @@
         background: transparent !important;
       }
     }
-
-    .p-generic-table__skeleton-default {
-      display: inline-block;
-      height: 3 * $sp-unit;
-      width: 70%;
-      background: linear-gradient(
-        90deg,
-        var(--vf-color-background-alt, #{$color-mid-light}) 25%,
-        var(--vf-color-background-default, #{$color-light}) 50%,
-        var(--vf-color-background-alt, #{$color-mid-light}) 75%
-      );
-      background-size: 200% 100%;
-      animation: p-generic-table-skeleton-shimmer 1.4s ease-in-out infinite;
-    }
-  }
-}
-
-@keyframes p-generic-table-skeleton-shimmer {
-  0% {
-    background-position: 200% center;
-  }
-
-  100% {
-    background-position: -200% center;
   }
 }
 
