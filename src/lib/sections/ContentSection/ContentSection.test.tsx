@@ -51,3 +51,16 @@ it("renders custom element for the title", () => {
     screen.getByRole("heading", { level: 5, name: "Test Title" }),
   ).toBeInTheDocument();
 });
+
+it("adds appropriate classnames for a pinned header", () => {
+  render(
+    <ContentSection>
+      <ContentSection.Header isPinned>
+        <ContentSection.Title>Test Title</ContentSection.Title>
+      </ContentSection.Header>
+      <ContentSection.Content>Test Content</ContentSection.Content>
+      <ContentSection.Footer>Test Footer</ContentSection.Footer>
+    </ContentSection>,
+  );
+  expect(document.querySelector(".is-pinned")).toBeInTheDocument();
+});
