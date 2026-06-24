@@ -33,8 +33,7 @@ const TableAllCheckbox = <T,>({ table, ...props }: TableCheckboxProps<T>) => {
   const isAllSelected =
     selectableRows.length > 0 &&
     selectedSelectableRows.length === selectableRows.length;
-  const isIndeterminate =
-    selectedSelectableRows.length > 0 && !isAllSelected;
+  const isIndeterminate = selectedSelectableRows.length > 0 && !isAllSelected;
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
@@ -76,8 +75,24 @@ const TableGroupCheckbox = <T,>({ row, ...props }: TableCheckboxProps<T>) => {
   const checkboxRef = useRef<HTMLInputElement>(null);
 
   if (!row) {
-    return null;
+    return (
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+      <label
+        className="p-checkbox--inline p-table-checkbox--group"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <input
+          className="p-checkbox__input"
+          disabled
+          type="checkbox"
+          {...props}
+        />
+        <span className="p-checkbox__label" />
+      </label>
+    );
   }
+
   const selectableSubRows = row.subRows.filter((subRow) =>
     subRow.getCanSelect(),
   );
@@ -123,15 +138,30 @@ const TableGroupCheckbox = <T,>({ row, ...props }: TableCheckboxProps<T>) => {
 
 const TableCheckbox = <T,>({
   row,
-  disabledTooltip,
+  disabledTooltip = "",
   isNested = false,
   ...props
 }: TableCheckboxProps<T> & {
-  disabledTooltip: string | ((row: Row<T>) => string);
-  isNested: boolean;
+  disabledTooltip?: string | ((row: Row<T>) => string);
+  isNested?: boolean;
 }): ReactElement | null => {
   if (!row) {
-    return null;
+    return (
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+      <label
+        className="p-checkbox--inline p-table-checkbox"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <input
+          className="p-checkbox__input"
+          disabled
+          type="checkbox"
+          {...props}
+        />
+        <span className="p-checkbox__label" />
+      </label>
+    );
   }
 
   const canSelect = row.getCanSelect();
@@ -145,8 +175,8 @@ const TableCheckbox = <T,>({
   const tooltipMessage = isNested
     ? "Selection is managed by the parent row"
     : !canSelect
-    ? disabledTooltipMessage
-    : false;
+      ? disabledTooltipMessage
+      : false;
 
   return (
     <Tooltip message={tooltipMessage} position="btm-right">
