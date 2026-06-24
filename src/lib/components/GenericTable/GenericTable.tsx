@@ -8,6 +8,7 @@ import {
   RefObject,
   SetStateAction,
   useMemo,
+  useState,
 } from "react";
 
 import {
@@ -21,6 +22,7 @@ import {
   Row,
   SortingState,
   useReactTable,
+  VisibilityState,
 } from "@tanstack/react-table";
 import classNames from "classnames";
 
@@ -33,7 +35,11 @@ import { useTableGrouping } from "@/lib/components/GenericTable/hooks/useTableGr
 import { useTableKeyboardNavigation } from "@/lib/components/GenericTable/hooks/useTableKeyboardNavigation";
 import { useTableScrollHeight } from "@/lib/components/GenericTable/hooks/useTableScrollHeight";
 import { useTableSorting } from "@/lib/components/GenericTable/hooks/useTableSorting";
-import { SelectionProps, GenericTableData } from "@/lib/components/GenericTable/types";
+import {
+  SelectionProps,
+  GenericTableData,
+  ColumnVisibilityProps,
+} from "@/lib/components/GenericTable/types";
 import { processColumnDefs } from "@/lib/components/GenericTable/utils/processColumnDefs";
 import { renderDataRows } from "@/lib/components/GenericTable/utils/renderDataRows";
 import { renderLoadingRows } from "@/lib/components/GenericTable/utils/renderLoadingRows";
@@ -53,14 +59,17 @@ type GenericTableProps<T extends GenericTableData> = {
   isLoading: boolean;
   loadingVariant?: "spinner" | "skeleton";
   skeletonRowCount?: number;
+  skeletonGroupCount?: number;
   noData?: ReactNode;
   pagination?: PaginationBarProps;
   pinGroup?: { value: string; isTop: boolean }[];
+  columnVisibility?: ColumnVisibilityProps;
   sorting?: ColumnSort[];
   selection?: SelectionProps<T>;
   setSorting?: Dispatch<SetStateAction<SortingState>>;
   showChevron?: boolean;
   variant?: "full-height" | "regular";
+  debug?: boolean;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 /**
@@ -75,6 +84,8 @@ type GenericTableProps<T extends GenericTableData> = {
  * @param {Object} props - Component props
  * @param {string} [props.className] - Additional CSS class for the table wrapper
  * @param {ColumnDef<T, Partial<T>>[]} props.columns - Column definitions
+ * @param {ColumnVisibilityProps} [props.columnVisibility] - Controlled column visibility state and setter; when omitted, visibility is managed internally. See {@link ColumnVisibilityProps} for all sub-options
+ *  (columnVisibility, setColumnVisibility).
  * @param {RefObject<HTMLElement | null>} [props.containerRef] - Reference to container for size calculations
  * @param {T[]} props.data - Table data array
  * @param {(row: Row<T>, column: Column<T>) => boolean} [props.filterCells] - Function to filter which cells should be displayed
@@ -83,7 +94,8 @@ type GenericTableProps<T extends GenericTableData> = {
  * @param {string[]} [props.groupBy] - Column IDs to group rows by
  * @param {boolean} props.isLoading - Loading state to display placeholder content
  * @param {"spinner" | "skeleton"} [props.loadingVariant="spinner"] - Loading display style; "spinner" shows a single spinner row, "skeleton" renders skeletonRowCount pulsing skeleton rows using meta.skeleton per column when defined, falling back to a default Placeholder block
- * @param {number} [props.skeletonRowCount=10] - Number of skeleton rows to render when loadingVariant="skeleton"
+ * @param {number} [props.skeletonRowCount=10] - Number of skeleton rows to render per group (or total when ungrouped) when loadingVariant="skeleton"
+ * @param {number} [props.skeletonGroupCount=2] - Number of skeleton group rows to render when loadingVariant="skeleton" and groupBy is set
  * @param {ReactNode} [props.noData] - Content to display when no data is available
  * @param {PaginationBarProps} [props.pagination] - Pagination configuration
  * @param {{ value: string; isTop: boolean }[]} [props.pinGroup] - Group pinning configuration
@@ -93,6 +105,7 @@ type GenericTableProps<T extends GenericTableData> = {
  *   (filterSelectable, disabledSelectionTooltip, rowSelection, rowSelectionLabelKey, setRowSelection).
  * @param {boolean} [props.showChevron=false] - Show group row expansion state chevrons
  * @param {"full-height" | "regular"} [props.variant="full-height"] - Table layout variant
+ * @param {boolean} [props.debug] - React Table debug output
  *
  * @returns {ReactElement} - The rendered table component
  *
@@ -120,6 +133,7 @@ export const GenericTable = <T extends GenericTableData>({
   "aria-label": tableAriaLabel,
   className,
   columns: initialColumns,
+  columnVisibility: externalColumnVisibility,
   containerRef,
   data: initialData,
   filterCells = () => true,
@@ -129,6 +143,7 @@ export const GenericTable = <T extends GenericTableData>({
   isLoading,
   loadingVariant = "spinner",
   skeletonRowCount = 10,
+  skeletonGroupCount = 2,
   noData,
   pagination,
   pinGroup,
@@ -137,6 +152,7 @@ export const GenericTable = <T extends GenericTableData>({
   setSorting: setExternalSorting,
   showChevron = false,
   variant = "full-height",
+  debug = false,
   ...divProps
 }: GenericTableProps<T>): ReactElement => {
   const { grouping, setGrouping, groupedData } = useTableGrouping({
@@ -164,6 +180,14 @@ export const GenericTable = <T extends GenericTableData>({
     isLoading,
   });
 
+  const [internalColumnVisibility, setInternalColumnVisibility] =
+    useState<VisibilityState>({});
+  const columnVisibility =
+    externalColumnVisibility?.columnVisibility ?? internalColumnVisibility;
+  const setColumnVisibility =
+    externalColumnVisibility?.setColumnVisibility ??
+    setInternalColumnVisibility;
+
   // Add chevron and selection columns if needed
   const canSelect = !!selection;
   const columns = useMemo(
@@ -171,13 +195,12 @@ export const GenericTable = <T extends GenericTableData>({
       processColumnDefs({
         canSelect,
         initialColumns,
-        isLoading,
         groupBy,
         getSubRows,
         selection,
         showChevron,
       }),
-    [canSelect, initialColumns, isLoading, groupBy, getSubRows],
+    [canSelect, initialColumns, groupBy, getSubRows],
   );
 
   // Configure table
@@ -188,6 +211,7 @@ export const GenericTable = <T extends GenericTableData>({
       grouping,
       expanded,
       sorting,
+      columnVisibility,
       rowSelection: selection?.rowSelection,
     },
     manualPagination: true,
@@ -195,6 +219,7 @@ export const GenericTable = <T extends GenericTableData>({
     onExpandedChange: setExpanded,
     onSortingChange: setSorting,
     onGroupingChange: setGrouping,
+    onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: selection?.setRowSelection,
     manualSorting: true,
     enableSorting: true,
@@ -207,6 +232,7 @@ export const GenericTable = <T extends GenericTableData>({
     enableRowSelection: selection?.filterSelectable ?? canSelect,
     enableMultiRowSelection: selection?.filterSelectable ?? canSelect,
     getRowId: (originalRow) => originalRow.id.toString(),
+    debugAll: debug,
   });
 
   // Handle accessibility
@@ -284,8 +310,10 @@ export const GenericTable = <T extends GenericTableData>({
                 table,
                 columns,
                 filterHeaders,
+                filterCells,
                 loadingVariant,
                 skeletonRowCount,
+                skeletonGroupCount,
               })
             : renderDataRows({
                 table,

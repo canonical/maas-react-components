@@ -1,6 +1,6 @@
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
-import type { Row, RowData, RowSelectionState } from "@tanstack/react-table";
+import  { Row, RowData, RowSelectionState, VisibilityState } from "@tanstack/react-table";
 
 declare module "@tanstack/react-table" {
   // TData / TValue must match the upstream signature; unused in the body by design.
@@ -28,4 +28,9 @@ export type SelectionProps<T extends GenericTableData> = {
   rowSelectionLabelKey?: keyof T;
   rowSelection?: RowSelectionState;
   setRowSelection?: Dispatch<SetStateAction<RowSelectionState>>;
+};
+
+export type ColumnVisibilityProps = {
+  columnVisibility: VisibilityState;
+  setColumnVisibility: Dispatch<SetStateAction<VisibilityState>>;
 };

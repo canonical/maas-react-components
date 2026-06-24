@@ -12,7 +12,6 @@ import { SelectionProps, GenericTableData } from "@/lib/components/GenericTable/
 export const processColumnDefs = <T extends GenericTableData>({
   canSelect,
   initialColumns,
-  isLoading,
   groupBy,
   getSubRows,
   selection,
@@ -20,18 +19,12 @@ export const processColumnDefs = <T extends GenericTableData>({
 }: {
   canSelect: boolean;
   initialColumns: ColumnDef<T, Partial<T>>[];
-  isLoading: boolean;
   groupBy: string[] | undefined;
   getSubRows?: (originalRow: T, index: number) => T[] | undefined;
   selection?: SelectionProps<T>;
   showChevron: boolean;
 }): ColumnDef<T, Partial<T>>[] => {
   let processedColumns = [...initialColumns];
-
-  // Spinner loading doesn't render real rows — skip injecting interactive columns.
-  if (isLoading) {
-    return processedColumns;
-  }
 
   // Add selection columns if needed
   if (canSelect && selection) {

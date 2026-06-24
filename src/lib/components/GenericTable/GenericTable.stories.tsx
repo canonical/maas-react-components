@@ -376,6 +376,20 @@ export const LoadingDefaultSkeleton: Story = {
 
 export const LoadingCustomSkeleton: Story = {
   name: "Loading (Custom skeleton)",
+  render: (args) => {
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+    return (
+      <GenericTable
+        {...args}
+        selection={{
+          rowSelection: rowSelection,
+          rowSelectionLabelKey: "fqdn",
+          setRowSelection: setRowSelection,
+        }}
+      />
+    );
+  },
   args: {
     columns: [
       {
@@ -391,7 +405,7 @@ export const LoadingCustomSkeleton: Story = {
                 gap: "0.1rem",
               }}
             >
-              <Placeholder variant="block" width="100%" height="1.5rem" />
+              <Placeholder variant="block" width="70%" height="1.5rem" />
               <Placeholder
                 variant="block"
                 width="50%"
@@ -403,11 +417,46 @@ export const LoadingCustomSkeleton: Story = {
         },
       },
       {
-        ...machineColumns[1],
+        id: "status",
+        accessorKey: "status",
         meta: {
+          cellAriaLabel: (row) =>
+            `${row.original.status}, ${row.getLeafRows().length} machines`,
           skeleton: () => (
-            <Placeholder variant="block" width="50%" height="1.5rem" />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.1rem",
+              }}
+            >
+              <Placeholder variant="block" width="10rem" height="1.5rem" />
+              <Placeholder
+                variant="block"
+                width="4rem"
+                height="1rem"
+                style={{ marginTop: "0.25rem" }}
+              />
+            </div>
           ),
+        },
+        cell: ({
+          row,
+          getValue,
+        }: {
+          row: Row<Machine>;
+          getValue: Getter<string>;
+        }) => {
+          return (
+            <div>
+              <div>
+                <strong>{getValue()}</strong>
+              </div>
+              <small className="u-text--muted">
+                {`${row.getLeafRows().length} machine${row.getLeafRows().length > 1 ? "s" : ""}`}
+              </small>
+            </div>
+          );
         },
       },
       machineColumns[2],
@@ -425,7 +474,19 @@ export const LoadingCustomSkeleton: Story = {
     data: [],
     isLoading: true,
     loadingVariant: "skeleton",
-    skeletonRowCount: 5,
+    skeletonRowCount: 2,
+    skeletonGroupCount: 2,
+    groupBy: ["status"],
+    filterCells: (row: Row<Machine>, column: Column<Machine>): boolean => {
+      if (row.getIsGrouped()) {
+        return ["status"].includes(column.id);
+      } else {
+        return !["status"].includes(column.id);
+      }
+    },
+    filterHeaders: (header: Header<Machine, unknown>): boolean =>
+      header.column.id !== "status",
+    showChevron: true,
   },
 };
 

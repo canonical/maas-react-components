@@ -64,6 +64,7 @@
         button {
           padding-top: 0;
           margin-bottom: 0;
+          color: var(--vf-color-text-default);
         }
 
         &:last-child {
@@ -158,6 +159,10 @@
       &:hover,
       &:focus-within {
         background: transparent !important;
+      }
+
+      td.p-generic-table__group-chevron {
+        opacity: 0.4;
       }
     }
   }
