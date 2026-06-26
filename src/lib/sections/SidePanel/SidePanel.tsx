@@ -80,7 +80,7 @@ const useCloseSidePanelOnEscPressed = (): void => {
  * openSidePanel({ component: EditForm, title: "Edit item", size: "wide" });
  * ```
  */
-const SidePanel = (): ReactElement => {
+export const SidePanel = (): ReactElement => {
   useCloseSidePanelOnEscPressed();
   useCloseSidePanelOnRouteChange();
   useResetSidePanelOnUnmount();
@@ -113,5 +113,3 @@ const SidePanel = (): ReactElement => {
     </AppAside>
   );
 };
-
-export default SidePanel;

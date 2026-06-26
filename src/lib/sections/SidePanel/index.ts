@@ -1,1 +1,3 @@
-export * from "./SidePanel";
+export { SidePanel } from "./SidePanel";
+export { SidePanelContextProvider, useSidePanel } from "./SidePanelContextProvider/SidePanelContextProvider";
+

@@ -2,10 +2,11 @@ import type { ComponentType } from "react";
 
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { MemoryRouter, useNavigate } from "react-router-dom";
+import { MemoryRouter, useNavigate } from "react-router";
 
-import SidePanel from "./SidePanel";
-import SidePanelContextProvider, {
+import { SidePanel } from "./SidePanel";
+import {
+  SidePanelContextProvider,
   useSidePanel,
 } from "./SidePanelContextProvider/SidePanelContextProvider";
 

@@ -2,10 +2,11 @@ import { useEffect } from "react";
 
 import { Button } from "@canonical/react-components";
 import { Meta, StoryObj } from "@storybook/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 
-import SidePanel from "@/lib/sections/SidePanel/SidePanel";
-import SidePanelContextProvider, {
+import { SidePanel } from "@/lib/sections/SidePanel/SidePanel";
+import {
+  SidePanelContextProvider,
   useSidePanel,
 } from "@/lib/sections/SidePanel/SidePanelContextProvider/SidePanelContextProvider";
 

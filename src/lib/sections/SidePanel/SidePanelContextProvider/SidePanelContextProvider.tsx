@@ -109,7 +109,7 @@ export const useSidePanel = (): SidePanelContextValue => {
  * }
  * ```
  */
-const SidePanelContextProvider = ({
+export const SidePanelContextProvider = ({
   children,
 }: PropsWithChildren): ReactElement => {
   const [state, setState] = useState<SidePanelState>({
@@ -169,5 +169,3 @@ const SidePanelContextProvider = ({
     </SidePanelContext.Provider>
   );
 };
-
-export default SidePanelContextProvider;

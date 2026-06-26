@@ -39,7 +39,7 @@ export default defineConfig({
         "react/jsx-runtime",
         "react-dom",
         "vanilla-framework",
-        "react-router-dom",
+        "react-router",
       ],
       output: {
         globals: {
@@ -47,7 +47,7 @@ export default defineConfig({
           "@canonical/react-components": "@canonical/react-components",
           "react/jsx-runtime": "react/jsx-runtime",
           "react-dom": "ReactDOM",
-          "react-router-dom": "react-router-dom",
+          "react-router": "react-router",
         },
       },
     },
