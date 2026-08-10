@@ -1,18 +1,25 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 
+import { SidePanelContextProvider } from "@/lib";
 import Layout from "@/lib/sections/Layout/Layout";
 
 it("renders header", async () => {
   render(
-    <Layout
-      isSecondaryNavVisible={false}
-      navigation={null}
-      pageTitle="MAAS Site Manager"
-      secondaryNavigation={null}
-      view="settings"
-    >
-      <div />
-    </Layout>,
+    <MemoryRouter>
+      <SidePanelContextProvider>
+        <Layout
+          isSecondaryNavVisible={false}
+          navigation={null}
+          pageTitle="MAAS Site Manager"
+          secondaryNavigation={null}
+          view="settings"
+        >
+          <div />
+        </Layout>
+        ,
+      </SidePanelContextProvider>
+    </MemoryRouter>,
   );
 
   await waitFor(() => {
