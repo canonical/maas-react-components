@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { ReactElement, useEffect } from "react";
 
 import { Button } from "@canonical/react-components";
 import { Meta, StoryObj } from "@storybook/react";
@@ -36,13 +36,17 @@ const ExampleFormContent = () => (
 const AutoOpenPanel = ({
   title,
   size = "regular",
+  component = ExampleFormContent,
+  componentProps,
 }: {
   title: string;
   size?: SidePanelSize;
+  component?: (props: object) => ReactElement;
+  componentProps?: Record<string, unknown>;
 }) => {
   const { openSidePanel } = useSidePanel();
   useEffect(() => {
-    openSidePanel({ component: ExampleFormContent, title, size });
+    openSidePanel({ component, title, size, props: componentProps });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return null;
@@ -151,3 +155,21 @@ export const LargeSize: Story = {
     </>
   ),
 };
+
+export const Skeleton: Story = {
+  render: () => (
+    <>
+      <SidePanel />
+      <AutoOpenPanel component={SidePanel.Skeleton} title="Panel title" componentProps={{ hasTitle: false }} />
+    </>
+  )
+}
+
+export const SkeletonWithTitle: Story = {
+  render: () => (
+    <>
+      <SidePanel />
+      <AutoOpenPanel component={SidePanel.Skeleton} title="" componentProps={{ hasTitle: true }} />
+    </>
+  )
+}
