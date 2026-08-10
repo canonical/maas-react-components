@@ -7,8 +7,8 @@ import { useLocation } from "react-router";
 
 import { useSidePanel } from "./SidePanelContextProvider/SidePanelContextProvider";
 
+import { Placeholder } from "@/lib/elements";
 import { ContentSection } from "@/lib/sections/ContentSection";
-
 
 const useCloseSidePanelOnRouteChange = (): void => {
   const location = useLocation();
@@ -19,7 +19,7 @@ const useCloseSidePanelOnRouteChange = (): void => {
       closeSidePanel();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [location.pathname, location.search, location.hash]
+    [location.pathname, location.search, location.hash],
   );
 };
 
@@ -34,7 +34,7 @@ const useResetSidePanelOnUnmount = (): void => {
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [],
   );
 };
 
@@ -113,3 +113,36 @@ export const SidePanel = (): ReactElement => {
     </AppAside>
   );
 };
+
+const SidePanelSkeleton = ({ hasTitle }: { hasTitle?: boolean }): ReactElement => {
+  return (
+    <ContentSection aria-hidden="true" className="aside-skeleton">
+      {hasTitle && (
+        <ContentSection.Title>
+          <Placeholder height="2rem" variant="block" width="16ch" />
+        </ContentSection.Title>
+      )}
+      <ContentSection.Content className="aside-skeleton__form">
+        <div className="layout-skeleton__form-description">
+          <Placeholder height="1.5rem" variant="block" width="100%" />
+          <Placeholder height="1.5rem" variant="block" width="70%" />
+        </div>
+        {Array.from({ length: 2 }).map((_, index) => (
+          <div
+            className="layout-skeleton__form-field"
+            key={`aside-skeleton-field-${index}`}
+          >
+            <Placeholder height="1.5rem" variant="block" width="14ch" />
+            <Placeholder height="2.5rem" variant="block" width="100%" />
+          </div>
+        ))}
+      </ContentSection.Content>
+      <ContentSection.Footer className="aside-skeleton__footer">
+        <Placeholder height="2rem" variant="block" width="8ch" />
+        <Placeholder height="2rem" variant="block" width="10ch" />
+      </ContentSection.Footer>
+    </ContentSection>
+  );
+};
+
+SidePanel.Skeleton = SidePanelSkeleton;
