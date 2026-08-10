@@ -1,9 +1,9 @@
-import Layout from "./Layout";
+import { render, screen, waitFor } from "@testing-library/react";
 
-import { renderWithMemoryRouter, screen, waitFor } from "@/utils/test-utils";
+import Layout from "@/lib/sections/Layout/Layout";
 
 it("renders header", async () => {
-  renderWithMemoryRouter(
+  render(
     <Layout
       isSecondaryNavVisible={false}
       navigation={null}
@@ -16,6 +16,8 @@ it("renders header", async () => {
   );
 
   await waitFor(() => {
-    expect(screen.getByRole("heading", { level: 1, name: /MAAS Site Manager/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 1, name: /MAAS Site Manager/i }),
+    ).toBeInTheDocument();
   });
 });
