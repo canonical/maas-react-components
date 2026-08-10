@@ -92,6 +92,12 @@
     "vite-plugin-dts": "^4.5.3",
     "vitest": "^3.0.8"
   },
+  "overrides": {
+    "@canonical/react-components": {
+      "@types/react": "$@types/react",
+      "@types/react-dom": "$@types/react-dom"
+    }
+  },
   "peerDependencies": {
     "@canonical/react-components": "^4.5.0",
     "@tanstack/react-table": "^8.15.3",
