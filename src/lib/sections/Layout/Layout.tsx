@@ -9,6 +9,8 @@ import DocumentTitle from "./components/DocumentTitle/DocumentTitle";
 import { ContentSection, GenericTable, Placeholder } from "@/lib";
 import { SidePanel } from "@/lib/sections/SidePanel";
 
+import "./Layout.scss";
+
 type LayoutProps = {
   className?: string;
   children: ReactNode;
@@ -20,7 +22,7 @@ type LayoutProps = {
   statusBar?: ReactNode;
 };
 
-const Layout = ({
+export const Layout = ({
   className,
   children,
   pageTitle,
@@ -182,5 +184,3 @@ const LayoutSkeleton = ({
 };
 
 Layout.Skeleton = LayoutSkeleton;
-
-export default Layout;
