@@ -4,8 +4,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterAll, beforeAll } from "vitest";
 
-import { SidePanelContextProvider } from "@/lib";
-import Layout from "@/lib/sections/Layout/Layout";
+import { Layout, SidePanelContextProvider } from "@/lib";
 
 beforeAll(() => {
   global.ResizeObserver = class {
