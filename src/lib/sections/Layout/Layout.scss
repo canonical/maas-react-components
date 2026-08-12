@@ -1,0 +1,126 @@
+@import "vanilla-framework";
+
+.l-main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  @media (min-width: $breakpoint-small) {
+    flex-direction: row;
+  }
+
+  .l-main__nav {
+    flex-shrink: 0;
+
+    @media (min-width: $breakpoint-small) {
+      height: 100vh;
+    }
+  }
+
+  .l-main__content {
+    width: 100%;
+    overflow-y: auto;
+  }
+}
+
+.l-aside {
+  background: var(--vf-color-background-default);
+
+  .section-header--side-panel {
+    display: none;
+  }
+}
+
+.aside-skeleton {
+  .aside-skeleton__header {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .aside-skeleton__form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding-bottom: 0.75rem;
+
+    .aside-skeleton__form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+
+  .aside-skeleton__footer {
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+  }
+}
+
+.layout-skeleton {
+  .layout-skeleton__header {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .layout-skeleton__pagination {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--vf-color-border-default);
+    border-bottom: 1px solid var(--vf-color-border-default);
+
+    .layout-skeleton__pagination-controls {
+      display: flex;
+      gap: 1rem;
+    }
+  }
+
+  .p-generic-table.layout-skeleton__table {
+    padding-top: 1rem;
+
+    th.p-column-header {
+      .p-placeholder {
+        height: $sp-large;
+      }
+    }
+
+    td.p-generic-table__skeleton-cell {
+      & > div {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      &.actions {
+        display: flex;
+        justify-content: end;
+
+        & > div {
+          display: flex;
+          flex-direction: row;
+          justify-content: end;
+          gap: 0.5rem;
+          padding-right: 0.5rem;
+        }
+      }
+
+      .p-placeholder {
+        height: $sp-large;
+      }
+    }
+  }
+
+  .layout-skeleton__form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding-bottom: 0.75rem;
+
+    .layout-skeleton__form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+}
