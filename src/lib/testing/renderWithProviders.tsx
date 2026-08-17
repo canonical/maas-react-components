@@ -9,33 +9,31 @@ import type { InitialEntry } from "@remix-run/router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { RenderOptions, RenderResult } from "@testing-library/react";
 import { render } from "@testing-library/react";
-import { Provider } from "react-redux";
 import { createMemoryRouter, RouterProvider } from "react-router";
-import type { Store } from "redux";
 
 import { SidePanelContextProvider } from "@/lib";
-import { createTestStore } from "@/lib/testing/utils";
 
 /** The router instance returned by `createMemoryRouter` / `createBrowserRouter`. */
 type DataRouter = ReturnType<typeof createMemoryRouter>;
 
 /**
  * Renders a component with all test-relevant providers (query client, side
- * panel, Redux, and router).
+ * panel, and router).
  *
- * @typeParam S - The Redux state shape for this project.
+ * Any project-specific providers (e.g. a Redux `Provider`, a WebSocket
+ * context, etc.) should be supplied via the `AdditionalProviders` option -
+ * this library has no dependency on Redux or any other state management
+ * library.
  *
  * @param ui       - The component to render.
- * @param options  - Rendering options including optional Redux state, a custom
- *                   store, router entries, and an `AdditionalProviders` wrapper
- *                   for project-specific providers (e.g. WebSocketProvider).
+ * @param options  - Rendering options including router entries and an
+ *                   `AdditionalProviders` wrapper for project-specific
+ *                   providers (e.g. a Redux `Provider`, WebSocketProvider).
  */
-export const renderWithProviders = <S extends object = Record<string, unknown>>(
+export const renderWithProviders = (
   ui: ReactNode,
   options?: Omit<RenderOptions, "wrapper"> &
     Partial<{
-      state: Partial<S>;
-      store: Store;
       initialEntries: InitialEntry[];
       pattern: string;
       AdditionalProviders: ComponentType<{ children: ReactNode }>;
@@ -43,8 +41,7 @@ export const renderWithProviders = <S extends object = Record<string, unknown>>(
 ): {
   result: RenderResult;
   router: DataRouter;
-  rerender: (ui: ReactNode, opts?: { state?: S }) => void;
-  store: Store;
+  rerender: (ui: ReactNode) => void;
 } => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, staleTime: Infinity } },
@@ -55,20 +52,16 @@ export const renderWithProviders = <S extends object = Record<string, unknown>>(
     { initialEntries: options?.initialEntries || ["/"] },
   );
 
-  let store: Store = options?.store ?? createTestStore<S>(options?.state);
-
   const AdditionalProviders = options?.AdditionalProviders;
 
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       <SidePanelContextProvider>
-        <Provider store={store}>
-          {AdditionalProviders ? (
-            <AdditionalProviders>{children}</AdditionalProviders>
-          ) : (
-            children
-          )}
-        </Provider>
+        {AdditionalProviders ? (
+          <AdditionalProviders>{children}</AdditionalProviders>
+        ) : (
+          children
+        )}
       </SidePanelContextProvider>
     </QueryClientProvider>
   );
@@ -78,13 +71,7 @@ export const renderWithProviders = <S extends object = Record<string, unknown>>(
     ...options,
   });
 
-  const customRerender = (
-    ui: ReactNode,
-    { state: newState }: { state?: S } = {},
-  ) => {
-    if (newState) {
-      store = createTestStore<S>({ ...options?.state, ...newState });
-    }
+  const customRerender = (ui: ReactNode) => {
     const newRouter = createMemoryRouter(
       [{ path: options?.pattern ?? "*", element: ui }],
       { initialEntries: options?.initialEntries || ["/"] },
@@ -93,5 +80,5 @@ export const renderWithProviders = <S extends object = Record<string, unknown>>(
     return rendered.rerender(<RouterProvider router={newRouter} />);
   };
 
-  return { result: rendered, rerender: customRerender, router, store };
+  return { result: rendered, rerender: customRerender, router };
 };
