@@ -7,8 +7,8 @@ import { defineConfig } from "vitest/config";
 import pkg from "./package.json";
 
 // Extra packages to externalize that aren't in peerDependencies directly
-// (transitive deps imported by src/lib/testing/utils.tsx).
-const testingExternals = ["@remix-run/router", "redux"];
+// (transitive deps imported by src/lib/testing helpers).
+const testingExternals = ["@remix-run/router"];
 
 // Derived from peerDependencies so the external list stays automatically in
 // sync as peers are added/removed.
