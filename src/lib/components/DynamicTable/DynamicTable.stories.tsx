@@ -1,5 +1,5 @@
 import { Button, Icon } from "@canonical/react-components";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 import { DynamicTable } from "@/lib/components/DynamicTable/DynamicTable";
 

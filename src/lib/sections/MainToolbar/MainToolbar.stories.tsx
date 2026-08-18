@@ -1,5 +1,5 @@
 import { Button, SearchBox, Select } from "@canonical/react-components";
-import { Meta } from "@storybook/react";
+import { Meta } from "@storybook/react-vite";
 
 import { MainToolbar } from "@/lib/sections/MainToolbar/MainToolbar";
 

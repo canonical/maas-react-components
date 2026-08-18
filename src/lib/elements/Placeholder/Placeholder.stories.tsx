@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols -- Storybook story exports are consumed by
 // the Storybook runtime, not by TypeScript imports. The IDE cannot see that usage.
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Placeholder } from "@/lib/elements/Placeholder/Placeholder";
 

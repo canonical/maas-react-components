@@ -1,5 +1,5 @@
 import { Input } from "@canonical/react-components";
-import type { Meta } from "@storybook/react";
+import type { Meta } from "@storybook/react-vite";
 
 import { InputGroup } from ".";
 

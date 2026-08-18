@@ -1,4 +1,4 @@
-import { Meta } from "@storybook/react";
+import { Meta } from "@storybook/react-vite";
 
 import { Navigation } from "@/lib/sections/Navigation/Navigation";
 

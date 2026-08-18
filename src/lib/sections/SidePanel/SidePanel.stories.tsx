@@ -1,7 +1,7 @@
 import { ReactElement, useEffect } from "react";
 
 import { Button } from "@canonical/react-components";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 import { MemoryRouter } from "react-router";
 
 import { SidePanel } from "@/lib/sections/SidePanel/SidePanel";
