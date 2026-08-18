@@ -9,3 +9,4 @@ export const BREAKPOINTS = {
   // Large desktop
   xLarge: 1681,
 };
+

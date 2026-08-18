@@ -3,7 +3,7 @@ import { vi } from "vitest";
 
 import { DynamicTable } from "./DynamicTable";
 
-import { BREAKPOINTS } from "@/constants";
+import { BREAKPOINTS } from "@/lib/constants";
 
 const offset = 100;
 

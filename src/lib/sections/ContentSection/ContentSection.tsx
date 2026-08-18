@@ -4,7 +4,7 @@ import { Col, Row } from "@canonical/react-components";
 import classNames from "classnames";
 
 import "./ContentSection.scss";
-import { AsProp } from "@/types";
+import { AsProp } from "@/lib/types";
 
 interface CommonContentSectionProps extends React.PropsWithChildren {
   className?: string;

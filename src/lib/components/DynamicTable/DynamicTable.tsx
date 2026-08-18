@@ -13,7 +13,7 @@ import {
 import type { RowData, Table } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import { BREAKPOINTS } from "@/constants";
+import { BREAKPOINTS } from "@/lib/constants";
 import { Placeholder } from "@/lib/elements";
 import "./DynamicTable.scss";
 
