@@ -9,7 +9,8 @@ import { vi } from "vitest";
  */
 export const spyOnMutation = (obj: unknown, methodName: string) => {
   const mockMutate = vi.fn();
-  vi.spyOn(obj, methodName as never).mockImplementation(() => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  vi.spyOn(obj as any, methodName as any).mockImplementation(() => ({
     mutate: mockMutate,
     mutateAsync: vi.fn(),
     data: undefined,
