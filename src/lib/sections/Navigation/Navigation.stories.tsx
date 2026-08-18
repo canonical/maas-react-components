@@ -2,6 +2,9 @@ import { Button } from "@canonical/react-components";
 import { Meta } from "@storybook/react-vite";
 
 import { Navigation, NavigationBar } from "@/lib";
+import { ContentSection } from "@/lib/sections/ContentSection/ContentSection";
+import { WithInputGroup } from "@/lib/sections/FormSection/FormSection.stories";
+import { Example as MainToolbarExample } from "@/lib/sections/MainToolbar/MainToolbar.stories";
 
 const meta: Meta<typeof Navigation> = {
   title: "Sections/Navigation",
@@ -235,10 +238,6 @@ const meta: Meta<typeof Navigation> = {
 
 export default meta;
 export const Example = { args: { isCollapsed: false } };
-
-import { ContentSection } from "@/lib/sections/ContentSection/ContentSection";
-import { WithInputGroup } from "@/lib/sections/FormSection/FormSection.stories";
-import { Example as MainToolbarExample } from "@/lib/sections/MainToolbar/MainToolbar.stories";
 
 export const Layout = {
   args: {
