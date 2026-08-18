@@ -26,11 +26,13 @@ describe("GenericTable", () => {
   // Set up ResizeObserver mock before each test
   beforeEach(() => {
     // Mock the ResizeObserver
-    global.ResizeObserver = vi.fn().mockImplementation(() => ({
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn(),
-    }));
+    global.ResizeObserver = vi.fn().mockImplementation(function () {
+      return {
+        observe: vi.fn(),
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
+      };
+    });
 
     // Mock window event listeners
     window.addEventListener = vi.fn();
