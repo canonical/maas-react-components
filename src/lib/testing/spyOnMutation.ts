@@ -1,4 +1,5 @@
 import { vi } from "vitest";
+import type { Mock } from "vitest";
 
 /**
  * Spies on a given mutation hook to observe the mutate function.
@@ -7,8 +8,11 @@ import { vi } from "vitest";
  * @param methodName - The name of the mutation hook to spy on.
  * @returns A mock `mutate` function that can be observed with `expect`.
  */
-export const spyOnMutation = (obj: unknown, methodName: string) => {
-  const mockMutate = vi.fn();
+export const spyOnMutation = (
+  obj: unknown,
+  methodName: string,
+): Mock<(...args: unknown[]) => unknown> => {
+  const mockMutate: Mock<(...args: unknown[]) => unknown> = vi.fn();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   vi.spyOn(obj as any, methodName as any).mockImplementation(() => ({
     mutate: mockMutate,

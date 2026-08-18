@@ -1,16 +1,20 @@
 import { vi } from "vitest";
+import type { Mock } from "vitest";
 
 /**
  * Mocks the `useSidePanel` hook, returning `mockOpen`/`mockClose` spies.
  */
-export const mockSidePanel = async () => {
+export const mockSidePanel = async (): Promise<{
+  mockOpen: Mock<(...args: unknown[]) => unknown>;
+  mockClose: Mock<(...args: unknown[]) => unknown>;
+}> => {
   const mockUseSidePanel = vi.spyOn(
     await import("../index"), // the library's own barrel export
     "useSidePanel",
   );
 
-  const mockOpen = vi.fn();
-  const mockClose = vi.fn();
+  const mockOpen: Mock<(...args: unknown[]) => unknown> = vi.fn();
+  const mockClose: Mock<(...args: unknown[]) => unknown> = vi.fn();
   let isOpen = false;
 
   const makeReturnValue = () => ({
