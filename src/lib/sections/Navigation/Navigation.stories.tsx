@@ -1,7 +1,7 @@
 import { Button } from "@canonical/react-components";
 import { Meta } from "@storybook/react-vite";
 
-import { Navigation, NavigationBar } from "./Navigation";
+import { Navigation, NavigationBar } from "@/lib";
 
 const meta: Meta<typeof Navigation> = {
   title: "Sections/Navigation",
