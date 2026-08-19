@@ -7,7 +7,7 @@ import classNames from "classnames";
 import DocumentTitle from "./components/DocumentTitle/DocumentTitle";
 
 import { ContentSection, GenericTable, Placeholder } from "@/lib";
-import { SidePanel } from "@/lib/sections/SidePanel";
+import { SidePanel, type SidePanelTitles } from "@/lib/sections/SidePanel";
 
 import "./Layout.scss";
 
@@ -19,6 +19,7 @@ type LayoutProps = {
   isSecondaryNavVisible: boolean;
   navigation: ReactNode;
   secondaryNavigation: ReactNode;
+  sidePanelTitles?: SidePanelTitles;
   statusBar?: ReactNode;
 };
 
@@ -30,6 +31,7 @@ export const Layout = ({
   isSecondaryNavVisible,
   navigation,
   secondaryNavigation,
+  sidePanelTitles = "auto",
   statusBar,
 }: LayoutProps): ReactElement => {
   return (
@@ -56,7 +58,7 @@ export const Layout = ({
             </div>
           </div>
         </AppMain>
-        <SidePanel />
+        <SidePanel sidePanelTitles={sidePanelTitles} />
         {statusBar}
       </Application>
     </>

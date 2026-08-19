@@ -5,10 +5,9 @@ import { AppAside, useOnEscapePressed } from "@canonical/react-components";
 import classNames from "classnames";
 import { useLocation } from "react-router";
 
-import { useSidePanel } from "./SidePanelContextProvider/SidePanelContextProvider";
+import { useSidePanel, Placeholder, ContentSection } from "@/lib";
 
-import { Placeholder } from "@/lib/elements";
-import { ContentSection } from "@/lib/sections/ContentSection";
+export type SidePanelTitles = "auto" | "custom";
 
 const useCloseSidePanelOnRouteChange = (): void => {
   const location = useLocation();
@@ -49,7 +48,8 @@ const useCloseSidePanelOnEscPressed = (): void => {
  * Slide-in aside panel rendered at the edge of the page.
  *
  * Reads all state from the nearest `SidePanelContextProvider` via `useSidePanel`.
- * The panel has no props of its own — open it by calling `openSidePanel` from the hook.
+ * Open it by calling `openSidePanel` from the hook. Use `sidePanelTitles="custom"`
+ * when the rendered panel component provides its own visible title.
  *
  * Behaviour:
  * - Collapses automatically when the current route changes
@@ -63,7 +63,7 @@ const useCloseSidePanelOnEscPressed = (): void => {
  * - `"large"` — adds the `is-large` CSS modifier
  *
  * @requires SidePanelContextProvider — must be present higher in the tree
- * @requires A React Router context — must be rendered inside a Router
+ * @requires _ React Router context — must be rendered inside a Router
  *
  * @example
  * ```tsx
@@ -80,7 +80,11 @@ const useCloseSidePanelOnEscPressed = (): void => {
  * openSidePanel({ component: EditForm, title: "Edit item", size: "wide" });
  * ```
  */
-export const SidePanel = (): ReactElement => {
+export const SidePanel = ({
+  sidePanelTitles = "auto",
+}: {
+  sidePanelTitles?: SidePanelTitles;
+}): ReactElement => {
   useCloseSidePanelOnEscPressed();
   useCloseSidePanelOnRouteChange();
   useResetSidePanelOnUnmount();
@@ -99,7 +103,7 @@ export const SidePanel = (): ReactElement => {
       id="aside-panel"
     >
       <ContentSection>
-        {title ? (
+        {sidePanelTitles === "auto" && title ? (
           <div className="row section-header section-header--side-panel">
             <div className="col-12">
               <h3 className="section-header__title u-flex--no-shrink p-heading--4">
@@ -114,7 +118,11 @@ export const SidePanel = (): ReactElement => {
   );
 };
 
-const SidePanelSkeleton = ({ hasTitle }: { hasTitle?: boolean }): ReactElement => {
+const SidePanelSkeleton = ({
+  hasTitle,
+}: {
+  hasTitle?: boolean;
+}): ReactElement => {
   return (
     <ContentSection aria-hidden="true" className="aside-skeleton">
       {hasTitle && (
