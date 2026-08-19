@@ -8,3 +8,4 @@ export type Prettify<T> = {
 export interface AsProp<C extends ElementType> {
   as?: C;
 }
+

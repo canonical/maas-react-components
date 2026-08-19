@@ -1,7 +1,7 @@
 import { AriaAttributes, Dispatch, SetStateAction, useState } from "react";
 
 import { Input } from "@canonical/react-components";
-import type { Meta } from "@storybook/react";
+import type { Meta } from "@storybook/react-vite";
 
 import { NestedFormGroup } from ".";
 

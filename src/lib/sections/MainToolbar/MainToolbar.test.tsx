@@ -5,11 +5,13 @@ import { MainToolbar } from ".";
 
 const originalObserver = window.ResizeObserver;
 beforeEach(() => {
-  window.ResizeObserver = vi.fn(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  }));
+  window.ResizeObserver = vi.fn().mockImplementation(function () {
+    return {
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn(),
+    };
+  });
 });
 afterEach(() => {
   window.ResizeObserver = originalObserver;

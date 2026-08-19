@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 
 import { Button, Icon, Tooltip } from "@canonical/react-components";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 import {
   Column,
   ColumnDef,

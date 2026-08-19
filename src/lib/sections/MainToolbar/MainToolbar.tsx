@@ -3,7 +3,7 @@ import * as React from "react";
 import classNames from "classnames";
 
 import "./MainToolbar.scss";
-import { AsProp } from "@/types";
+import { AsProp } from "@/lib/types";
 
 function useResizeObserver(ref: React.RefObject<HTMLElement | null>) {
   const [dimensions, setDimensions] = React.useState<DOMRect | null>(null);

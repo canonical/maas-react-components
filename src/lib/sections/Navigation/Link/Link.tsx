@@ -2,7 +2,7 @@ import { ComponentProps, ElementType } from "react";
 
 import classNames from "classnames";
 
-import { AsProp } from "@/types";
+import { AsProp } from "@/lib/types";
 
 export interface NavigationLinkProps extends ComponentProps<typeof Link> {}
 

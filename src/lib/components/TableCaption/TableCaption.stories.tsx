@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 import { DynamicTable } from "@/lib/components/DynamicTable";
 import { TableCaption } from "@/lib/components/TableCaption/TableCaption";

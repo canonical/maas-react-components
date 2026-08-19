@@ -34,7 +34,7 @@ module.exports = {
   settings: {
     "import/resolver": {
       typescript: {
-        alias: { "@": path.resolve(__dirname, "src") },
+        alias: { "@": [path.resolve(__dirname, "src")] },
       },
     },
     react: {

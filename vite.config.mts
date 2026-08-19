@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import dts from "vite-plugin-dts";
 import { defineConfig } from "vitest/config";
 
-import pkg from "./package.json";
+import pkg from "./package.json" with { type: "json" };
 
 // Extra packages to externalize that aren't in peerDependencies directly
 // (transitive deps imported by src/lib/testing helpers).
@@ -36,20 +36,22 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        api: "modern",
         quietDeps: true,
         silenceDeprecations: ["import", "global-builtin"],
       },
     },
   },
   resolve: {
-    alias: { "@": path.resolve(__dirname, "src") },
+    alias: { "@": path.resolve(import.meta.dirname, "src") },
   },
   build: {
     lib: {
       entry: {
-        index: path.resolve(__dirname, "src/lib/index.ts"),
-        "testing/index": path.resolve(__dirname, "src/lib/testing/index.ts"),
+        index: path.resolve(import.meta.dirname, "src/lib/index.ts"),
+        "testing/index": path.resolve(
+          import.meta.dirname,
+          "src/lib/testing/index.ts",
+        ),
       },
       name: pkg.name,
       formats: ["es"],

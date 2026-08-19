@@ -2,7 +2,7 @@ import { ComponentProps, ElementType, ReactNode } from "react";
 
 import classNames from "classnames";
 
-import { AsProp } from "@/types";
+import { AsProp } from "@/lib/types";
 
 export interface NavigationLogoProps extends ComponentProps<typeof Logo> {
   children: ReactNode;

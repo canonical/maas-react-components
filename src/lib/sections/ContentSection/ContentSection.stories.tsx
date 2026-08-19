@@ -1,5 +1,5 @@
 import { Button } from "@canonical/react-components";
-import { Meta } from "@storybook/react";
+import { Meta } from "@storybook/react-vite";
 
 import { ContentSection } from "@/lib/sections/ContentSection/ContentSection";
 import { WithInputGroup } from "@/lib/sections/FormSection/FormSection.stories";
