@@ -8,5 +8,10 @@
     "@semantic-release/changelog",
     "@semantic-release/npm",
     "@semantic-release/github"
+  ],
+  "releaseRules": [
+    { 
+      "type": "chore", "release": "patch"
+    }
   ]
 }
