@@ -4,11 +4,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { MemoryRouter, useNavigate } from "react-router";
 
-import { SidePanel } from "./SidePanel";
-import {
-  SidePanelContextProvider,
-  useSidePanel,
-} from "./SidePanelContextProvider/SidePanelContextProvider";
+import { SidePanel, SidePanelContextProvider, useSidePanel } from "@/lib";
 
 const TestContent = () => <p>Panel content</p>;
 
@@ -48,14 +44,17 @@ const NavigateButton = ({ to }: { to: string }) => {
   return <button onClick={() => navigate(to)}>Navigate</button>;
 };
 
-const renderWithControls = (initialPath = "/") =>
+const renderWithControls = (
+  initialPath = "/",
+  sidePanelTitles?: "auto" | "custom",
+) =>
   render(
     <MemoryRouter initialEntries={[initialPath]}>
       <SidePanelContextProvider>
         <OpenPanelButton component={TestContent} />
         <ClosePanelButton />
         <NavigateButton to="/other" />
-        <SidePanel />
+        <SidePanel sidePanelTitles={sidePanelTitles} />
       </SidePanelContextProvider>
     </MemoryRouter>,
   );
@@ -85,10 +84,24 @@ describe("SidePanel", () => {
     ).toBeInTheDocument();
   });
 
+  it("does not render the panel title when custom titles are enabled", async () => {
+    renderWithControls("/", "custom");
+    await userEvent.click(screen.getByRole("button", { name: "Open" }));
+
+    expect(
+      screen.queryByRole("heading", { name: "Test Title" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("complementary", { name: "Test Title" }),
+    ).toBeInTheDocument();
+  });
+
   it("uses the title as the accessible label for the aside element", async () => {
     renderWithControls();
     await userEvent.click(screen.getByRole("button", { name: "Open" }));
-    expect(screen.getByRole("complementary", { name: "Test Title" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("complementary", { name: "Test Title" }),
+    ).toBeInTheDocument();
   });
 
   it("hides the component content after closing", async () => {
@@ -172,9 +185,7 @@ describe("useSidePanel", () => {
   it("updates the panel size via setSidePanelSize", async () => {
     const SetSizeButton = () => {
       const { setSidePanelSize } = useSidePanel();
-      return (
-        <button onClick={() => setSidePanelSize("wide")}>Set wide</button>
-      );
+      return <button onClick={() => setSidePanelSize("wide")}>Set wide</button>;
     };
 
     render(
@@ -197,9 +208,7 @@ describe("useSidePanel", () => {
   it("resets size to regular when the panel is closed", async () => {
     const SetSizeButton = () => {
       const { setSidePanelSize } = useSidePanel();
-      return (
-        <button onClick={() => setSidePanelSize("wide")}>Set wide</button>
-      );
+      return <button onClick={() => setSidePanelSize("wide")}>Set wide</button>;
     };
 
     render(

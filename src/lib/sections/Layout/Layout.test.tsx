@@ -1,10 +1,11 @@
 import { ComponentProps, lazy } from "react";
 
 import { render, screen, waitFor } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { afterAll, beforeAll } from "vitest";
 
-import { Layout, SidePanelContextProvider } from "@/lib";
+import { Layout, SidePanelContextProvider, useSidePanel } from "@/lib";
 
 beforeAll(() => {
   global.ResizeObserver = class {
@@ -26,6 +27,22 @@ const layoutProps: ComponentProps<typeof Layout> = {
   secondaryNavigation: null,
   view: "settings",
   children: <div />,
+};
+
+const OpenSidePanelButton = () => {
+  const { openSidePanel } = useSidePanel();
+  return (
+    <button
+      onClick={() =>
+        openSidePanel({
+          component: () => <p>Panel content</p>,
+          title: "Panel title",
+        })
+      }
+    >
+      Open panel
+    </button>
+  );
 };
 
 describe("Layout", () => {
@@ -71,6 +88,23 @@ describe("Layout", () => {
     );
 
     expect(document.getElementById("aside-panel")).toBeInTheDocument();
+  });
+
+  it("uses custom side panel titles when requested", async () => {
+    render(
+      <MemoryRouter>
+        <SidePanelContextProvider>
+          <Layout {...layoutProps} sidePanelTitles="custom">
+            <OpenSidePanelButton />
+          </Layout>
+        </SidePanelContextProvider>
+      </MemoryRouter>,
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Open panel" }));
+
+    expect(screen.queryByRole("heading", { name: "Panel title" })).not.toBeInTheDocument();
+    expect(screen.getByRole("complementary", { name: "Panel title" })).toBeInTheDocument();
   });
 
   it("renders the status bar when provided", () => {
