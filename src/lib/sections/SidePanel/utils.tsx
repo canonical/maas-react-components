@@ -23,9 +23,14 @@ import { ContentSection } from "@/lib/sections/ContentSection";
  * keeps `<SidePanel />` mounted (and open) while the chunk loads, and shows the
  * spinner inside the panel.
  */
-export const lazyLoadSidePanel = (loader: () => Promise<{ default: ComponentType }>, showSkeletonTitle?: boolean): ComponentType => {
+export const lazyLoadSidePanel = <
+  P extends Record<string, unknown> = Record<string, unknown>,
+>(
+  loader: () => Promise<{ default: ComponentType<P> }>,
+  showSkeletonTitle?: boolean
+): ComponentType => {
   const LazyPanel = lazy(loader);
-  const SidePanelContent = (props: Record<string, unknown>) => (
+  const SidePanelContent = (props: P) => (
     <Suspense
       fallback={
         <ContentSection>
@@ -36,5 +41,5 @@ export const lazyLoadSidePanel = (loader: () => Promise<{ default: ComponentType
       <LazyPanel {...props} />
     </Suspense>
   );
-  return SidePanelContent;
+  return SidePanelContent as ComponentType;
 };
