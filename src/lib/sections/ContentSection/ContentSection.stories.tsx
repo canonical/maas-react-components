@@ -73,6 +73,21 @@ export const WithToolbar = {
   },
 };
 
+export const WithPinnedHeader = {
+  args: {
+    children: (
+      <>
+        <ContentSection.Header isPinned>
+          <MainToolbarExample.render />
+        </ContentSection.Header>
+        <ContentSection.Content>
+          <WithInputGroup.render />
+        </ContentSection.Content>
+      </>
+    )
+  }
+}
+
 export const WithNestedFooter = {
   args: {
     children: (
