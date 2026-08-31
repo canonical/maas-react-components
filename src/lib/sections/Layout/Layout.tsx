@@ -12,7 +12,7 @@ import { SidePanel, type SidePanelTitles } from "@/lib/sections/SidePanel";
 import "./Layout.scss";
 
 type LayoutProps = {
-  id: string;
+  id?: string;
   className?: string;
   children: ReactNode;
   pageTitle: string;
