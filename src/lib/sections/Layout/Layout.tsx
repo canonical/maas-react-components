@@ -12,6 +12,7 @@ import { SidePanel, type SidePanelTitles } from "@/lib/sections/SidePanel";
 import "./Layout.scss";
 
 type LayoutProps = {
+  id: string;
   className?: string;
   children: ReactNode;
   pageTitle: string;
@@ -24,6 +25,7 @@ type LayoutProps = {
 };
 
 export const Layout = ({
+  id,
   className,
   children,
   pageTitle,
@@ -37,7 +39,7 @@ export const Layout = ({
   return (
     <>
       <DocumentTitle>{pageTitle}</DocumentTitle>
-      <Application>
+      <Application id={id}>
         {navigation}
         <AppMain className={className}>
           <h1 className="u-visually-hidden">{pageTitle}</h1>
