@@ -9,6 +9,13 @@ section.content-section {
   .content-section__header {
     padding-top: 0.051rem;
     margin-bottom: $input-margin-bottom;
+
+    &.is-pinned {
+      position: sticky;
+      top: 0;
+      background: $color-x-light;
+      z-index: 2; // Ensure title displays above notification bar when scrolled
+    }
   }
 
   .content-section__footer {
