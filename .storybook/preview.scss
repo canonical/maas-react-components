@@ -1,6 +1,9 @@
+@import "@canonical/styles";
+@import "@canonical/styles/fonts";
+@import "@canonical/react-ds-global-form/dist/esm/index.css";
 @import "vanilla-framework";
 @include vanilla;
 
 pre {
   color: #f4f4f4;
-} 
+}

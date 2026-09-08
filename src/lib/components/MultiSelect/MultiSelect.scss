@@ -1,4 +1,7 @@
 @use "sass:map";
+@import "@canonical/styles";
+@import "@canonical/styles/fonts";
+@import "@canonical/react-ds-global-form/dist/esm/index.css";
 @import "vanilla-framework";
 @include vf-base;
 @include vf-p-lists;
@@ -35,7 +38,6 @@ $dropdown-max-height: 20rem;
     opacity: 1;
   }
 }
-
 
 .multi-select__dropdown {
   @extend %vf-bg--x-light;
@@ -92,7 +94,8 @@ $dropdown-max-height: 20rem;
     padding-top: $sph--x-small;
   }
 
-  &, .p-checkbox {
+  &,
+  .p-checkbox {
     width: 100%;
   }
 }
@@ -133,29 +136,27 @@ button.multi-select__select-button {
   align-items: center;
   z-index: 0;
 
+  &::after {
+    position: absolute;
+    right: $sph--small;
+    top: 50%;
+
+    @extend %icon;
+    @include vf-icon-chevron($color-mid-dark);
+    @include vf-transition($property: transform, $duration: fast);
+
+    content: "";
+    margin-left: $sph--large;
+    transform: translateY(-50%) rotate(-180deg);
+  }
+
+  &[aria-expanded="true"] {
+    background-color: $colors--light-theme--background-hover;
+  }
+
+  &[aria-expanded="false"] {
     &::after {
-      position: absolute;
-      right: $sph--small;
-      top: 50%;
-
-        @extend %icon;
-        @include vf-icon-chevron($color-mid-dark);
-        @include vf-transition($property: transform, $duration: fast);
-    
-        content: '';
-        margin-left: $sph--large;
-        transform: translateY(-50%) rotate(-180deg);
-      }
-
-      &[aria-expanded='true'] {
-        background-color: $colors--light-theme--background-hover;
-      }
-    
-      &[aria-expanded='false'] {
-        &::after {
-          transform: translateY(-50%) rotate(0);
-        }
-      }
+      transform: translateY(-50%) rotate(0);
     }
-
-
+  }
+}

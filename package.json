@@ -34,7 +34,9 @@
   ],
   "typesVersions": {
     "*": {
-      "testing": ["./dist/testing/index.d.ts"]
+      "testing": [
+        "./dist/testing/index.d.ts"
+      ]
     }
   },
   "license": "AGPL-3.0",
@@ -56,6 +58,9 @@
     "create-component": "plop component"
   },
   "devDependencies": {
+    "@canonical/summon": "^0.37.0",
+    "@canonical/summon-application": "^0.37.0",
+    "@canonical/summon-component": "^0.37.0",
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
     "@remix-run/router": "^1.23.3",
@@ -109,7 +114,11 @@
     }
   },
   "peerDependencies": {
+    "@canonical/ds-assets": "^0.37.0",
     "@canonical/react-components": "^4.5.0",
+    "@canonical/react-ds-global": "^0.37.0",
+    "@canonical/react-ds-global-form": "^0.37.0",
+    "@canonical/styles": "^0.37.0",
     "@tanstack/react-query": "^5.100.11",
     "@tanstack/react-table": "^8.15.3",
     "@testing-library/react": "^16.0.0",
@@ -125,9 +134,17 @@
     "vitest": "^4.0.0"
   },
   "peerDependenciesMeta": {
-    "@testing-library/react": { "optional": true },
-    "@testing-library/user-event": { "optional": true },
-    "msw": { "optional": true },
-    "vitest": { "optional": true }
+    "@testing-library/react": {
+      "optional": true
+    },
+    "@testing-library/user-event": {
+      "optional": true
+    },
+    "msw": {
+      "optional": true
+    },
+    "vitest": {
+      "optional": true
+    }
   }
 }

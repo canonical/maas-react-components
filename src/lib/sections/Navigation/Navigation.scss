@@ -1,4 +1,7 @@
 @use "sass:map";
+@import "@canonical/styles";
+@import "@canonical/styles/fonts";
+@import "@canonical/react-ds-global-form/dist/esm/index.css";
 @import "vanilla-framework";
 @include vf-base;
 @include vf-p-icon-machines;
@@ -112,7 +115,8 @@ $side-navigation-z-index: 103;
     }
 
     .p-side-navigation__link[aria-current="page"] {
-      &:hover,:active {
+      &:hover,
+      :active {
         cursor: pointer;
       }
     }

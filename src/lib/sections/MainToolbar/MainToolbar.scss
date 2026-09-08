@@ -1,3 +1,6 @@
+@import "@canonical/styles";
+@import "@canonical/styles/fonts";
+@import "@canonical/react-ds-global-form/dist/esm/index.css";
 @import "vanilla-framework";
 
 .main-toolbar {
@@ -7,7 +10,7 @@
   align-items: baseline;
   flex-flow: row wrap;
 
-  // The negative margin-bottom counteracts the default bottom margin of nested inputs. 
+  // The negative margin-bottom counteracts the default bottom margin of nested inputs.
   // This allows the toolbar to dictate the spacing.
   margin-bottom: -#{$input-margin-bottom};
 
