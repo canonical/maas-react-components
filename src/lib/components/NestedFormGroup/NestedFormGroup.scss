@@ -1,4 +1,7 @@
 @use "sass:map";
+@import "@canonical/styles";
+@import "@canonical/styles/fonts";
+@import "@canonical/react-ds-global-form/dist/esm/index.css";
 @import "vanilla-framework";
 
 @mixin vertical-line {
@@ -20,12 +23,12 @@
 
 .p-form__nested-group {
   position: relative;
-  margin-top:-(map.get($nudges, x-small));
+  margin-top: -(map.get($nudges, x-small));
   margin-left: calc($form-tick-box-size / 2 - ($input-border-thickness / 2));
   padding-left: calc($sph--large + $form-tick-box-size / 2);
 
   @include vertical-line;
-  
+
   .p-checkbox,
   .p-radio {
     padding-top: 0;
