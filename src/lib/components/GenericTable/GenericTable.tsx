@@ -281,7 +281,7 @@ export const GenericTable = <T extends GenericTableData>({
                 .filter(filterHeaders)
                 .map((header, index) => (
                   <Fragment key={header.id}>
-                    <ColumnHeader header={header} />
+                    <ColumnHeader header={header} isLoading={isLoading} />
                     {canSelect &&
                     groupBy &&
                     ((!showChevron && index === 2) ||

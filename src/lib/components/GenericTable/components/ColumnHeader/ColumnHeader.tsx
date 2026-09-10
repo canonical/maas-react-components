@@ -11,14 +11,21 @@ import "./ColumnHeader.scss";
 
 type TableHeaderProps<T> = {
   header: Header<T, unknown>;
+  isLoading?: boolean;
 };
 
-const ColumnHeader = <T,>({ header }: TableHeaderProps<T>): ReactElement => {
+const ColumnHeader = <T,>({
+  header,
+  isLoading,
+}: TableHeaderProps<T>): ReactElement => {
   const canSort = header.column.getCanSort();
   const meta = header.column.columnDef.meta;
   const isInteractiveHeader = meta?.isInteractiveHeader;
 
-  const renderedHeader = flexRender(header.column.columnDef.header, header.getContext());
+  const renderedHeader = flexRender(
+    header.column.columnDef.header,
+    header.getContext(),
+  );
 
   return (
     <th
@@ -32,6 +39,7 @@ const ColumnHeader = <T,>({ header }: TableHeaderProps<T>): ReactElement => {
           appearance="link"
           className="p-button--column-header"
           onClick={header.column.getToggleSortingHandler()}
+          tabIndex={isLoading ? -1 : 0}
           type="button"
         >
           <>
@@ -41,8 +49,10 @@ const ColumnHeader = <T,>({ header }: TableHeaderProps<T>): ReactElement => {
         </Button>
       ) : (
         <span className="p-container--column-header">
-            {renderedHeader}
-            {canSort && !isInteractiveHeader && <SortingIndicator header={header} />}
+          {renderedHeader}
+          {canSort && !isInteractiveHeader && (
+            <SortingIndicator header={header} />
+          )}
         </span>
       )}
     </th>
