@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import { Meta } from "@storybook/react-vite";
 
-import { Navigation } from "@/lib/sections/Navigation/Navigation";
 import { NavigationGroupProps } from "@/lib/sections/Navigation/Group/Group";
+import { Navigation } from "@/lib/sections/Navigation/Navigation";
 
 const Template = (args: NavigationGroupProps) => {
   const [isExpanded, setIsExpanded] = useState(args.isExpanded);

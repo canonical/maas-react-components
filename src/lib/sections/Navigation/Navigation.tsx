@@ -46,7 +46,7 @@ export interface NavigationBarProps {
 }
 
 export const NavigationBar = ({ children, className }: NavigationBarProps) => {
-  
+
   return (
     <header aria-label="navigation" className="l-navigation-bar">
       <div className={classNames("p-panel is-dark", className)}>

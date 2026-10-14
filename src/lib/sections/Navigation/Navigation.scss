@@ -371,7 +371,11 @@ $maas-side-nav-width-collapsed: 3rem;
 // center the logo icon within the collapsed rail; keep it fixed at that same
 // centered position regardless of collapsed/expanded state (hover, focus,
 // pinned, etc.) so it never shifts around.
-.l-navigation .p-panel__header .p-panel__logo .p-navigation__tagged-logo .p-navigation__logo-tag {
+.l-navigation
+  .p-panel__header
+  .p-panel__logo
+  .p-navigation__tagged-logo
+  .p-navigation__logo-tag {
   @media only screen and (min-width: ($breakpoint-small + 1)) {
     left: ($maas-side-nav-width-collapsed - 1.25rem) / 2;
     transform: none;
@@ -391,7 +395,9 @@ $maas-side-nav-width-collapsed: 3rem;
 
   @include vf-application-layout--when-expanded {
     left: 0;
-    transform: translateX(#{$application-layout--side-nav-width-expanded - 3rem});
+    transform: translateX(
+      #{$application-layout--side-nav-width-expanded - 3rem}
+    );
   }
 }
 
