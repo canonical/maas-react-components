@@ -21,17 +21,13 @@
 @include vf-p-icon-submit-bug;
 @include vf-p-icon-log-out;
 
-// left-pointing arrow docked against a vertical bar, per the "MAAS navigation 2.0" Figma design
 @mixin maas-icon-sidebar-collapse() {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' width='16px' height='16px' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.25 1.0508L12.25 15.0255H13.75L13.75 1.0508H12.25Z' fill='%23FFF'/%3E%3Cpath d='M6.834 11.7352L3.871 8.7729L10.849 8.7729V7.2729L3.871 7.2729L6.834 4.3106L5.773 3.2499L1 8.0229L5.773 12.7959L6.834 11.7352Z' fill='%23FFF'/%3E%3C/svg%3E");
 }
 
 $side-navigation-z-index: 103;
 
-// narrower icon-only rail than vanilla's 4rem default; scoped with the extra
-// .is-maas/.l-navigation-bar specificity bump so it reliably wins over any
-// other vanilla-framework inclusion (e.g. Storybook's global preview styles)
-// setting the same property at equal specificity
+// narrower icon-only rail than vanilla's 4rem default
 $maas-side-nav-width-collapsed: 3rem;
 
 @media (min-width: $application-layout--breakpoint-side-nav-collapsed) {
@@ -46,8 +42,7 @@ $maas-side-nav-width-collapsed: 3rem;
       width: $maas-side-nav-width-collapsed;
     }
 
-    // mirror vanilla's own expand-on-interaction rule so it still wins over
-    // the narrower collapsed width above
+    // still expands on hover/focus/pinned
     &:hover,
     &:focus-within,
     &.is-pinned {
@@ -56,12 +51,7 @@ $maas-side-nav-width-collapsed: 3rem;
   }
 }
 
-// collapse is impossible on very wide screens (mirrors vanilla's own
-// breakpoint-large override) - without restating this, the `.is-collapsed`
-// rule above (higher specificity than vanilla's own breakpoint-large rule)
-// would keep the rail stuck at 3rem here, while its contents (icons, text)
-// correctly render as "expanded" per the when-expanded mixin - clipping
-// their edges against the too-narrow 3rem container
+// collapse is impossible on very wide screens, mirroring vanilla's own breakpoint-large override
 @media (min-width: $application-layout--breakpoint-side-nav-expanded) {
   .l-navigation.is-maas.is-collapsed {
     width: $application-layout--side-nav-width-expanded;
@@ -169,24 +159,17 @@ $maas-side-nav-width-collapsed: 3rem;
       }
     }
 
-    // vanilla's side-navigation rows don't set their own line-height, so they
-    // fall back to the browser default (~1.15) instead of vanilla's own
-    // default text line-height (3 * $sp-unit = 24px) - set it explicitly so
-    // each row's height (24px line-height + 2 * 4px vertical padding = 32px)
-    // matches the design
+    // vanilla doesn't set its own line-height for these rows
     .p-side-navigation__link,
     .p-side-navigation__text {
       line-height: 3 * $sp-unit;
     }
   }
 
-  // vanilla's %side-navigation__list defaults to a dimmed "inactive" white; keep all
-  // nav items (links, text, icons, labels) at full opacity white by default
+  // vanilla's %side-navigation__list defaults to a dimmed "inactive" white
   .p-side-navigation__list {
     color: $colors--theme--text-default;
 
-    // .p-side-navigation__link sets its own "inactive" color, so inheriting from
-    // the list above isn't enough - it must be overridden explicitly too
     .p-side-navigation__link,
     .p-side-navigation__link:visited {
       color: $colors--theme--text-default;
@@ -200,14 +183,10 @@ $maas-side-nav-width-collapsed: 3rem;
     text-transform: uppercase;
   }
 
-  // the expandable Group's header is a single full-width button (icon + label
-  // + chevron) so hover/click behaves like a regular nav item across its
-  // whole width, instead of only on a separate chevron button
+  // the expandable Group's header is a single full-width button so hover/click
+  // behaves like a regular nav item across its whole width
   .p-side-navigation__link.is-expandable {
-    // .p-side-navigation__link is only ever styled as an <a> elsewhere in
-    // vanilla, so reset the native <button> chrome (border/background) it
-    // would otherwise pick up. Scoped to :not(:hover) so it doesn't tie with
-    // (and lose to source order against) vanilla's own :hover background rule
+    // reset native <button> chrome; scoped to :not(:hover) to not fight vanilla's hover rule
     appearance: none;
     border: 0;
     position: relative;
@@ -234,14 +213,12 @@ $maas-side-nav-width-collapsed: 3rem;
   }
 
   .p-side-navigation--icons {
-    // vanilla's default grid-based offset (24px) leaves too much space before
-    // the icon - bring it closer to the wrapper's left edge
+    // tighter than vanilla's default 24px offset
     .p-side-navigation__icon {
       left: $sph--large;
     }
 
-    // reduce the icon-to-text gap, and realign icon-less nested children
-    // (e.g. the expandable Group's items) under the same column
+    // reduce icon-to-text gap, and realign icon-less nested children to the same column
     .p-side-navigation__text,
     .p-side-navigation__link,
     .p-side-navigation__item .p-side-navigation__item .p-side-navigation__link {
@@ -259,16 +236,12 @@ $maas-side-nav-width-collapsed: 3rem;
   }
 
   .l-navigation__drawer {
-    // ensures the drawer never exceeds the viewport width on mobile
     max-width: 100vw;
   }
 }
 
-// when the rail is collapsed (icon-only, not hovered/focused/pinned), hide every
-// nav icon except the footer's account/logout icons (the collapse toggle itself
-// isn't a .p-side-navigation__icon, so it's unaffected). Not nested inside
-// `.l-navigation {}` since the when-collapsed/when-expanded mixins already
-// prepend a `.l-navigation` ancestor themselves.
+// hide every nav icon when the rail is collapsed, except the footer's icons.
+// Not nested inside `.l-navigation {}` since the mixins prepend that ancestor themselves.
 .p-side-navigation__icon,
 .p-side-navigation__link.is-expandable::after {
   @include vf-application-layout--when-collapsed {
@@ -286,9 +259,7 @@ $maas-side-nav-width-collapsed: 3rem;
   }
 }
 
-// the active item's highlight (background + left highlight bar) should only
-// show once the rail is expanded (hover/focus-within/pinned) - while collapsed
-// to the icon-only rail, the active item shouldn't stand out from the rest
+// hide the active item's highlight while the rail is collapsed
 .p-side-navigation__link.is-active,
 .p-side-navigation__link[aria-current="page"],
 .p-side-navigation__link[aria-current="true"] {
@@ -368,9 +339,7 @@ $maas-side-nav-width-collapsed: 3rem;
   }
 }
 
-// center the logo icon within the collapsed rail; keep it fixed at that same
-// centered position regardless of collapsed/expanded state (hover, focus,
-// pinned, etc.) so it never shifts around.
+// keep the logo tag fixed and centered in the collapsed rail regardless of state
 .l-navigation
   .p-panel__header
   .p-panel__logo
@@ -382,11 +351,8 @@ $maas-side-nav-width-collapsed: 3rem;
   }
 }
 
-// the collapse/expand toggle, on the other hand, centers in the collapsed
-// rail but reverts to its normal left-aligned position once expanded (hover,
-// focus, pinned, or the always-expanded breakpoint-large+ screens). Not
-// nested inside `.l-navigation {}` since the when-collapsed/when-expanded
-// mixins already prepend a `.l-navigation` ancestor themselves.
+// center the toggle in the collapsed rail; left-align once expanded. Not nested
+// inside `.l-navigation {}` since the mixins prepend that ancestor themselves.
 .p-panel__controls {
   @include vf-application-layout--when-collapsed {
     left: 50%;
