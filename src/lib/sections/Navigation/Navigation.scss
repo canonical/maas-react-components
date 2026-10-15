@@ -174,6 +174,28 @@ $maas-side-nav-width-collapsed: 3rem;
     .p-side-navigation__link:visited {
       color: $colors--theme--text-default;
     }
+
+    // replicates vanilla's own [aria-expanded] collapse animation (see
+    // %side-navigation__list) using a data attribute instead, since
+    // aria-expanded isn't a valid ARIA attribute on a list/ul element
+    &[data-expanded] {
+      @include vf-transition(#{transform, opacity}, fast);
+    }
+
+    &[data-expanded="false"] {
+      height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transform: translate3d(0, -0.5rem, 0);
+      visibility: hidden;
+    }
+
+    &[data-expanded="true"] {
+      height: auto;
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      visibility: visible;
+    }
   }
 
   .p-side-navigation__label--group {
