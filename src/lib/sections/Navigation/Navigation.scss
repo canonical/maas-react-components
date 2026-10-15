@@ -282,13 +282,13 @@ $maas-side-nav-width-collapsed: 3rem;
 }
 
 // hide the active item's highlight while the rail is collapsed
-//
+
 // Note: vanilla-framework's own active-link rule
 // (.p-side-navigation__link[aria-current="page"]) compiles outside of any
 // CSS @layer, while this rule compiles inside one (e.g. "ds.states"). Per the
 // CSS cascade, unlayered styles always win over layered styles regardless of
 // specificity, so `!important` is required here to actually override it.
-//
+
 // maas-ui also defines its own themed `!important` background rule for
 // `[aria-current=page].p-side-navigation__link` (see
 // `_patterns_navigation.scss`) which ties with a plain
@@ -297,7 +297,7 @@ $maas-side-nav-width-collapsed: 3rem;
 // (not pinned, not hovered, not focus-within) to both be correct and to win
 // that specificity tie regardless of CSS source order.
 @media (min-width: $application-layout--breakpoint-side-nav-collapsed) {
-  .l-navigation:not(.is-pinned):not(:hover):not(:focus-within) {
+  .l-navigation:not(.is-pinned, :hover, :focus-within) {
     .p-side-navigation__link.is-active,
     .p-side-navigation__link[aria-current="page"],
     .p-side-navigation__link[aria-current="true"] {
