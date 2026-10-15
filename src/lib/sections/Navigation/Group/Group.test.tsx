@@ -26,7 +26,7 @@ it("renders an icon when provided", () => {
   expect(container.querySelector(".p-icon--machines")).toBeInTheDocument();
 });
 
-it("reflects the expanded state on the toggle button and nested list", () => {
+it("reflects the expanded state on the toggle button", () => {
   render(
     <Navigation.Group isExpanded label="Hardware" setIsExpanded={vi.fn()}>
       <Navigation.Item>
@@ -37,10 +37,6 @@ it("reflects the expanded state on the toggle button and nested list", () => {
   expect(
     screen.getByRole("button", { name: "hide submenu for Hardware" }),
   ).toHaveAttribute("aria-expanded", "true");
-  expect(screen.getByText("Machines").closest("ul")).toHaveAttribute(
-    "aria-expanded",
-    "true",
-  );
 });
 
 it("calls setIsExpanded with the toggled value when clicked", async () => {

@@ -36,7 +36,7 @@ export const Group = ({
         {icon && <Icon name={icon} />}
         <Label>{label}</Label>
       </button>
-      <List isExpanded={isExpanded}>
+      <List>
         {children}
       </List>
     </Item>
