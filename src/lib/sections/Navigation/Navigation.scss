@@ -221,6 +221,7 @@ $maas-side-nav-width-collapsed: 3rem;
     // reset native <button> chrome; scoped to :not(:hover) to not fight vanilla's hover rule
     appearance: none;
     border: 0;
+    margin: 0;
     position: relative;
 
     &:not(:hover) {
