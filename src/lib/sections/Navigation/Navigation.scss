@@ -1,4 +1,10 @@
 @use "sass:map";
+
+// locks the rail into its expanded state only on very wide screens; set
+// before importing vanilla-framework so its own `!default` doesn't win.
+// Matches maas-ui's own $breakpoint-xx-large (vanilla's default is $breakpoint-large, 1036px).
+$application-layout--breakpoint-side-nav-expanded: 1920px;
+
 @import "@canonical/styles";
 @import "@canonical/styles/fonts";
 @import "@canonical/react-ds-global-form/dist/esm/index.css";
@@ -296,7 +302,12 @@ $maas-side-nav-width-collapsed: 3rem;
 // override below spells out the "genuinely collapsed" condition explicitly
 // (not pinned, not hovered, not focus-within) to both be correct and to win
 // that specificity tie regardless of CSS source order.
-@media (min-width: $application-layout--breakpoint-side-nav-collapsed) {
+
+// bounded above by the expanded-lock breakpoint so this doesn't fight the
+// unconditional "always expanded" rule below on very wide screens, where the
+// rail is forced open (and the highlight should show) even though it's not
+// pinned, hovered, or focus-within.
+@media (min-width: $application-layout--breakpoint-side-nav-collapsed) and (max-width: ($application-layout--breakpoint-side-nav-expanded - 1px)) {
   .l-navigation:not(.is-pinned, :hover, :focus-within) {
     .p-side-navigation__link.is-active,
     .p-side-navigation__link[aria-current="page"],
