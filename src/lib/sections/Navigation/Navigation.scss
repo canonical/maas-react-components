@@ -1,4 +1,14 @@
 @use "sass:map";
+
+// locks the rail into its expanded state only on very wide screens; set
+// before importing vanilla-framework so its own `!default` doesn't win.
+// Matches maas-ui's own $breakpoint-xx-large (vanilla's default is $breakpoint-large, 1036px).
+// NOTE: must be double-dash to match vanilla's own variable name (`vf-application-layout--when-expanded`/
+// `when-collapsed` reference this exact name internally) - a single-dash copy would silently fail to
+// override vanilla's `!default` and those mixins would fall back to vanilla's 1036px default instead.
+// stylelint-disable-next-line scss/dollar-variable-pattern
+$application-layout--breakpoint-side-nav-expanded: 1920px;
+
 @import "@canonical/styles";
 @import "@canonical/styles/fonts";
 @import "@canonical/react-ds-global-form/dist/esm/index.css";
@@ -6,18 +16,57 @@
 @include vf-base;
 @include vf-p-icon-machines;
 @include vf-p-icon-pods;
+@include vf-p-icon-controllers;
+@include vf-p-icon-containers;
+@include vf-p-icon-mount-2;
+@include vf-p-icon-status;
+@include vf-p-icon-image;
 @include vf-p-icon-connected;
 @include vf-p-icon-settings;
 @include vf-p-icon-tag;
+@include vf-p-icon-bundle;
+@include vf-p-icon-canvas;
 @include vf-p-icon-units;
 @include vf-p-icon-profile;
 @include vf-p-icon-submit-bug;
+@include vf-p-icon-log-out;
 
 @mixin maas-icon-sidebar-collapse() {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' width='16px' height='16px' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0 7.743 L 6.742 14.485 L 7.899 13.329 L 2.311 7.743 L 7.899 2.157 L 6.742 1 L 0 7.743 Z M 7.899 7.743 L 14.642 14.485 L 15.797 13.329 L 10.21 7.743 L 15.797 2.157 L 14.642 1 L 7.899 7.743 Z' fill='%23FFF' style=''/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' width='16px' height='16px' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.25 1.0508L12.25 15.0255H13.75L13.75 1.0508H12.25Z' fill='%23FFF'/%3E%3Cpath d='M6.834 11.7352L3.871 8.7729L10.849 8.7729V7.2729L3.871 7.2729L6.834 4.3106L5.773 3.2499L1 8.0229L5.773 12.7959L6.834 11.7352Z' fill='%23FFF'/%3E%3C/svg%3E");
 }
 
 $side-navigation-z-index: 103;
+
+// narrower icon-only rail than vanilla's 4rem default
+$maas-side-nav-width-collapsed: 3rem;
+
+@media (min-width: $application-layout--breakpoint-side-nav-collapsed) {
+  .l-navigation-bar.l-navigation-bar {
+    width: $maas-side-nav-width-collapsed;
+  }
+
+  .l-navigation.is-maas {
+    width: $maas-side-nav-width-collapsed;
+
+    &.is-collapsed {
+      width: $maas-side-nav-width-collapsed;
+    }
+
+    // still expands on hover/focus/pinned
+    &:hover,
+    &:focus-within,
+    &.is-pinned {
+      width: $application-layout--side-nav-width-expanded;
+    }
+  }
+}
+
+// collapse is impossible on very wide screens, mirroring vanilla's own breakpoint-large override
+@media (min-width: $application-layout--breakpoint-side-nav-expanded) {
+  .l-navigation.is-maas.is-collapsed {
+    width: $application-layout--side-nav-width-expanded;
+  }
+}
 
 .l-navigation.is-collapsed {
   .l-navigation-collapse-toggle {
@@ -36,7 +85,6 @@ $side-navigation-z-index: 103;
   );
 
   .p-button--base.l-navigation-collapse-toggle {
-    background-color: rgb(255 255 255 / 5%);
     visibility: hidden;
 
     @media only screen and (min-width: ($breakpoint-small + 1)) {
@@ -120,25 +168,96 @@ $side-navigation-z-index: 103;
         cursor: pointer;
       }
     }
+
+    // vanilla doesn't set its own line-height for these rows
+    .p-side-navigation__link,
+    .p-side-navigation__text {
+      line-height: 3 * $sp-unit;
+    }
+  }
+
+  // vanilla's %side-navigation__list defaults to a dimmed "inactive" white
+  .p-side-navigation__list {
+    color: $colors--theme--text-default;
+
+    .p-side-navigation__link,
+    .p-side-navigation__link:visited {
+      color: $colors--theme--text-default;
+    }
+
+    // replicates vanilla's own [aria-expanded] collapse animation (see
+    // %side-navigation__list) using a data attribute instead, since
+    // aria-expanded isn't a valid ARIA attribute on a list/ul element
+    &[data-expanded] {
+      @include vf-transition(#{transform, opacity}, fast);
+    }
+
+    &[data-expanded="false"] {
+      height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transform: translate3d(0, -0.5rem, 0);
+      visibility: hidden;
+    }
+
+    &[data-expanded="true"] {
+      height: auto;
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      visibility: visible;
+    }
   }
 
   .p-side-navigation__label--group {
     @extend %table-header-label;
 
-    color: $color-light;
     margin-bottom: $sp-unit * 0.25;
     text-transform: uppercase;
   }
 
-  .p-side-navigation--icons
-    .p-side-navigation__item
-    .p-side-navigation__item
-    .p-side-navigation__link,
-  .p-side-navigation__text {
-    padding-left: 4rem;
+  // the expandable Group's header is a single full-width button so hover/click
+  // behaves like a regular nav item across its whole width
+  .p-side-navigation__link.is-expandable {
+    // reset native <button> chrome; scoped to :not(:hover) to not fight vanilla's hover rule
+    appearance: none;
+    border: 0;
+    margin: 0;
+    position: relative;
+
+    &:not(:hover) {
+      background-color: transparent;
+    }
+
+    &::after {
+      @extend %icon;
+      @include vf-icon-chevron-themed;
+
+      content: "";
+      position: absolute;
+      right: $sph--large;
+      top: 50%;
+      transform: translateY(-50%) rotate(-90deg);
+      transition: transform 100ms;
+    }
+
+    &[aria-expanded="true"]::after {
+      transform: translateY(-50%) rotate(0deg);
+    }
   }
 
   .p-side-navigation--icons {
+    // tighter than vanilla's default 24px offset
+    .p-side-navigation__icon {
+      left: $sph--large;
+    }
+
+    // reduce icon-to-text gap, and realign icon-less nested children to the same column
+    .p-side-navigation__text,
+    .p-side-navigation__link,
+    .p-side-navigation__item .p-side-navigation__item .p-side-navigation__link {
+      padding-left: 2.5rem;
+    }
+
     & > .p-side-navigation__list:last-of-type::after {
       content: "";
     }
@@ -150,8 +269,72 @@ $side-navigation-z-index: 103;
   }
 
   .l-navigation__drawer {
-    // ensures the drawer never exceeds the viewport width on mobile
     max-width: 100vw;
+  }
+}
+
+// hide every nav icon when the rail is collapsed, except the footer's icons.
+// Not nested inside `.l-navigation {}` since the mixins prepend that ancestor themselves.
+.p-side-navigation__icon,
+.p-side-navigation__link.is-expandable::after {
+  @include vf-application-layout--when-collapsed {
+    display: none;
+  }
+
+  @include vf-application-layout--when-expanded {
+    display: block;
+  }
+}
+
+.p-panel__footer .p-side-navigation__icon {
+  @include vf-application-layout--when-collapsed {
+    display: block;
+  }
+}
+
+// hide the active item's highlight while the rail is collapsed
+
+// Note: vanilla-framework's own active-link rule
+// (.p-side-navigation__link[aria-current="page"]) compiles outside of any
+// CSS @layer, while this rule compiles inside one (e.g. "ds.states"). Per the
+// CSS cascade, unlayered styles always win over layered styles regardless of
+// specificity, so `!important` is required here to actually override it.
+
+// maas-ui also defines its own themed `!important` background rule for
+// `[aria-current=page].p-side-navigation__link` (see
+// `_patterns_navigation.scss`) which ties with a plain
+// `vf-application-layout--when-collapsed` selector on specificity, so the
+// override below spells out the "genuinely collapsed" condition explicitly
+// (not pinned, not hovered, not focus-within) to both be correct and to win
+// that specificity tie regardless of CSS source order.
+
+// bounded above by the expanded-lock breakpoint so this doesn't fight the
+// unconditional "always expanded" rule below on very wide screens, where the
+// rail is forced open (and the highlight should show) even though it's not
+// pinned, hovered, or focus-within.
+@media (min-width: $application-layout--breakpoint-side-nav-collapsed) and (max-width: ($application-layout--breakpoint-side-nav-expanded - 1px)) {
+  .l-navigation:not(.is-pinned, :hover, :focus-within) {
+    .p-side-navigation__link.is-active,
+    .p-side-navigation__link[aria-current="page"],
+    .p-side-navigation__link[aria-current="true"] {
+      background: transparent !important;
+
+      &::before {
+        display: none;
+      }
+    }
+  }
+}
+
+.p-side-navigation__link.is-active,
+.p-side-navigation__link[aria-current="page"],
+.p-side-navigation__link[aria-current="true"] {
+  @include vf-application-layout--when-expanded {
+    background: $colors--theme--background-active;
+
+    &::before {
+      display: block;
+    }
   }
 }
 
@@ -187,7 +370,7 @@ $side-navigation-z-index: 103;
         line-height: map.get($line-heights, x-small);
         margin-bottom: 0;
         padding-top: 0;
-        margin-left: 2rem;
+        margin-left: 1.375rem;
         text-wrap: nowrap;
       }
 
@@ -205,11 +388,40 @@ $side-navigation-z-index: 103;
     .p-navigation__tagged-logo .p-navigation__logo-tag {
       height: 2.3rem;
       left: 1rem;
+      width: 1.25rem;
 
       @media only screen and (min-width: ($breakpoint-small + 1)) {
         left: 1.5rem;
       }
     }
+  }
+}
+
+// keep the logo tag fixed and centered in the collapsed rail regardless of state
+.l-navigation
+  .p-panel__header
+  .p-panel__logo
+  .p-navigation__tagged-logo
+  .p-navigation__logo-tag {
+  @media only screen and (min-width: ($breakpoint-small + 1)) {
+    left: ($maas-side-nav-width-collapsed - 1.25rem) / 2;
+    transform: none;
+  }
+}
+
+// center the toggle in the collapsed rail; left-align once expanded. Not nested
+// inside `.l-navigation {}` since the mixins prepend that ancestor themselves.
+.p-panel__controls {
+  @include vf-application-layout--when-collapsed {
+    left: 50%;
+    transform: translateX(-50%) translateY(2.6rem);
+  }
+
+  @include vf-application-layout--when-expanded {
+    left: 0;
+    transform: translateX(
+      #{$application-layout--side-nav-width-expanded - 3rem}
+    );
   }
 }
 
