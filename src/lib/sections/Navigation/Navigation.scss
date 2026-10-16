@@ -3,7 +3,7 @@
 // locks the rail into its expanded state only on very wide screens; set
 // before importing vanilla-framework so its own `!default` doesn't win.
 // Matches maas-ui's own $breakpoint-xx-large (vanilla's default is $breakpoint-large, 1036px).
-$application-layout--breakpoint-side-nav-expanded: 1920px;
+$application-layout-breakpoint-side-nav-expanded: 1920px;
 
 @import "@canonical/styles";
 @import "@canonical/styles/fonts";
@@ -58,7 +58,7 @@ $maas-side-nav-width-collapsed: 3rem;
 }
 
 // collapse is impossible on very wide screens, mirroring vanilla's own breakpoint-large override
-@media (min-width: $application-layout--breakpoint-side-nav-expanded) {
+@media (min-width: $application-layout-breakpoint-side-nav-expanded) {
   .l-navigation.is-maas.is-collapsed {
     width: $application-layout--side-nav-width-expanded;
   }
@@ -307,7 +307,7 @@ $maas-side-nav-width-collapsed: 3rem;
 // unconditional "always expanded" rule below on very wide screens, where the
 // rail is forced open (and the highlight should show) even though it's not
 // pinned, hovered, or focus-within.
-@media (min-width: $application-layout--breakpoint-side-nav-collapsed) and (max-width: ($application-layout--breakpoint-side-nav-expanded - 1px)) {
+@media (min-width: $application-layout--breakpoint-side-nav-collapsed) and (max-width: ($application-layout-breakpoint-side-nav-expanded - 1px)) {
   .l-navigation:not(.is-pinned, :hover, :focus-within) {
     .p-side-navigation__link.is-active,
     .p-side-navigation__link[aria-current="page"],
