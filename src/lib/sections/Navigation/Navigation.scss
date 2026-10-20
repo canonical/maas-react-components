@@ -323,6 +323,19 @@ $maas-side-nav-width-collapsed: 3rem;
         display: none;
       }
     }
+
+    // a collapsed Group's own dropdown items are hidden entirely, but the
+    // Group's `has-active-child` highlight on its parent <li> (added by
+    // consuming apps, e.g. maas-ui's themed `.has-active-child` background
+    // + left accent bar `::before`) isn't - suppress both so they don't leak
+    // through as a stray colored sliver/border at the edge of the rail.
+    .p-side-navigation__item.has-active-child {
+      background: transparent !important;
+
+      &::before {
+        display: none !important;
+      }
+    }
   }
 }
 
