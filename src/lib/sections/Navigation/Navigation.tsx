@@ -8,6 +8,7 @@ import { Content } from "./Content/Content";
 import { Controls } from "./Controls/Controls";
 import { Drawer } from "./Drawer/Drawer";
 import { Footer } from "./Footer/Footer";
+import { Group } from "./Group/Group";
 import { Header } from "./Header/Header";
 import { Icon } from "./Icon/Icon";
 import { Item } from "./Item/Item";
@@ -45,7 +46,7 @@ export interface NavigationBarProps {
 }
 
 export const NavigationBar = ({ children, className }: NavigationBarProps) => {
-  
+
   return (
     <header aria-label="navigation" className="l-navigation-bar">
       <div className={classNames("p-panel is-dark", className)}>
@@ -64,6 +65,7 @@ Navigation.Content = Content;
 Navigation.Footer = Footer;
 Navigation.List = List;
 Navigation.Item = Item;
+Navigation.Group = Group;
 Navigation.Link = Link;
 Navigation.Text = Text;
 Navigation.Icon = Icon;

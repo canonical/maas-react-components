@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Button } from "@canonical/react-components";
 import { Meta } from "@storybook/react-vite";
 
@@ -9,7 +11,9 @@ import { Example as MainToolbarExample } from "@/lib/sections/MainToolbar/MainTo
 const meta: Meta<typeof Navigation> = {
   title: "Sections/Navigation",
   component: Navigation,
-  render: (args) => (
+  render: (args) => {
+    const [isNetworksExpanded, setIsNetworksExpanded] = useState(true);
+    return (
     <div className="l-application">
       <NavigationBar>
         <Navigation.Header>
@@ -92,95 +96,81 @@ const meta: Meta<typeof Navigation> = {
           </Navigation.Header>
           <Navigation.Content>
             <Navigation.List>
-              <Navigation.Item hasActiveChild>
-                <Navigation.Text>
+              <Navigation.Item>
+                <Navigation.Link href="#" aria-current="page">
                   <Navigation.Icon name="machines" />
-                  <Navigation.Label variant="group">Hardware</Navigation.Label>
-                </Navigation.Text>
-                <Navigation.List>
-                  <Navigation.Item>
-                    <Navigation.Link href="#" aria-current="page">
-                      <Navigation.Label>Machines</Navigation.Label>
-                    </Navigation.Link>
-                    <Navigation.Link href="#">
-                      <Navigation.Label>Controllers</Navigation.Label>
-                    </Navigation.Link>
-                    <Navigation.Link href="#">
-                      <Navigation.Label>Devices</Navigation.Label>
-                    </Navigation.Link>
-                  </Navigation.Item>
-                </Navigation.List>
-              </Navigation.Item>
-              <Navigation.Item>
-                <Navigation.Text>
+                  <Navigation.Label>Machines</Navigation.Label>
+                </Navigation.Link>
+                <Navigation.Link href="#">
                   <Navigation.Icon name="pods" />
-                  <Navigation.Label variant="group">KVM</Navigation.Label>
-                </Navigation.Text>
-                <Navigation.List>
-                  <Navigation.Item>
-                    <Navigation.Link href="#">
-                      <Navigation.Label>LXD</Navigation.Label>
-                    </Navigation.Link>
-                  </Navigation.Item>
-                </Navigation.List>
+                  <Navigation.Label>Devices</Navigation.Label>
+                </Navigation.Link>
+                <Navigation.Link href="#">
+                  <Navigation.Icon name="controllers" />
+                  <Navigation.Label>Controllers</Navigation.Label>
+                </Navigation.Link>
+                <Navigation.Link href="#">
+                  <Navigation.Icon name="containers" />
+                  <Navigation.Label>Racks</Navigation.Label>
+                </Navigation.Link>
+                <Navigation.Link href="#">
+                  <Navigation.Icon name="mount-2" />
+                  <Navigation.Label>Switches</Navigation.Label>
+                </Navigation.Link>
+                <Navigation.Link href="#">
+                  <Navigation.Icon name="status" />
+                  <Navigation.Label>Jobs</Navigation.Label>
+                </Navigation.Link>
+                <Navigation.Link href="#">
+                  <Navigation.Icon name="image" />
+                  <Navigation.Label>Images</Navigation.Label>
+                </Navigation.Link>
               </Navigation.Item>
+            </Navigation.List>
+            <Navigation.List>
               <Navigation.Item>
-                <Navigation.Text>
+                <Navigation.Link href="#">
                   <Navigation.Icon name="tag" />
-                  <Navigation.Label variant="group">
-                    Organisation
-                  </Navigation.Label>
-                </Navigation.Text>
-                <Navigation.List>
-                  <Navigation.Item>
-                    <Navigation.Link href="#">
-                      <Navigation.Label>Tags</Navigation.Label>
-                    </Navigation.Link>
-                    <Navigation.Link href="#">
-                      <Navigation.Label>AZs</Navigation.Label>
-                    </Navigation.Link>
-                    <Navigation.Link href="#">
-                      <Navigation.Label>Pools</Navigation.Label>
-                    </Navigation.Link>
-                  </Navigation.Item>
-                </Navigation.List>
+                  <Navigation.Label>Tags</Navigation.Label>
+                </Navigation.Link>
+                <Navigation.Link href="#">
+                  <Navigation.Icon name="bundle" />
+                  <Navigation.Label>AZs</Navigation.Label>
+                </Navigation.Link>
+                <Navigation.Link href="#">
+                  <Navigation.Icon name="canvas" />
+                  <Navigation.Label>Pools</Navigation.Label>
+                </Navigation.Link>
               </Navigation.Item>
-              <Navigation.Item>
-                <Navigation.Text>
-                  <Navigation.Icon name="units" />
-                  <Navigation.Label variant="group">
-                    Configuration
-                  </Navigation.Label>
-                </Navigation.Text>
-                <Navigation.List>
-                  <Navigation.Item>
-                    <Navigation.Link href="#">
-                      <Navigation.Label>Images</Navigation.Label>
-                    </Navigation.Link>
-                  </Navigation.Item>
-                </Navigation.List>
-              </Navigation.Item>
-              <Navigation.Item>
-                <Navigation.Text>
-                  <Navigation.Icon name="connected" />
-                  <Navigation.Label variant="group">
-                    Networking
-                  </Navigation.Label>
-                </Navigation.Text>
-                <Navigation.List>
-                  <Navigation.Item>
-                    <Navigation.Link href="#">
-                      <Navigation.Label>Subnets</Navigation.Label>
-                    </Navigation.Link>
-                    <Navigation.Link href="#">
-                      <Navigation.Label>DNS</Navigation.Label>
-                    </Navigation.Link>
-                    <Navigation.Link href="#">
-                      <Navigation.Label>Discovery</Navigation.Label>
-                    </Navigation.Link>
-                  </Navigation.Item>
-                </Navigation.List>
-              </Navigation.Item>
+            </Navigation.List>
+            <Navigation.List>
+              <Navigation.Group
+                icon="connected"
+                isExpanded={isNetworksExpanded}
+                label="Networking"
+                setIsExpanded={setIsNetworksExpanded}
+              >
+                <Navigation.Item>
+                  <Navigation.Link href="#">
+                    <Navigation.Label>Subnets</Navigation.Label>
+                  </Navigation.Link>
+                  <Navigation.Link href="#">
+                    <Navigation.Label>VLANs</Navigation.Label>
+                  </Navigation.Link>
+                  <Navigation.Link href="#">
+                    <Navigation.Label>Fabrics</Navigation.Label>
+                  </Navigation.Link>
+                  <Navigation.Link href="#">
+                    <Navigation.Label>Spaces</Navigation.Label>
+                  </Navigation.Link>
+                  <Navigation.Link href="#">
+                    <Navigation.Label>DNS</Navigation.Label>
+                  </Navigation.Link>
+                  <Navigation.Link href="#">
+                    <Navigation.Label>Discovery</Navigation.Label>
+                  </Navigation.Link>
+                </Navigation.Item>
+              </Navigation.Group>
             </Navigation.List>
             <Navigation.List>
               <Navigation.Item>
@@ -190,33 +180,20 @@ const meta: Meta<typeof Navigation> = {
                 </Navigation.Link>
               </Navigation.Item>
             </Navigation.List>
-            <Navigation.List>
-              <Navigation.Item>
-                <Navigation.Link href="#">
-                  <Navigation.Icon name="profile" />
-                  <Navigation.Label>admin</Navigation.Label>
-                </Navigation.Link>
-              </Navigation.Item>
-              <Navigation.Item>
-                <Navigation.Link as={Button} appearance="link">
-                  <Navigation.Label>Log out</Navigation.Label>
-                </Navigation.Link>
-              </Navigation.Item>
-            </Navigation.List>
           </Navigation.Content>
           <Navigation.Footer>
             <Navigation.Content>
               <Navigation.List>
                 <Navigation.Item>
                   <Navigation.Link href="#">
-                    <Navigation.Icon name="information" />
-                    <Navigation.Label>Documentation</Navigation.Label>
+                    <Navigation.Icon name="profile" />
+                    <Navigation.Label>admin</Navigation.Label>
                   </Navigation.Link>
                 </Navigation.Item>
                 <Navigation.Item>
-                  <Navigation.Link href="#">
-                    <Navigation.Icon name="submit-bug" />
-                    <Navigation.Label>Report a bug</Navigation.Label>
+                  <Navigation.Link as={Button} appearance="link">
+                    <Navigation.Icon name="log-out" />
+                    <Navigation.Label>Log out</Navigation.Label>
                   </Navigation.Link>
                 </Navigation.Item>
               </Navigation.List>
@@ -226,7 +203,8 @@ const meta: Meta<typeof Navigation> = {
       </Navigation>
       <div className="l-application__content">{args.children}</div>
     </div>
-  ),
+    );
+  },
   tags: ["autodocs"],
   parameters: {
     status: {
