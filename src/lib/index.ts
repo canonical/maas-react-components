@@ -1,3 +1,5 @@
+import "./global.css";
+
 export * from "./elements";
 export * from "./sections";
 export * from "./components";

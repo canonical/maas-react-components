@@ -9,9 +9,6 @@
 // stylelint-disable-next-line scss/dollar-variable-pattern
 $application-layout--breakpoint-side-nav-expanded: 1920px;
 
-@import "@canonical/styles";
-@import "@canonical/styles/fonts";
-@import "@canonical/react-ds-global-form/dist/esm/index.css";
 @import "vanilla-framework";
 @include vf-base;
 @include vf-p-icon-machines;
