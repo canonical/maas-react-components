@@ -1,0 +1,10 @@
+/*
+ * Shared Pragma styles, imported once from the library entry point.
+ * Do not re-import these in component stylesheets: each SCSS module is
+ * compiled separately, so per-file imports get duplicated in the bundle.
+ *
+ * Fonts (@canonical/styles/fonts) are intentionally not included; consuming
+ * apps are expected to provide them.
+ */
+@import "@canonical/styles";
+@import "@canonical/react-ds-global-form/dist/esm/index.css";
