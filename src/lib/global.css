@@ -3,8 +3,8 @@
  * Do not re-import these in component stylesheets: each SCSS module is
  * compiled separately, so per-file imports get duplicated in the bundle.
  *
- * Fonts (@canonical/styles/fonts) are intentionally not included; consuming
- * apps are expected to provide them.
+ * Fonts are included once below so consumers importing the library stylesheet retain the existing typography.
  */
 @import "@canonical/styles";
-@import "@canonical/react-ds-global-form/dist/esm/index.css";
+@import "@canonical/styles/fonts";
+@import "@canonical/react-ds-global-form/dist/esm/index.css"
