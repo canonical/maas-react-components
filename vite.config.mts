@@ -45,6 +45,10 @@ export default defineConfig({
     alias: { "@": path.resolve(import.meta.dirname, "src") },
   },
   build: {
+    watch: {
+      // The build writes into dist/, which would otherwise retrigger the watcher.
+      exclude: ["**/dist/**"],
+    },
     lib: {
       entry: {
         index: path.resolve(import.meta.dirname, "src/lib/index.ts"),
