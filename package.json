@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@canonical/summon": "^0.37.0",
-    "@canonical/summon-application": "^0.37.0",
+    "@canonical/summon-application": "^0.44.0",
     "@canonical/summon-component": "^0.37.0",
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
