@@ -1,4 +1,4 @@
-export interface FormSectionProps {}
+export type FormSectionProps = object;
 import "./FormSection.scss";
 
 export const FormSection = ({ children }: React.PropsWithChildren) => {
