@@ -45,11 +45,6 @@ export default defineConfig({
     alias: { "@": path.resolve(import.meta.dirname, "src") },
   },
   build: {
-    watch: process.argv.some((arg) => arg === "--watch" || arg === "-w")
-      ? {
-          exclude: ["**/dist/**"],
-        }
-      : null,
     lib: {
       entry: {
         index: path.resolve(import.meta.dirname, "src/lib/index.ts"),
@@ -61,7 +56,9 @@ export default defineConfig({
       name: pkg.name,
       formats: ["es"],
       fileName: (_format, entryName) =>
-        entryName === "index" ? `${pkg.name}.es.js` : `${entryName}.es.js`,
+        entryName === "index"
+          ? `${pkg.name}.es.js`
+          : `${entryName}.es.js`,
     },
     rollupOptions: {
       external: isExternal,
