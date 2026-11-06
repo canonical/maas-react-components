@@ -58,7 +58,7 @@
     "create-component": "plop component"
   },
   "devDependencies": {
-    "@canonical/summon": "^0.37.0",
+    "@canonical/summon": "^0.44.0",
     "@canonical/summon-application": "^0.37.0",
     "@canonical/summon-component": "^0.37.0",
     "@commitlint/cli": "^19.0.0",
