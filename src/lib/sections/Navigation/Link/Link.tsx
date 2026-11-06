@@ -4,7 +4,7 @@ import classNames from "classnames";
 
 import { AsProp } from "@/lib/types";
 
-export interface NavigationLinkProps extends ComponentProps<typeof Link> {}
+export type NavigationLinkProps = ComponentProps<typeof Link>;
 
 export const Link = <
   C extends ElementType = "a",
