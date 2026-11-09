@@ -10,7 +10,10 @@
     "@semantic-release/github"
   ],
   "releaseRules": [
-    { 
+    {
+      "breaking": true, "release": "major"
+    },
+    {
       "type": "chore", "release": "patch"
     }
   ]
