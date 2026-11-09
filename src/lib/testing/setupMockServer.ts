@@ -18,7 +18,7 @@ export const setupMockServer = (
   const mockServer = setupServer(...handlers);
 
   beforeAll(() => {
-    mockServer.listen({ onUnhandledFrame: "error" });
+    mockServer.listen({ onUnhandledRequest: "error" });
   });
   afterEach(() => {
     mockServer.resetHandlers();

@@ -205,7 +205,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   const updateItems = (newItems: MultiSelectItem[]) => {
     const uniqueItems = Array.from(new Set(newItems));
     setInternalSelectedItems(uniqueItems);
-    onItemsUpdate?.(uniqueItems);
+    onItemsUpdate && onItemsUpdate(uniqueItems);
   };
 
   const dropdownId = useId();
