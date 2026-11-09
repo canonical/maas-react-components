@@ -118,7 +118,7 @@
     "@canonical/react-components": "^4.5.0",
     "@canonical/react-ds-global": "^0.37.0 || ^0.45.0",
     "@canonical/react-ds-global-form": "^0.37.0 || ^0.45.0",
-    "@canonical/styles": "^0.37.0",
+    "@canonical/styles": "^0.37.0 || ^0.45.0",
     "@tanstack/react-query": "^5.100.11",
     "@tanstack/react-table": "^8.15.3",
     "@testing-library/react": "^16.0.0",
