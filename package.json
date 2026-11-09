@@ -114,7 +114,7 @@
     }
   },
   "peerDependencies": {
-    "@canonical/ds-assets": "^0.37.0",
+    "@canonical/ds-assets": "^0.37.0 || ^0.45.0",
     "@canonical/react-components": "^4.5.0",
     "@canonical/react-ds-global": "^0.37.0",
     "@canonical/react-ds-global-form": "^0.37.0",
