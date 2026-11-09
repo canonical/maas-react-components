@@ -61,9 +61,7 @@ export default defineConfig({
       name: pkg.name,
       formats: ["es"],
       fileName: (_format, entryName) =>
-        entryName === "index"
-          ? `${pkg.name}.es.js`
-          : `${entryName}.es.js`,
+        entryName === "index" ? `${pkg.name}.es.js` : `${entryName}.es.js`,
     },
     rollupOptions: {
       external: isExternal,
