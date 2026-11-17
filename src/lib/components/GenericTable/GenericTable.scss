@@ -58,7 +58,7 @@
       position: sticky;
       top: 0;
       z-index: 1;
-      background-color: inherit;
+      background-color: var(--vf-color-background-default);
 
       th {
         button {
